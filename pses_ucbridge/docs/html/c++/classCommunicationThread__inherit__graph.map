@@ -1,0 +1,5 @@
+<map id="CommunicationThread" name="CommunicationThread">
+<area shape="rect" id="node2" href="$classReadingThread.html" title="The ReadingThread class implements threadded polling of the serial input buffer. " alt="" coords="5,80,116,107"/>
+<area shape="rect" id="node3" href="$classSensorGroupThread.html" title="The SensorGroupThread class implements functionality to extract the group identifier of an incoming s..." alt="" coords="141,80,279,107"/>
+<area shape="rect" id="node4" href="$classThreadDispatcher.html" title="The ThreadDispatcher class coordinates other communication threads and handles start up and shut down..." alt="" coords="303,80,429,107"/>
+</map>

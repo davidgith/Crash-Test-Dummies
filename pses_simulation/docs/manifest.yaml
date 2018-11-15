@@ -1,0 +1,21 @@
+actions: []
+authors: Sebastian Ehmes <sebastian.ehmes@gmx.de>
+brief: ''
+bugtracker: ''
+depends:
+- dynamic_reconfigure
+- nav_msgs
+- map_server
+- catkin
+- roscpp
+- std_msgs
+- sensor_msgs
+- geometry_msgs
+description: The pses_simulation package
+license: GPLv3
+maintainers: Sebastian Ehmes <sebastian.ehmes@gmx.de>, Nicolas Acero <aceronicolas@hotmail.com>
+msgs: []
+package_type: package
+repo_url: https://github.com/tud-pses/pses_simulation
+srvs: []
+url: https://github.com/tud-pses/pses_simulation/wiki

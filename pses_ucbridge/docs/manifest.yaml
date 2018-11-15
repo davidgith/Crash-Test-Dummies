@@ -1,0 +1,49 @@
+actions: []
+authors: Sebastian Ehmes <sebastian.ehmes@gmx.de>
+brief: ''
+bugtracker: ''
+depends:
+- catkin
+- roscpp
+- sensor_msgs
+- message_runtime
+- std_msgs
+- message_generation
+- serial
+description: The pses_ucbridge package
+license: GPLv3
+maintainers: Sebastian Ehmes <sebastian.ehmes@gmx.de>, Nicolas Acero <aceronicolas@hotmail.com>
+msgs: []
+package_type: package
+repo_url: https://github.com/tud-pses/pses_ucbridge
+srvs:
+- ToggleDAQ
+- GetInfoGroup
+- ToggleBrakes
+- ToggleUS
+- ToggleMotor
+- GetMagASA
+- SetSteering
+- GetSteeringLevel
+- GetFirmwareVersion
+- GetSessionID
+- GetInfoAllGroups
+- ResetController
+- SetSessionID
+- SetUS
+- GetControllerID
+- GetIMUInfo
+- ResetDMS
+- SetMag
+- GetMotorLevel
+- SetMotorLevel
+- GetKinectStatus
+- ToggleGroup
+- ToggleDMS
+- GetDAQStatus
+- GetMagInfo
+- SetIMU
+- ToggleKinect
+- DeleteGroup
+- GetUSInfo
+url: https://github.com/tud-pses/pses_ucbridge/wiki

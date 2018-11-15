@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   image_transport
   nav_msgs
-  pses_ucbrisge
+  pses_ucbridge
   roscpp
   sensor_msgs
   std_msgs

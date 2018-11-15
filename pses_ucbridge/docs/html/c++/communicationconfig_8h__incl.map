@@ -1,0 +1,7 @@
+<map id="communicationconfig.h" name="communicationconfig.h">
+<area shape="rect" id="node2" href="$command_8h.html" title="Header file for the Command class. " alt="" coords="609,169,810,211"/>
+<area shape="rect" id="node8" href="$syntax_8h.html" title="Header file for the Syntax struct. " alt="" coords="327,259,529,300"/>
+<area shape="rect" id="node14" href="$sensorgroup_8h.html" title="Header file for the SensorGroup class. " alt="" coords="331,80,533,121"/>
+<area shape="rect" id="node9" href="$parameter_8h.html" title="Header file for the Parameter::Parameter, Parameter::GenericParameter and Parameter::ParameterMap cla..." alt="" coords="978,259,1179,300"/>
+<area shape="rect" id="node15" href="$base64Decoder_8h.html" title="This library provides functions to convert a base64 encoded value to 32bit signed/unsigned integer..." alt="" coords="54,169,255,211"/>
+</map>

@@ -1,0 +1,12 @@
+<map id="readingthread.h" name="readingthread.h">
+<area shape="rect" id="node4" href="$communicationconfig_8h.html" title="Header file for the CommunicationConfig class. " alt="" coords="387,169,588,211"/>
+<area shape="rect" id="node18" href="$communicationthread_8h.html" title="Header file for the CommunicationThread class. " alt="" coords="1632,259,1833,300"/>
+<area shape="rect" id="node22" href="$threaddispatcher_8h.html" title="Header file for the ThreadDispatcher class. " alt="" coords="1397,80,1599,121"/>
+<area shape="rect" id="node5" href="$command_8h.html" title="Header file for the Command class. " alt="" coords="539,348,740,389"/>
+<area shape="rect" id="node10" href="$syntax_8h.html" title="Header file for the Syntax struct. " alt="" coords="96,437,297,479"/>
+<area shape="rect" id="node16" href="$sensorgroup_8h.html" title="Header file for the SensorGroup class. " alt="" coords="867,259,1068,300"/>
+<area shape="rect" id="node11" href="$parameter_8h.html" title="Header file for the Parameter::Parameter, Parameter::GenericParameter and Parameter::ParameterMap cla..." alt="" coords="525,437,727,479"/>
+<area shape="rect" id="node17" href="$base64Decoder_8h.html" title="This library provides functions to convert a base64 encoded value to 32bit signed/unsigned integer..." alt="" coords="917,348,1119,389"/>
+<area shape="rect" id="node23" href="$serialinterface_8h.html" title="Header file for the SerialInterface class. " alt="" coords="1936,169,2137,211"/>
+<area shape="rect" id="node28" href="$sensorgroupthread_8h.html" title="Header file for the SensorGroupThread class. " alt="" coords="1397,169,1599,211"/>
+</map>

@@ -1,0 +1,12 @@
+<map id="threaddispatcher.h" name="threaddispatcher.h">
+<area shape="rect" id="node2" href="$communication_8h.html" title="Header file for the Communication class. " alt="" coords="110,155,231,181"/>
+<area shape="rect" id="node7" href="$readingthread_8h.html" title="Header file for the ReadingThread class. " alt="" coords="249,80,359,107"/>
+<area shape="rect" id="node9" href="$sensorgroupthread_8h.html" title="Header file for the SensorGroupThread class. " alt="" coords="383,80,523,107"/>
+<area shape="rect" id="node11" href="$threaddispatcher_8cpp.html" title="Implementaion of the ThreadDispatcher class. " alt="" coords="547,80,690,107"/>
+<area shape="rect" id="node3" href="$servicefunctions_8h.html" title="Contains all service functions and their respective implementations. " alt="" coords="5,229,133,256"/>
+<area shape="rect" id="node4" href="$uc__bridge_8h.html" title="Header file for the uc_bridge node. " alt="" coords="75,304,165,331"/>
+<area shape="rect" id="node6" href="$communication_8cpp.html" title="Implementaion of the Communication class. " alt="" coords="209,229,343,256"/>
+<area shape="rect" id="node5" href="$uc__bridge_8cpp.html" title="uc_bridge node implementation, containing the main function. " alt="" coords="69,379,171,405"/>
+<area shape="rect" id="node8" href="$readingthread_8cpp.html" title="Implementaion of the ReadingThread class. " alt="" coords="256,155,381,181"/>
+<area shape="rect" id="node10" href="$sensorgroupthread_8cpp.html" title="Implementaion of the SensorgroupThread class. " alt="" coords="405,155,560,181"/>
+</map>

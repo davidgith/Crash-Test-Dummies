@@ -1,0 +1,10 @@
+<map id="uc_bridge.h" name="uc_bridge.h">
+<area shape="rect" id="node4" href="$servicefunctions_8h.html" title="Contains all service functions and their respective implementations. " alt="" coords="3828,80,4044,107"/>
+<area shape="rect" id="node5" href="$communication_8h.html" title="Header file for the Communication class. " alt="" coords="495,155,697,196"/>
+<area shape="rect" id="node10" href="$communicationconfig_8h.html" title="Header file for the CommunicationConfig class. " alt="" coords="323,423,525,464"/>
+<area shape="rect" id="node7" href="$threaddispatcher_8h.html" title="Header file for the ThreadDispatcher class. " alt="" coords="253,244,454,285"/>
+<area shape="rect" id="node8" href="$serialinterface_8h.html" title="Header file for the SerialInterface class. " alt="" coords="46,333,247,375"/>
+<area shape="rect" id="node9" href="$readingthread_8h.html" title="Header file for the ReadingThread class. " alt="" coords="374,333,575,375"/>
+<area shape="rect" id="node11" href="$command_8h.html" title="Header file for the Command class. " alt="" coords="513,512,714,553"/>
+<area shape="rect" id="node12" href="$parameter_8h.html" title="Header file for the Parameter::Parameter, Parameter::GenericParameter and Parameter::ParameterMap cla..." alt="" coords="563,601,765,643"/>
+</map>

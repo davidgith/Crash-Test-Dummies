@@ -1,0 +1,13 @@
+<map id="sensorgroupthread.cpp" name="sensorgroupthread.cpp">
+<area shape="rect" id="node2" href="$sensorgroupthread_8h.html" title="Header file for the SensorGroupThread class. " alt="" coords="783,80,985,121"/>
+<area shape="rect" id="node5" href="$communicationthread_8h.html" title="Header file for the CommunicationThread class. " alt="" coords="1542,348,1743,389"/>
+<area shape="rect" id="node9" href="$threaddispatcher_8h.html" title="Header file for the ThreadDispatcher class. " alt="" coords="783,169,985,211"/>
+<area shape="rect" id="node28" href="$sensorgroup_8h.html" title="Header file for the SensorGroup class. " alt="" coords="619,437,821,479"/>
+<area shape="rect" id="node10" href="$serialinterface_8h.html" title="Header file for the SerialInterface class. " alt="" coords="321,259,522,300"/>
+<area shape="rect" id="node15" href="$readingthread_8h.html" title="Header file for the ReadingThread class. " alt="" coords="809,259,1010,300"/>
+<area shape="rect" id="node16" href="$communicationconfig_8h.html" title="Header file for the CommunicationConfig class. " alt="" coords="783,348,985,389"/>
+<area shape="rect" id="node17" href="$command_8h.html" title="Header file for the Command class. " alt="" coords="805,527,1006,568"/>
+<area shape="rect" id="node22" href="$syntax_8h.html" title="Header file for the Syntax struct. " alt="" coords="961,616,1162,657"/>
+<area shape="rect" id="node23" href="$parameter_8h.html" title="Header file for the Parameter::Parameter, Parameter::GenericParameter and Parameter::ParameterMap cla..." alt="" coords="633,616,834,657"/>
+<area shape="rect" id="node29" href="$base64Decoder_8h.html" title="This library provides functions to convert a base64 encoded value to 32bit signed/unsigned integer..." alt="" coords="347,527,549,568"/>
+</map>

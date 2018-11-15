@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classCommunicationThread.html" title="The CommunicationThread class is the abstract base class of all thread objects used in the communicat..." alt="" coords="5,56,159,83"/>
+<area shape="rect" id="node2" href="$classReadingThread.html" title="The ReadingThread class implements threadded polling of the serial input buffer. " alt="" coords="221,5,331,32"/>
+<area shape="rect" id="node3" href="$classSensorGroupThread.html" title="The SensorGroupThread class implements functionality to extract the group identifier of an incoming s..." alt="" coords="207,56,345,83"/>
+<area shape="rect" id="node4" href="$classThreadDispatcher.html" title="The ThreadDispatcher class coordinates other communication threads and handles start up and shut down..." alt="" coords="213,107,339,133"/>
+</map>

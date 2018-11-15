@@ -1,0 +1,6 @@
+<map id="sensorgroup.h" name="sensorgroup.h">
+<area shape="rect" id="node4" href="$parameter_8h.html" title="Header file for the Parameter::Parameter, Parameter::GenericParameter and Parameter::ParameterMap cla..." alt="" coords="763,169,964,211"/>
+<area shape="rect" id="node9" href="$command_8h.html" title="Header file for the Command class. " alt="" coords="463,80,664,121"/>
+<area shape="rect" id="node11" href="$syntax_8h.html" title="Header file for the Syntax struct. " alt="" coords="214,169,415,211"/>
+<area shape="rect" id="node14" href="$base64Decoder_8h.html" title="This library provides functions to convert a base64 encoded value to 32bit signed/unsigned integer..." alt="" coords="27,80,228,121"/>
+</map>

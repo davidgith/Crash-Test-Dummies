@@ -1,0 +1,27 @@
+actions: []
+authors: Sebastian Ehmes <sebastian.ehmes@gmx.de>
+brief: ''
+bugtracker: ''
+depends:
+- nav_msgs
+- Qt5Core
+- catkin
+- roscpp
+- pses_ucbridge
+- std_msgs
+- sensor_msgs
+- Qt5Gui
+- OpenCV
+- '>OpenCV'
+- Qt5Widgets
+- tf
+- '>Qt5Widgets'
+- cv_bridge
+description: The pses_dashboard package
+license: GPLv3
+maintainers: Sebastian Ehmes <sebastian.ehmes@gmx.de>, Nicolas Acero <aceronicolas@hotmail.com>
+msgs: []
+package_type: package
+repo_url: https://github.com/tud-pses/pses_dashboard
+srvs: []
+url: https://github.com/tud-pses/pses_dashboard/wiki
