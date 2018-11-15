@@ -16,12 +16,11 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
 
     // filter green
     cv::Mat ThreshImage;
-    inRange(HSVImage,cv::Scalar(50,50,150),cv::Scalar(70,255,255),ThreshImage);
+    inRange(HSVImage,cv::Scalar(50,50,120),cv::Scalar(70,255,255),ThreshImage);
     cv::imshow("view", ThreshImage);
     ROS_INFO("Shown new image!");
     //cv::waitKey(30);
 
-    /*
     *control_deviation = 0;
 
     // Find control deviation in pixels (approximately linear?)
@@ -31,7 +30,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
         *control_deviation = -100 + w;
         break;
       }
-    }*/
+    }
 
     ROS_INFO("Control deviation set!");
   }
@@ -75,21 +74,17 @@ int main(int argc, char** argv)
     if (control_deviation > 5)
     {
       steering.data = -750;
-      motor.data = 300;
     }
     else if (control_deviation < -5)
     {
       steering.data = 750;
-      motor.data = 300;
     }
     else
     {
       steering.data = 0;
-      motor.data = 300;
     }
 
     // publish command messages on their topics
-    motorCtrl.publish(motor);
     steeringCtrl.publish(steering);
     // side note: setting steering and motor even though nothing might have
     // changed is actually stupid but for this demo it doesn't matter too much.
