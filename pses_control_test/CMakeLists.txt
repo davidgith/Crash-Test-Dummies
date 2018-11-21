@@ -139,7 +139,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(pses_experimental_control_node src/control_node.cpp)
+add_executable(pses_experimental_control_node src/control_node.cpp src/IPM.cpp src/IPM.h)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
