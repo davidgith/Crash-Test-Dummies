@@ -27,7 +27,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     for (int w = ThreshImage.cols-1; w >= 0; w--) {
       uchar pixel = ThreshImage.at<uchar>(ThreshImage.rows-1, w);
       if (pixel > 127) {
-        *control_deviation = -100 + w;
+        *control_deviation = -250 + w;
         break;
       }
     }
@@ -56,8 +56,6 @@ int main(int argc, char** argv)
       "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, &control_deviation));
 
   // generate control message publisher
-  ros::Publisher motorCtrl =
-      nh.advertise<std_msgs::Int16>("/uc_bridge/set_motor_level_msg", 1);
   ros::Publisher steeringCtrl =
       nh.advertise<std_msgs::Int16>("/uc_bridge/set_steering_level_msg", 1);
 
@@ -70,24 +68,10 @@ int main(int argc, char** argv)
   ros::Rate loop_rate(25);
   while (ros::ok())
   {
-    // simple bang-bang...
-    if (control_deviation > 5)
-    {
-      steering.data = -750;
-    }
-    else if (control_deviation < -5)
-    {
-      steering.data = 750;
-    }
-    else
-    {
-      steering.data = 0;
-    }
-
+    // P-control
+    steering.data = -control_deviation;
     // publish command messages on their topics
     steeringCtrl.publish(steering);
-    // side note: setting steering and motor even though nothing might have
-    // changed is actually stupid but for this demo it doesn't matter too much.
 
     // clear input/output buffers
     ros::spinOnce();
