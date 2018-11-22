@@ -43,8 +43,14 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     }
     ROS_INFO("Control deviatiion set! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
+    
+    ROS_INFO("Sizes = %d %d", image.cols, image.rows);
+    cv::imshow("raw", image);
+
+    int width = 960, height = 540;
+
     // Cropped image
-    cv::Rect myROI(500, 0, 500, 500);
+    cv::Rect myROI(0, height/4, width, height/4*3);
     cv::Mat croppedImage = image(myROI);
     cv::imshow("cropped", croppedImage);
     ROS_INFO("Cropped! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
@@ -64,26 +70,28 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     // IPM-Transformed image
     cv::Mat transformedImage;
 
+    height = height/4*3;
+
     //TESTING
     // The 4-points at the input image	
     vector<Point2f> origPoints;
-    origPoints.push_back( Point2f(0, 250) );
-    origPoints.push_back( Point2f(250, 250) );
-    origPoints.push_back( Point2f(250, 0) );
+    origPoints.push_back( Point2f(0, height) );
+    origPoints.push_back( Point2f(width, height) );
+    origPoints.push_back( Point2f(width, 0) );
     origPoints.push_back( Point2f(0, 0) );
 
     // The 4-points correspondences in the destination image
     vector<Point2f> dstPoints;
-    dstPoints.push_back( Point2f(50, 250) );
-    dstPoints.push_back( Point2f(150, 250) );
-    dstPoints.push_back( Point2f(250, 0) );
+    dstPoints.push_back( Point2f(395, height) );
+    dstPoints.push_back( Point2f(565, height) );
+    dstPoints.push_back( Point2f(width, 0) );
     dstPoints.push_back( Point2f(0, 0) );
       
     // IPM object
-    IPM ipm( Size(250, 250), Size(250, 250), origPoints, dstPoints );
+    IPM ipm( Size(width, height), Size(width, height), origPoints, dstPoints );
 
     // transform
-		ipm.applyHomography( downscaledImage, transformedImage );		
+		ipm.applyHomography( blurredImage, transformedImage );		
     
     cv::imshow("transformed", transformedImage);    
     ROS_INFO("Transformed! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
@@ -116,6 +124,7 @@ int main(int argc, char** argv)
       nh.advertise<std_msgs::Int16>("/uc_bridge/set_steering_level_msg", 1);
 
   ROS_INFO("Hello world!");
+  cv::namedWindow("raw");
   cv::namedWindow("greenfilter");
   cv::namedWindow("cropped");
   cv::namedWindow("blurred");
