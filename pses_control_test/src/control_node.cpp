@@ -41,7 +41,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
         break;
       }
     }
-    ROS_INFO("Control deviation set! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+    ROS_INFO("Control deviatiion set! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
     // Cropped image
     cv::Rect myROI(500, 0, 500, 500);
