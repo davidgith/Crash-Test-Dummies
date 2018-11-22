@@ -45,7 +45,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     // filter green
     cv::Mat ThreshImage;
     cv::Mat FiltedImage;
-    inRange(HSVImage,cv::Scalar(70,50,50),cv::Scalar(140,100,100),ThreshImage);
+    inRange(HSVImage,cv::Scalar(50,40,102),cv::Scalar(107,255,200),ThreshImage);
     medianBlur(ThreshImage, FiltedImage, 7);
     cv::imshow("view", FiltedImage);
     ROS_INFO("Shown new image!");
@@ -55,10 +55,10 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     int subMatrix[20][100];
 		double colpick = FiltedImage.cols / 100.0;
 		double rowpick = FiltedImage.rows / 40.0;
-		for (int c = 0; c < 100; c--)
+		for (int c = 0; c < 100; c++)
 		{
       //take the lower half
-			for (int r = 39; r >= 20; r--)
+			for (int r = 19; r >= 0; r--)
 			{
 				int col = c * colpick;
 				int row = row * rowpick;
@@ -95,7 +95,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
       {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
       {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     };
-    
+    /*
     //get the deviation(Abweichung)
 		deviation devi;
 		int tmp1;
@@ -123,7 +123,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
 		devi.getDistanceMemSum();
 		*control_deviation = devi.P * devi.distanceMem[0] + devi.D * (devi.distanceMem[0] - devi.distanceMem[2]) + devi.I * devi.distanceSum;
     
-    ROS_INFO("Control deviation set!");
+    ROS_INFO("Control deviation set! deviation = %d", *control_deviation);*/
   }
   catch (cv_bridge::Exception& e)
   {
