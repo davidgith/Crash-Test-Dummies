@@ -76,30 +76,42 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     cv::imshow("thresholded", ThreshImage);    
     ROS_INFO("Thresholded! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
-    // Column Histograms
-    cv::Mat histogram;
-    cv::reduce(ThreshImage, histogram, 0, CV_REDUCE_AVG);
-    cv::imshow("reduced", histogram);    
-    ROS_INFO("reduced! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
-    
-    // Histogram peak detection
-    double min=0, max=0;
-    Point minLoc, maxLoc;
-    minMaxLoc(histogram, &min, &max, &minLoc, &maxLoc);
-    int firstPeakX = maxLoc.x;
-    cv::circle(histogram, maxLoc, 100, cv::Scalar(0), CV_FILLED, 8, 0);
-    minMaxLoc(histogram, &min, &max, &minLoc, &maxLoc);
-    int secondPeakX = maxLoc.x;
-    int leftPeakX = firstPeakX < secondPeakX ? firstPeakX : secondPeakX;
-    int rightPeakX = firstPeakX < secondPeakX ? secondPeakX : firstPeakX;
+    // Sliding window k-means averaging search for curved path center detection, then curve fitting
+    int WINDOW_SIZE = 20;
+    std::vector<int> leftLanePoints;
+    std::vector<int> rightLanePoints;
+    for (int window = 1; window < 15; window++) {
+      // Calculate Column Histograms for first window
+      cv::Rect roi(0, height - window * WINDOW_SIZE, width, WINDOW_SIZE);
+      cv::Mat windowedImage = ThreshImage(roi);
+      cv::Mat histogram;
+      cv::reduce(windowedImage, histogram, 0, CV_REDUCE_AVG);
 
-    // TODO Sliding Window Search for curved path detection, then curve fitting
+      // Histogram peak detection
+      double min=0, max=0;
+      Point minLoc, maxLoc;
+      minMaxLoc(histogram, &min, &max, &minLoc, &maxLoc);
+      cv::circle(transformedImage, Point(maxLoc.x, height - window * WINDOW_SIZE + WINDOW_SIZE/2), 10, cv::Scalar(255,255,255), 1, 8, 0);
+      int firstPeakX = maxLoc.x;      
+      cv::circle(histogram, maxLoc, 25, cv::Scalar(0), CV_FILLED, 8, 0); // fill in found maximum with black pixels
+
+      minMaxLoc(histogram, &min, &max, &minLoc, &maxLoc);
+      cv::circle(transformedImage, Point(maxLoc.x, height - window * WINDOW_SIZE + WINDOW_SIZE/2), 10, cv::Scalar(255,255,255), 1, 8, 0);
+      int secondPeakX = maxLoc.x;
+      int leftPeakX = firstPeakX < secondPeakX ? firstPeakX : secondPeakX;
+      int rightPeakX = firstPeakX < secondPeakX ? secondPeakX : firstPeakX;
+      leftLanePoints.push_back(leftPeakX);
+      rightLanePoints.push_back(rightPeakX);
+    }
+
+    cv::imshow("windowed", transformedImage);    
+    ROS_INFO("windowed! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
     
 
     // for now, take histogram peaks to calculate control deviation directly
-    int targetDeviationX = 500;
-    int currentDeviationX = leftPeakX + (rightPeakX - leftPeakX) * 3 / 4;
-    *control_deviation = targetDeviationX - currentDeviationX;
+    // int targetDeviationX = 500;
+    // int currentDeviationX = leftPeakX + (rightPeakX - leftPeakX) * 3 / 4;
+    // *control_deviation = targetDeviationX - currentDeviationX;
   }
   catch (cv_bridge::Exception& e)
   {
@@ -136,7 +148,7 @@ int main(int argc, char** argv)
   cv::namedWindow("blurred");
   cv::namedWindow("transformed");
   cv::namedWindow("thresholded");
-  cv::namedWindow("reduced");
+  cv::namedWindow("windowed");
   cv::startWindowThread();
 
   // Loop starts here:
