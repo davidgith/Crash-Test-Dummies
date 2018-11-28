@@ -25,33 +25,14 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image;
     cv::Mat HSVImage;
     cvtColor(image,HSVImage,CV_BGR2HSV);
-    ROS_INFO("Received new image!");
-
-    // filter green
-    cv::Mat ThreshImage;
-    inRange(HSVImage,cv::Scalar(50,50,120),cv::Scalar(70,255,255),ThreshImage);
-    cv::imshow("greenfilter", ThreshImage);
-    ROS_INFO("Shown new image! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
-    //cv::waitKey(30);
-
-    // Find control deviation in pixels (approximately linear?)
-    for (int w = ThreshImage.cols-1; w >= 0; w--) {
-      if (ThreshImage.at<uchar>(ThreshImage.rows-1, w) > 127) {
-        *control_deviation = -100 + w;
-        break;
-      }
-    }
-    ROS_INFO("Control deviatiion set! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
-
-    
-    ROS_INFO("Sizes = %d %d", image.cols, image.rows);
+    ROS_INFO("Received new image! Sizes = %d %d", image.cols, image.rows);
     cv::imshow("raw", image);
 
     int width = 960, height = 540;
 
     // Cropped image
     cv::Rect myROI(0, height/4, width, height/4*3);
-    cv::Mat croppedImage = image(myROI);
+    cv::Mat croppedImage = HSVImage(myROI);
     cv::imshow("cropped", croppedImage);
     ROS_INFO("Cropped! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
@@ -61,18 +42,12 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     cv::imshow("blurred", blurredImage);
     ROS_INFO("Blurred! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
-    // Downscaled image
-    cv::Mat downscaledImage;
-    cv::resize(blurredImage, downscaledImage, Size(), 0.5, 0.5, cv::INTER_LINEAR);
-    cv::imshow("downscaled", downscaledImage);
-    ROS_INFO("Downscaled! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
+    //TESTING IPM
     // IPM-Transformed image
     cv::Mat transformedImage;
-
     height = height/4*3;
 
-    //TESTING
     // The 4-points at the input image	
     vector<Point2f> origPoints;
     origPoints.push_back( Point2f(0, height) );
@@ -87,20 +62,52 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     dstPoints.push_back( Point2f(width, 0) );
     dstPoints.push_back( Point2f(0, 0) );
       
-    // IPM object
+    // IPM transform
     IPM ipm( Size(width, height), Size(width, height), origPoints, dstPoints );
-
-    // transform
 		ipm.applyHomography( blurredImage, transformedImage );		
-    
     cv::imshow("transformed", transformedImage);    
     ROS_INFO("Transformed! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+
+
+    // TESTING LANE DETECTION
+    // Thresholding
+    cv::Mat ThreshImage;
+    inRange(transformedImage, cv::Scalar(50,50,120),cv::Scalar(70,255,255),ThreshImage);
+    cv::imshow("thresholded", ThreshImage);    
+    ROS_INFO("Thresholded! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+
+    // Column Histograms
+    cv::Mat histogram;
+    cv::reduce(ThreshImage, histogram, 0, CV_REDUCE_AVG);
+    cv::imshow("reduced", histogram);    
+    ROS_INFO("reduced! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+    
+    // Histogram peak detection
+    double min=0, max=0;
+    Point minLoc, maxLoc;
+    minMaxLoc(histogram, &min, &max, &minLoc, &maxLoc);
+    int firstPeakX = maxLoc.x;
+    cv::circle(histogram, maxLoc, 100, cv::Scalar(0), CV_FILLED, 8, 0);
+    minMaxLoc(histogram, &min, &max, &minLoc, &maxLoc);
+    int secondPeakX = maxLoc.x;
+    int leftPeakX = firstPeakX < secondPeakX ? firstPeakX : secondPeakX;
+    int rightPeakX = firstPeakX < secondPeakX ? secondPeakX : firstPeakX;
+
+    // TODO Sliding Window Search for curved path detection, then curve fitting
+    
+
+    // for now, take histogram peaks to calculate control deviation directly
+    int targetDeviationX = 500;
+    int currentDeviationX = leftPeakX + (rightPeakX - leftPeakX) * 3 / 4;
+    *control_deviation = targetDeviationX - currentDeviationX;
   }
   catch (cv_bridge::Exception& e)
   {
-    ROS_ERROR("Could not convert from '%s' to 'bgr8'.", msg->encoding.c_str());
+    ROS_ERROR("Could not convert from '%s' to 'bgr8'?", msg->encoding.c_str());
   }
 }
+
+
 
 int main(int argc, char** argv)
 {
@@ -125,11 +132,11 @@ int main(int argc, char** argv)
 
   ROS_INFO("Hello world!");
   cv::namedWindow("raw");
-  cv::namedWindow("greenfilter");
   cv::namedWindow("cropped");
   cv::namedWindow("blurred");
-  cv::namedWindow("downscaled");
   cv::namedWindow("transformed");
+  cv::namedWindow("thresholded");
+  cv::namedWindow("reduced");
   cv::startWindowThread();
 
   // Loop starts here:
