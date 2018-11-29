@@ -93,7 +93,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
       minMaxLoc(histogram, &min, &max, &minLoc, &maxLoc);
       cv::circle(transformedImage, Point(maxLoc.x, height - window * WINDOW_SIZE + WINDOW_SIZE/2), 10, cv::Scalar(255,255,255), 1, 8, 0);
       int firstPeakX = maxLoc.x;      
-      cv::circle(histogram, maxLoc, 25, cv::Scalar(0), CV_FILLED, 8, 0); // fill in found maximum with black pixels
+      cv::circle(histogram, maxLoc, 12, cv::Scalar(0), CV_FILLED, 8, 0); // fill in found maximum with black pixels
 
       minMaxLoc(histogram, &min, &max, &minLoc, &maxLoc);
       cv::circle(transformedImage, Point(maxLoc.x, height - window * WINDOW_SIZE + WINDOW_SIZE/2), 10, cv::Scalar(255,255,255), 1, 8, 0);
