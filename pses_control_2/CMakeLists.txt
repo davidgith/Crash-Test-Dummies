@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   sensor_msgs
   std_msgs
+  dynamic_reconfigure
 )
 
 find_package(OpenCV REQUIRED)
@@ -97,6 +98,15 @@ find_package(OpenCV REQUIRED)
 #   cfg/DynReconf2.cfg
 # )
 
+#add dynamic reconfigure api
+#find_package(catkin REQUIRED dynamic_reconfigure)
+generate_dynamic_reconfigure_options(
+  cfg/Tutorials.cfg
+  #...
+)
+
+
+
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -139,6 +149,8 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(control2 src/control_node.cpp)
+# make sure configure headers are built before any node using them
+add_dependencies(control2 ${PROJECT_NAME}_gencfg)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

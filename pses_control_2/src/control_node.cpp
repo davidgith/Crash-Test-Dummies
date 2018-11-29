@@ -4,6 +4,13 @@
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/highgui/highgui.hpp>
+#include <dynamic_reconfigure/server.h>
+#include <pses_control_2/TutorialsConfig.h>
+
+void callback(pses_control_2::TutorialsConfig &config, uint32_t level, pses_control_2::TutorialsConfig* newconfig) 
+{
+    *newconfig = config;
+}
 
 class deviation
 {
@@ -32,7 +39,7 @@ class deviation
 		}
 };
 
-void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation)
+void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation, pses_control_2::TutorialsConfig* newconfig)
 {
   try
   {
@@ -45,7 +52,13 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     // filter green
     cv::Mat ThreshImage;
     cv::Mat FiltedImage;
-    inRange(HSVImage,cv::Scalar(50,35,70),cv::Scalar(85,255,255),ThreshImage);
+    int H_min = newconfig->H_min_int_param;
+    int H_max = newconfig->H_max_int_param;
+    int S_min = newconfig->S_min_int_param;
+    int S_max = newconfig->S_max_int_param;
+    int V_min = newconfig->V_min_int_param;
+    int V_max = newconfig->V_max_int_param;  
+    inRange(HSVImage,cv::Scalar(H_min,S_min,V_min),cv::Scalar(H_max,S_max,V_max),ThreshImage);
     medianBlur(ThreshImage, FiltedImage, 7);
     cv::imshow("view", FiltedImage);
     ROS_INFO("Shown new image!");
@@ -138,13 +151,21 @@ int main(int argc, char** argv)
   // get ros node handle
   ros::NodeHandle nh;
 
+  //reconfig
+  pses_control_2::TutorialsConfig newconfig;
+  dynamic_reconfigure::Server<pses_control_2::TutorialsConfig> server;
+  dynamic_reconfigure::Server<pses_control_2::TutorialsConfig>::CallbackType f;
+
+  f = boost::bind(&callback, _1, _2, &newconfig);
+  server.setCallback(f);
+
   // sensor message container
   int control_deviation = 0;
   std_msgs::Int16 motor, steering;
 
   // generate subscriber for sensor messages
   ros::Subscriber imageSub = nh.subscribe<sensor_msgs::Image>(
-      "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, &control_deviation));
+      "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, &control_deviation, &newconfig));
 
   // generate control message publisher
   ros::Publisher motorCtrl =
