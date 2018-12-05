@@ -53,6 +53,10 @@ bool isLeftTurn(std::vector<Point>& leftmostPoints, std::vector<Point>& rightmos
 
 void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
 {
+  const bool USE_TURN_ORIENTATION_ONLY = false;
+  const bool LEFT_LANE = false;
+  const int WINDOW_SIZE = 10;
+
   try
   {
     // setup time
@@ -113,7 +117,6 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
     ROS_INFO("Thresholded! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
     // Sliding window histogram peak search -> clustering around peak
-    int WINDOW_SIZE = 10;
     std::vector<Point> firstPoints;
     std::vector<Point> secondPoints;
     for (int window = 1; window <= height/WINDOW_SIZE; window++) {
@@ -259,7 +262,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
     std::vector<Point> wayPoints;
     // if sufficient two-lane-point-pairs, calculate all pathing points as three-quarters between left and right points
     // else if lane centroid on left half of image, assume right lane visible, else assume left lane visible
-    if (leftLanePairPoints.size() > 6) {
+    if (!USE_TURN_ORIENTATION_ONLY && leftLanePairPoints.size() > 6) {
       // double lane detected
       for (int i = 0; i < leftLanePairPoints.size(); i++) {
         Point leftLanePoint = leftLanePairPoints.at(i);
@@ -271,14 +274,14 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
       // left turn detected
       for (int i = 0; i < rightmostPoints.size(); i++) {
         Point lanePoint = rightmostPoints.at(i);
-        Point wayPoint(std::max(0, lanePoint.x - 60), lanePoint.y);
+        Point wayPoint(std::max(0, LEFT_LANE ? lanePoint.x - 180 : lanePoint.x - 60), lanePoint.y);
         wayPoints.push_back(wayPoint);
       }
     } else {
       // right turn detected
       for (int i = 0; i < leftmostPoints.size(); i++) {
         Point lanePoint = leftmostPoints.at(i);
-        Point wayPoint(std::min(width, lanePoint.x + 180), lanePoint.y);
+        Point wayPoint(std::min(width, LEFT_LANE ? lanePoint.x + 60: lanePoint.x + 180), lanePoint.y);
         wayPoints.push_back(wayPoint);
       }
     }
