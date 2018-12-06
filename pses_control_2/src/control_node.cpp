@@ -142,6 +142,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
       {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     };
     int turn = 1;
+    turn = newconfig->turn;
     //get the deviation(Abweichung)
 		deviation devi;
 		int tmp1;
