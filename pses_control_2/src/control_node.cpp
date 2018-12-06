@@ -199,6 +199,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     devi.D = newconfig->D_int_param;
 		*control_deviation = devi.P * devi.distanceMem[0] + devi.D * (devi.distanceMem[0] - devi.distanceMem[2]) + devi.I * devi.distanceSum;
     
+    cv::waitKey(1);
     ROS_INFO("Control deviation set! deviation = %d", *control_deviation);
   }
   catch (cv_bridge::Exception& e)

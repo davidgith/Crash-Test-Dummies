@@ -298,11 +298,12 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
       Point robotLocation(490, 600);
       Point targetLocation = wayPoints.at(0);
       // TODO calculate Lenkwinkel -> calculate steering_lvl
-      *control = targetLocation.x - robotLocation.x; 
+      //*control = 50*(targetLocation.x - robotLocation.x); 
     }
 
     // DEBUG visualization
     cv::imshow("windowed", transformedImage);    
+    cv::waitKey(1);
     ROS_INFO("Finished planning trajectory! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
   }
   catch (cv_bridge::Exception& e)
