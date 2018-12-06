@@ -1,3 +1,5 @@
+//Code basiert auf: https://sourceforge.net/projects/ipmapping/files/
+
 #include "IPM.h"
 
 using namespace cv;
