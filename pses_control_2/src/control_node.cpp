@@ -59,6 +59,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
 
     cvtColor(image,HSVImage,CV_BGR2HSV);
     ROS_INFO("Received new image!");
+    cv::imshow("row", HSVImage);
+    
 
     // filter green
     cv::Mat ThreshImage;
@@ -152,11 +154,12 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     //if the test gose well, delete following two defs
 		int tmp1;
 		int tmp2;
+    devi.distance = 0;
     if(turn == 1)
     {
+
       for(int y = 19; y >= 0; y--)
       {
-        devi.distance = 0;
         noVision = 0;
         int lastValidSearch = 0;
         for(int search = 0; search < 20; search++)
@@ -167,20 +170,20 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
           if(subMatrix[y][toLeft] == 1)
           {
             lastValidSearch = -search;
-            devi.distance = devi.distance - y*search;
+            devi.distance = devi.distance - search;
             break;
           }
           if(subMatrix[y][toRight] == 1)
           {
             lastValidSearch = +search;
-            devi.distance = devi.distance + y*search;
+            devi.distance = devi.distance + search;
             break;
           }
           //if not find, use last valid search
           if(search == 19)
           {
             noVision++;
-            devi.distance = devi.distance + y*lastValidSearch;
+            devi.distance = devi.distance + lastValidSearch;
           }
         }
       }
@@ -210,7 +213,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     {
       for(int y = 19; y >= 0; y--)
       {
-        devi.distance = 0;
+
         noVision = 0;
         int lastValidSearch = 0;
         for(int search = 0; search < 20; search++)
@@ -221,20 +224,20 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
           if(subMatrix[y][toLeft] == 1)
           {
             lastValidSearch = -search;
-            devi.distance = devi.distance - y*search;
+            devi.distance = devi.distance - search;
             break;
           }
           if(subMatrix[y][toRight] == 1)
           {
             lastValidSearch = +search;
-            devi.distance = devi.distance + y*search;
+            devi.distance = devi.distance + search;
             break;
           }
           //if not find, use last valid search
           if(search == 19)
           {
             noVision++;
-            devi.distance = devi.distance + y*lastValidSearch;
+            devi.distance = devi.distance + lastValidSearch;
           }
         }
       }
@@ -328,10 +331,10 @@ int main(int argc, char** argv)
     }
     steering.data = control_deviation;
     //avoid suddenly steer change
-    if(abs(steering.data - lastSteering) > 200)
-    {
-      steering.data = lastSteering + ((steering.data - lastSteering)/abs(steering.data - lastSteering))*200;
-    }
+    //if(abs(steering.data - lastSteering) > 200)
+    //{
+    //  steering.data = lastSteering + ((steering.data - lastSteering)/abs(steering.data - lastSteering))*200;
+    //}
     if(steering.data >= 1000)
     {
       steering.data = 1000;
