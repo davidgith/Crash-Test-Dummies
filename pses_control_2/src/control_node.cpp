@@ -141,14 +141,51 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
       {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
       {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     };
+    int standarLineRight[20] = {62,62,63,64,65,66,66,67,68,68,69,70,71,71,72,73,73,74,75,76};
+    int standarLineleft[20] = {37,37,36,35,34,33,33,32,31,31,30,29,28,28,27,26,26,25,24,23};
     int turn = 1;
     turn = newconfig->turn;
     //get the deviation(Abweichung)
 		deviation devi;
+    //stop flag;
+    int noVision = 0;
+    //if the test gose well, delete following two defs
 		int tmp1;
 		int tmp2;
     if(turn == 1)
     {
+      for(int y = 19; y >= 0; y--)
+      {
+        devi.distance = 0;
+        noVision = 0;
+        int lastValidSearch = 0;
+        for(int search = 0; search < 20; search++)
+        {
+          int startPonit = standarLineRight[y];
+          int toLeft = startPonit - search;
+          int toRight = startPonit + search;
+          if(subMatrix[y][toLeft] == 1)
+          {
+            lastValidSearch = -search;
+            devi.distance = devi.distance - y*search;
+            break;
+          }
+          if(subMatrix[y][toRight] == 1)
+          {
+            lastValidSearch = +search;
+            devi.distance = devi.distance + y*search;
+            break;
+          }
+          //if not find, use last valid search
+          if(search == 19)
+          {
+            noVision++;
+            devi.distance = devi.distance + y*lastValidSearch;
+          }
+        }
+      }
+      //if the test gose well, delete this part
+      /*
       for (int y = 19; y >= 0; y--)
       {
         devi.distance = 0;
@@ -166,11 +203,43 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
             break;
           }
         }
-      }
+      }*/
     }
 
     if(turn == -1)
     {
+      for(int y = 19; y >= 0; y--)
+      {
+        devi.distance = 0;
+        noVision = 0;
+        int lastValidSearch = 0;
+        for(int search = 0; search < 20; search++)
+        {
+          int startPonit = standarLineRight[y];
+          int toLeft = startPonit - search;
+          int toRight = startPonit + search;
+          if(subMatrix[y][toLeft] == 1)
+          {
+            lastValidSearch = -search;
+            devi.distance = devi.distance - y*search;
+            break;
+          }
+          if(subMatrix[y][toRight] == 1)
+          {
+            lastValidSearch = +search;
+            devi.distance = devi.distance + y*search;
+            break;
+          }
+          //if not find, use last valid search
+          if(search == 19)
+          {
+            noVision++;
+            devi.distance = devi.distance + y*lastValidSearch;
+          }
+        }
+      }
+            //if the test gose well, delete this part
+      /*
       for (int y = 19; y >= 0; y--)
       {
         devi.distance = 0;
@@ -188,7 +257,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
             break;
           }
         }
-      }
+      }*/
     }
 
     
@@ -198,7 +267,11 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     devi.I = newconfig->I_int_param;
     devi.D = newconfig->D_int_param;
 		*control_deviation = devi.P * devi.distanceMem[0] + devi.D * (devi.distanceMem[0] - devi.distanceMem[2]) + devi.I * devi.distanceSum;
-    
+    //a flag, works when no vision, stop the car
+    if(noVision == 20)
+    {
+      	*control_deviation = 99999999;
+    }
     cv::waitKey(1);
     ROS_INFO("Control deviation set! deviation = %d", *control_deviation);
   }
@@ -244,9 +317,21 @@ int main(int argc, char** argv)
   // Loop starts here:
   // loop rate value is set in Hz
   ros::Rate loop_rate(25);
+  int lastSteering = 0;
   while (ros::ok())
   {
+    //stop the car because no vision
+    if(control_deviation == 99999999)
+    {
+      motor.data = 0;
+      motorCtrl.publish(motor);
+    }
     steering.data = control_deviation;
+    //avoid suddenly steer change
+    if(abs(steering.data - lastSteering) > 200)
+    {
+      steering.data = lastSteering + ((steering.data - lastSteering)/abs(steering.data - lastSteering))*200;
+    }
     if(steering.data >= 1000)
     {
       steering.data = 1000;
@@ -255,6 +340,8 @@ int main(int argc, char** argv)
     {
       steering.data = -1000;
     }
+
+    lastSteering = steering.data;
     // publish command messages on their topics
     steeringCtrl.publish(steering);
     // side note: setting steering and motor even though nothing might have
