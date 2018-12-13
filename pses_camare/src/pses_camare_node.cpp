@@ -1,6 +1,10 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Range.h>
 #include <std_msgs/Int16.h>
+#include <image_transport/image_transport.h>
+#include <cv_bridge/cv_bridge.h>
+#include <opencv2/highgui/highgui.hpp>
+#include <dynamic_reconfigure/server.h>
 #include "opencv2/opencv.hpp"
 
 // gets called whenever a new message is availible in the input puffer
@@ -16,7 +20,13 @@ int main(int argc, char** argv)
   sensor_msgs::Image image;
 
   //using webcam to get a picture
-  
+  cv::VideoCapture cap(0);
+  if(!cap.isOpened())
+  {
+    return -1;
+  }
+
+  cv::Mat edges;
 
   // generate control message publisher
   ros::Publisher camareImage =
@@ -29,6 +39,11 @@ int main(int argc, char** argv)
   ros::Rate loop_rate(25);
   while (ros::ok())
   {
+    cv::Mat frame;
+    cap >> frame;
+    cvtColor(frame, edges, CV_BGR2HSV);
+    cv::imshow("edges", edges);
+    //image = edges;
     // publish command messages on their topics
     camareImage.publish(image);
     // side note: setting steering and motor even though nothing might have
