@@ -143,7 +143,11 @@ include_directories(
 add_executable(pses_experimental_control_node 
   src/control_node.cpp 
   src/IPM.cpp 
-  src/IPM.h)
+  src/IPM.h
+  src/Array.cc
+  src/Array.hh
+  src/QuadProg++.cc
+  src/QuadProg++.hh)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

@@ -12,11 +12,17 @@
 #include <algorithm>    
 #include <eigen3/Eigen/Dense>
 
+#include "QuadProg++.hh"
+
 #include "IPM.h"
 
 using namespace cv;
 using namespace std;
 using namespace Eigen;
+
+// Model Calibration Macros
+#define METER_PER_PIXEL_X 0.0048f
+#define METER_PER_PIXEL_Y 0.0033f
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 /* 
@@ -316,6 +322,71 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
     }
 
     // TODO: Calculate MPC from trajectory
+    quadprogpp::Matrix<double> G, CE, CI;
+    quadprogpp::Vector<double> g0, ce0, ci0, x;
+    int n, m, p;
+    double sum = 0.0;
+    char ch;
+    
+    n = 2;
+    G.resize(n, n);
+    {
+      std::istringstream is("4, -2,"
+                            "-2, 4 ");
+
+      for (int i = 0; i < n; i++)	
+        for (int j = 0; j < n; j++)
+          is >> G[i][j] >> ch;
+    }
+    
+    g0.resize(n);
+    {
+      std::istringstream is("6.0, 0.0 ");
+
+      for (int i = 0; i < n; i++)
+        is >> g0[i] >> ch;
+    }
+    
+    m = 1;
+    CE.resize(n, m);
+    {
+      std::istringstream is("1.0, "
+                            "1.0 ");
+
+      for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+          is >> CE[i][j] >> ch;
+    } 
+    
+    ce0.resize(m);
+    {
+      std::istringstream is("-3.0 ");
+      
+      for (int j = 0; j < m; j++)
+        is >> ce0[j] >> ch;
+    }
+    
+    p = 3;
+    CI.resize(n, p);
+    {
+      std::istringstream is("1.0, 0.0, 1.0, "
+                            "0.0, 1.0, 1.0 ");
+    
+      for (int i = 0; i < n; i++)
+        for (int j = 0; j < p; j++)
+          is >> CI[i][j] >> ch;
+    }
+    
+    ci0.resize(p);
+    {
+      std::istringstream is("0.0, 0.0, -2.0 ");
+
+      for (int j = 0; j < p; j++)
+        is >> ci0[j] >> ch;
+    }
+    x.resize(n);
+
+    solve_quadprog(G, g0, CE, ce0, CI, ci0, x);
 
 
 
