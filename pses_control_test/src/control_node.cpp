@@ -147,56 +147,6 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
       // save point
       firstPoints.push_back(Point(leftPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2));
       secondPoints.push_back(Point(rightPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2));
-
-      // Obsolete
-      /* Buggy small area clustering
-      // calculate centroids of cluster pixels and save
-      int CLUSTERING_WIDTH = 20;
-      cv::Rect leftRoi(std::max(0, leftPeakX - CLUSTERING_WIDTH / 2), height - window * WINDOW_SIZE, std::min(CLUSTERING_WIDTH, width - leftPeakX + CLUSTERING_WIDTH / 2), WINDOW_SIZE);
-      cv::Rect rightRoi(std::max(0, rightPeakX - CLUSTERING_WIDTH / 2), height - window * WINDOW_SIZE, std::min(CLUSTERING_WIDTH, width - rightPeakX + CLUSTERING_WIDTH / 2), WINDOW_SIZE);
-      Mat leftPixels = ThreshImage(leftRoi);
-      Mat rightPixels = ThreshImage(rightRoi);
-      Mat leftLanePixels;
-      Mat rightLanePixels;
-      findNonZero(leftPixels, leftLanePixels);
-      findNonZero(rightPixels, rightLanePixels);
-      Point leftLanePoint = getCentroid(leftLanePixels);
-      Point rightLanePoint = getCentroid(rightLanePixels);
-
-      // correction since subimage does not retain original coordinates
-      leftLanePoint.x = leftLanePoint.x + std::max(0, leftPeakX - CLUSTERING_WIDTH / 2); 
-      rightLanePoint.x = rightLanePoint.x + std::max(0, rightPeakX - CLUSTERING_WIDTH / 2); 
-      leftLanePoint.y = height - window * WINDOW_SIZE + WINDOW_SIZE/2;
-      rightLanePoint.y = height - window * WINDOW_SIZE + WINDOW_SIZE/2;
-
-      // save point
-      firstPoints.push_back(leftLanePoint);
-      secondPoints.push_back(rightLanePoint);
-
-      // DEBUG visualization of detected centroids
-      cv::circle(transformedImage, leftLanePoint, 10, cv::Scalar(255,0,0), 1, 8, 0);
-      cv::circle(transformedImage, rightLanePoint, 10, cv::Scalar(255,0,0), 1, 8, 0);
-      */
-
-      /* Obsolete k-means clustering
-      // calculate centroids of cluster pixels and save
-      int splitX = leftPeakX + (rightPeakX - leftPeakX) / 2;
-      cv::Rect leftRoi(0, height - window * WINDOW_SIZE, splitX, WINDOW_SIZE);
-      cv::Rect rightRoi(splitX, height - window * WINDOW_SIZE, width - splitX, WINDOW_SIZE);
-      Mat leftPixels = ThreshImage(leftRoi);
-      Mat rightPixels = ThreshImage(rightRoi);
-      Mat leftLanePixels;
-      Mat rightLanePixels;
-      findNonZero(leftPixels, leftLanePixels);
-      findNonZero(rightPixels, rightLanePixels);
-      Point leftLanePoint = getCentroid(leftLanePixels);
-      Point rightLanePoint = getCentroid(rightLanePixels);
-      rightLanePoint.x = rightLanePoint.x + splitX; //correction since subimage does not retain original coordinates
-      leftLanePoint.y = height - window * WINDOW_SIZE + WINDOW_SIZE/2;
-      rightLanePoint.y = height - window * WINDOW_SIZE + WINDOW_SIZE/2;
-      firstPoints.push_back(leftLanePoint);
-      secondPoints.push_back(rightLanePoint);
-      */
     }
     ROS_INFO("Sliding window search done! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
@@ -303,7 +253,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
 
     // DEBUG visualization
     cv::imshow("windowed", transformedImage);    
-    cv::waitKey(1);
+    //cv::waitKey(1);
     ROS_INFO("Finished planning trajectory! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
   }
   catch (cv_bridge::Exception& e)
