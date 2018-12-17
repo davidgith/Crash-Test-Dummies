@@ -10,12 +10,66 @@
 #include <iostream>
 #include <stdio.h>
 #include <algorithm>    
+#include <eigen3/Eigen/Dense>
 
 #include "IPM.h"
 
 using namespace cv;
 using namespace std;
+using namespace Eigen;
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+/* 
+ *  Example code for fitting a polynomial to sample data (using Eigen 3)
+ *
+ *  Copyright (C) 2014  RIEGL Research ForschungsGmbH
+ *  Copyright (C) 2014  Clifford Wolf <clifford@clifford.at>
+ *  
+ *  Permission to use, copy, modify, and/or distribute this software for any
+ *  purpose with or without fee is hereby granted, provided that the above
+ *  copyright notice and this permission notice appear in all copies.
+ *  
+ *  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ *  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ *  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ *  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ *  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ *  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ *  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+void polyfit(const std::vector<double> &xv, const std::vector<double> &yv, std::vector<double> &coeff, int order)
+{
+	Eigen::MatrixXd A(xv.size(), order+1);
+	Eigen::VectorXd yv_mapped = Eigen::VectorXd::Map(&yv.front(), yv.size());
+	Eigen::VectorXd result;
+
+	assert(xv.size() == yv.size());
+	assert(xv.size() >= order+1);
+
+	// create matrix
+	for (size_t i = 0; i < xv.size(); i++)
+	for (size_t j = 0; j < order+1; j++)
+		A(i, j) = pow(xv.at(i), j);
+
+	// solve for linear least squares fit
+	result = A.householderQr().solve(yv_mapped);
+
+	coeff.resize(order+1);
+	for (size_t i = 0; i < order+1; i++)
+		coeff[i] = result[i];
+}
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+// Evaluate a polynomial.
+double polyeval(const std::vector<double> coeffs, double x) {
+  double result = 0.0;
+  for (int i = 0; i < coeffs.size(); i++) {
+    result += coeffs[i] * pow(x, i);
+  }
+  return result;
+}
+
+// Detect left or right turn
 bool isLeftTurn(std::vector<Point>& leftmostPoints, std::vector<Point>& rightmostPoints) {
   int leftSteps = 0;
   int rightSteps = 0;
@@ -39,12 +93,14 @@ bool isLeftTurn(std::vector<Point>& leftmostPoints, std::vector<Point>& rightmos
   return leftSteps > rightSteps;
 }
 
+// Callback on new kinect image
 void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
 {
-  const bool USE_TURN_ORIENTATION_ONLY = false;
   const bool LEFT_LANE = false;
   const int WINDOW_SIZE = 10;
   const int PEAK_MIN_DISTANCE = 100;
+  const int MIN_LANE_POINT_PAIRS = 5;
+  const int DETECTION_END_OFFSET_Y = 100;
 
   clock_t begin = clock();
   
@@ -99,7 +155,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
     // Sliding window histogram peak search for lane points
     std::vector<Point> firstPoints;
     std::vector<Point> secondPoints;
-    for (int window = 1; window <= height/WINDOW_SIZE; window++) {
+    for (int window = 1; window <= height/WINDOW_SIZE - DETECTION_END_OFFSET_Y/WINDOW_SIZE; window++) {
       // Calculate column histogram for window
       cv::Rect roi(0, height - window * WINDOW_SIZE, width, WINDOW_SIZE);
       cv::Mat windowedImage = ThreshImage(roi);
@@ -148,7 +204,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
       }
       int secondPeakX = curMaxIndex;     
 
-      // order peaks
+      // Order peaks
       int leftPeakX = firstPeakX < secondPeakX ? firstPeakX : secondPeakX;
       int rightPeakX = firstPeakX < secondPeakX ? secondPeakX : firstPeakX;
 
@@ -156,79 +212,73 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
       cv::circle(transformedImage, Point(leftPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2), 3, cv::Scalar(0,255,0), 1, 8, 0);
       cv::circle(transformedImage, Point(rightPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2), 3, cv::Scalar(0,255,0), 1, 8, 0);
 
-      // save points
+      // Save points
       firstPoints.push_back(Point(leftPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2));
       secondPoints.push_back(Point(rightPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2));
     }
     ROS_INFO("Sliding window search done! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
+    // Select interesting points (horizontal pairs)
     std::vector<Point> leftLanePairPoints;
     std::vector<Point> rightLanePairPoints;
-    // select interesting point pairs (distance between centroids approximately appropriate)
     for (int i = 0; i < firstPoints.size(); i++) {
-      //filter if only one point detected
-      if (firstPoints.at(i).x == 0)
+      if (firstPoints.at(i).x == 0) {
+        // If only one point detected, skip this pair of points
         continue;
-
-      //if distance between appropriate values, use these points
-      int distanceX = secondPoints.at(i).x - firstPoints.at(i).x;
-      if (distanceX < width/2 && distanceX > width/10) {
-        leftLanePairPoints.push_back(firstPoints.at(i));
-        rightLanePairPoints.push_back(secondPoints.at(i));
-
-        // DEBUG visualization of window of interest
-        cv::circle(transformedImage, firstPoints.at(i), 8, cv::Scalar(100,100,0), 1, 8, 0);
-        cv::circle(transformedImage, secondPoints.at(i), 8, cv::Scalar(100,100,0), 1, 8, 0);
       }
+
+      leftLanePairPoints.push_back(firstPoints.at(i));
+      rightLanePairPoints.push_back(secondPoints.at(i));
     }
 
+    // Select interesting points (rightmost points)
     std::vector<Point> rightmostPoints;
-    // for detected left turn, select rightmost points as right lane
     for (int i = 0; i < firstPoints.size(); i++) {
-      //if distance between appropriate values for rightmost point, use rightmost point
-      if (secondPoints.at(i).x < width/4*3 && secondPoints.at(i).x > width/4*1) {
+      if (secondPoints.at(i).x != 0) {
+        // If second point detected, use second point
         rightmostPoints.push_back(secondPoints.at(i));
       }
-      //else try leftmost point since rightmost point is out of range
-      else if (firstPoints.at(i).x < width/4*3 && firstPoints.at(i).x > width/4*1) {
+      else if (firstPoints.at(i).x != 0) {
+        // If no second point but first point detected, use first point
         rightmostPoints.push_back(firstPoints.at(i));
-      } 
+      }
     }
 
+    // Select interesting points (leftmost points)
     std::vector<Point> leftmostPoints;
-    // for detected right turn, select leftmost points as left lane
     for (int i = 0; i < firstPoints.size(); i++) {
-      //if distance between appropriate values for leftmost point, use leftmost point
-      if (firstPoints.at(i).x < width/4*3 && firstPoints.at(i).x > width/4*1) {
-        leftmostPoints.push_back(firstPoints.at(i));
-      } 
-      //else try rightmost point since leftmost point is out of range
-      else if (secondPoints.at(i).x < width/4*3 && secondPoints.at(i).x > width/4*1) {
+      if (firstPoints.at(i).x == 0 && secondPoints.at(i).x != 0) {
+        // If second point detected and no first point detected, use second point
         leftmostPoints.push_back(secondPoints.at(i));
+      }
+      else if (firstPoints.at(i).x != 0 && secondPoints.at(i).x != 0) {
+        // If second point detected and first point detected, use first point
+        leftmostPoints.push_back(firstPoints.at(i));
       }
     }
     ROS_INFO("Interesting points selected! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
+    // Generate waypoints from interesting detected lane points
     std::vector<Point> wayPoints;
-    // if sufficient two-lane-point-pairs, calculate all pathing points as three-quarters between left and right points
-    // else if lane centroid on left half of image, assume right lane visible, else assume left lane visible
-    if (!USE_TURN_ORIENTATION_ONLY && leftLanePairPoints.size() > 6) {
-      // double lane detected
+    if (leftLanePairPoints.size() > MIN_LANE_POINT_PAIRS) {
+      // Sufficient horizontal pairs -> waypoints 3/4 between existing pairs
       for (int i = 0; i < leftLanePairPoints.size(); i++) {
         Point leftLanePoint = leftLanePairPoints.at(i);
         Point rightLanePoint = rightLanePairPoints.at(i);
         Point wayPoint(leftLanePoint.x + (rightLanePoint.x - leftLanePoint.x)*3/4, leftLanePoint.y);
         wayPoints.push_back(wayPoint);
       }
-    } else if (isLeftTurn(leftmostPoints, rightmostPoints)) {
-      // left turn detected
+    } 
+    else if (isLeftTurn(leftmostPoints, rightmostPoints)) {
+      // Left turn -> drive left from rightmost points
       for (int i = 0; i < rightmostPoints.size(); i++) {
         Point lanePoint = rightmostPoints.at(i);
         Point wayPoint(std::max(0, LEFT_LANE ? lanePoint.x - 180 : lanePoint.x - 60), lanePoint.y);
         wayPoints.push_back(wayPoint);
       }
-    } else {
-      // right turn detected
+    } 
+    else {
+      // Right turn -> drive right from leftmost points
       for (int i = 0; i < leftmostPoints.size(); i++) {
         Point lanePoint = leftmostPoints.at(i);
         Point wayPoint(std::min(width, LEFT_LANE ? lanePoint.x + 60: lanePoint.x + 180), lanePoint.y);
@@ -242,14 +292,37 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
       cv::circle(transformedImage, wayPoints.at(i), 10, cv::Scalar(255,0,0), 1, 8, 0);
     }
 
-    // TODO curve fitting a nominal trajectory
-    // for now, set steering level such that first waypoint is reached
-    if (wayPoints.size() > 0) {
-      Point robotLocation(490, 600);
-      Point targetLocation = wayPoints.at(0);
-      // TODO calculate Lenkwinkel -> calculate steering_lvl
-      //*control = 50*(targetLocation.x - robotLocation.x); 
+    // If we could not find more than three wayPoints, we stop and do nothing
+    if (wayPoints.size() <= 3) 
+      return;
+
+    // Fit a quadratic polynomial x(y) as nominal trajectory
+    std::vector<double> xs;
+    std::vector<double> ys;
+    std::vector<double> trajectory_coeffs;
+    for (int i = 0; i < wayPoints.size(); i++) {
+      xs.push_back(wayPoints.at(i).x);
+      ys.push_back(wayPoints.at(i).y);
     }
+    polyfit(ys,xs,trajectory_coeffs,2); 
+    ROS_INFO("Finished fitting trajectory! t = %f, coeffs: %f %f %f", 
+      double(clock() - begin) / CLOCKS_PER_SEC,
+      trajectory_coeffs.at(0), trajectory_coeffs.at(1), trajectory_coeffs.at(2));
+
+    // DEBUG Fill in and draw
+    for (int y = 600; y > 0; y--) {
+      int x = round(polyeval(trajectory_coeffs,y));
+      cv::circle(transformedImage, Point(x,y), 1, cv::Scalar(255,0,0), 1, 8, 0);
+    }
+
+    // TODO: Calculate MPC from trajectory
+
+
+
+
+
+    //Point robotLocation(490, 600);
+    //*control = 50*(targetLocation.x - robotLocation.x); 
 
     // DEBUG visualization
     //cv::Mat transformedOriginalImage;
