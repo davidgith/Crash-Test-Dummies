@@ -16,18 +16,6 @@
 using namespace cv;
 using namespace std;
 
-Point getCentroid(InputArray Points)
-{
-  Point Coord;
-  Moments mm = moments( Points, false );
-  double moment10 = mm.m10;
-  double moment01 = mm.m01;
-  double moment00 = mm.m00;
-  Coord.x = int(moment10 / moment00);
-  Coord.y = int(moment01 / moment00);
-  return Coord;
-}
-
 bool isLeftTurn(std::vector<Point>& leftmostPoints, std::vector<Point>& rightmostPoints) {
   int leftSteps = 0;
   int rightSteps = 0;
@@ -56,12 +44,13 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
   const bool USE_TURN_ORIENTATION_ONLY = false;
   const bool LEFT_LANE = false;
   const int WINDOW_SIZE = 10;
-  const int PEAK_MIN_DISTANCE = 10;
+  const int PEAK_MIN_DISTANCE = 100;
 
   clock_t begin = clock();
   
   try
   {
+    // Read image
     cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image;
     int width = image.cols, height = image.rows;
     cv::imshow("raw", image);
@@ -111,22 +100,54 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
     std::vector<Point> firstPoints;
     std::vector<Point> secondPoints;
     for (int window = 1; window <= height/WINDOW_SIZE; window++) {
-      // Calculate Column Histograms for first window
+      // Calculate column histogram for window
       cv::Rect roi(0, height - window * WINDOW_SIZE, width, WINDOW_SIZE);
       cv::Mat windowedImage = ThreshImage(roi);
       cv::Mat histogram;
       cv::reduce(windowedImage, histogram, 0, CV_REDUCE_AVG);
 
-      // Histogram peak detection
-      double min=0, max=0;
-      Point minLoc, maxLoc;
-      // detect window histogram maximum
-      minMaxLoc(histogram, &min, &max, &minLoc, &maxLoc);
-      int firstPeakX = maxLoc.x;      
-      // draw over maximum with black pixels (prevents peak detection around it), then find next maximum
-      cv::circle(histogram, maxLoc, 30, cv::Scalar(0), CV_FILLED, 8, 0); 
-      minMaxLoc(histogram, &min, &max, &minLoc, &maxLoc);
-      int secondPeakX = maxLoc.x;
+      // Manual histogram peak detection for one point
+      int curMaxVal = 0, curMaxIndex = 0;
+      for (int i = 0; i < histogram.cols; i++) {
+        if (histogram.at<uchar>(0,i) < 127)
+          continue;
+
+        if (histogram.at<uchar>(0,i) > curMaxVal) {
+          curMaxVal = histogram.at<uchar>(0,i);
+          curMaxIndex = i;
+        } 
+        else if (histogram.at<uchar>(0,i) == curMaxVal) {
+          if (abs(i-histogram.cols/2) < abs(curMaxIndex-histogram.cols/2)) {
+            curMaxIndex = i;
+          }
+        }
+      }
+      int firstPeakX = curMaxIndex;      
+
+
+      // Blacken region around found peak
+      if (firstPeakX > 0)
+        cv::circle(histogram, Point(firstPeakX, 0), PEAK_MIN_DISTANCE, cv::Scalar(0), CV_FILLED, 8, 0); 
+      
+      // Manual histogram peak detection for second point
+      curMaxVal = 0;
+      curMaxIndex = 0;
+      for (int i = 0; i < histogram.cols; i++) {
+        if (histogram.at<uchar>(0,i) < 127)
+          continue;
+
+        if (histogram.at<uchar>(0,i) > curMaxVal) {
+          curMaxVal = histogram.at<uchar>(0,i);
+          curMaxIndex = i;
+        } 
+        else if (histogram.at<uchar>(0,i) == curMaxVal) {
+          if (abs(i-histogram.cols/2) < abs(curMaxIndex-histogram.cols/2)) {
+            curMaxIndex = i;
+          }
+        }
+      }
+      int secondPeakX = curMaxIndex;     
+
       // order peaks
       int leftPeakX = firstPeakX < secondPeakX ? firstPeakX : secondPeakX;
       int rightPeakX = firstPeakX < secondPeakX ? secondPeakX : firstPeakX;
@@ -135,7 +156,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
       cv::circle(transformedImage, Point(leftPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2), 3, cv::Scalar(0,255,0), 1, 8, 0);
       cv::circle(transformedImage, Point(rightPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2), 3, cv::Scalar(0,255,0), 1, 8, 0);
 
-      // save point
+      // save points
       firstPoints.push_back(Point(leftPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2));
       secondPoints.push_back(Point(rightPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2));
     }
@@ -231,9 +252,9 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
     }
 
     // DEBUG visualization
-    cv::Mat transformedOriginalImage;
-    cvtColor(transformedImage,transformedOriginalImage,CV_HSV2BGR);
-    cv::imshow("windowed", transformedOriginalImage);    
+    //cv::Mat transformedOriginalImage;
+    //cvtColor(transformedImage,transformedOriginalImage,CV_HSV2BGR);
+    cv::imshow("windowed", transformedImage);    
     ROS_INFO("Finished planning trajectory! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
     //cv::waitKey(1);
