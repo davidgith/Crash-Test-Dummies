@@ -9,23 +9,23 @@
 #include <ctime>
 #include <iostream>
 #include <stdio.h>
-#include <algorithm>    // std::max
+#include <algorithm>    
 
 #include "IPM.h"
 
 using namespace cv;
 using namespace std;
 
-Point getCentroid( InputArray Points )
+Point getCentroid(InputArray Points)
 {
-    Point Coord;
-    Moments mm = moments( Points, false );
-    double moment10 = mm.m10;
-    double moment01 = mm.m01;
-    double moment00 = mm.m00;
-    Coord.x = int(moment10 / moment00);
-    Coord.y = int(moment01 / moment00);
-    return Coord;
+  Point Coord;
+  Moments mm = moments( Points, false );
+  double moment10 = mm.m10;
+  double moment01 = mm.m01;
+  double moment00 = mm.m00;
+  Coord.x = int(moment10 / moment00);
+  Coord.y = int(moment01 / moment00);
+  return Coord;
 }
 
 bool isLeftTurn(std::vector<Point>& leftmostPoints, std::vector<Point>& rightmostPoints) {
@@ -56,67 +56,58 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
   const bool USE_TURN_ORIENTATION_ONLY = false;
   const bool LEFT_LANE = false;
   const int WINDOW_SIZE = 10;
+  const int PEAK_MIN_DISTANCE = 10;
 
+  clock_t begin = clock();
+  
   try
   {
-    // setup time
-    clock_t begin = clock();
-
     cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image;
-    cv::Mat HSVImage;
-    cvtColor(image,HSVImage,CV_BGR2HSV);
-    ROS_INFO("Received new image! Sizes = %d %d", image.cols, image.rows);
+    int width = image.cols, height = image.rows;
     cv::imshow("raw", image);
 
-    int width = 960, height = 540;
+    // Convert image into HSV color space
+    cv::Mat HSVImage;
+    cvtColor(image,HSVImage,CV_BGR2HSV);
+    ROS_INFO("Received new image! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
-    // Cropped image
+    // Crop image
     cv::Rect myROI(0, height/4, width, height/4*3);
     cv::Mat croppedImage = HSVImage(myROI);
-    cv::imshow("cropped", croppedImage);
-    ROS_INFO("Cropped! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+    height = height/4*3;
+    //ROS_INFO("Cropped! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
-    // Lowpass-filtered image
+    // Lowpass-filter image
     cv::Mat blurredImage;
     cv::medianBlur( croppedImage, blurredImage, 3 );
-    cv::imshow("blurred", blurredImage);
-    ROS_INFO("Blurred! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+    //ROS_INFO("Blurred! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
-
-    //TESTING IPM
-    // IPM-Transformed image
-    cv::Mat transformedImage;
-    height = height/4*3;
-
-    // The 4-points at the input image	
+    // Define IPM transformation
     vector<Point2f> origPoints;
     origPoints.push_back(Point2f(0, height));
     origPoints.push_back(Point2f(width, height));
     origPoints.push_back(Point2f(width, 0));
     origPoints.push_back(Point2f(0, 0));
-
-    // The 4-points correspondences in the destination image
     vector<Point2f> dstPoints;
     dstPoints.push_back(Point2f(395, height));
     dstPoints.push_back(Point2f(565, height));
     dstPoints.push_back(Point2f(width, 0));
     dstPoints.push_back(Point2f(0, 0));
-      
-    // IPM transform
     IPM ipm(Size(width, height), Size(width, height), origPoints, dstPoints);
+
+    // IPM-transform image
+    cv::Mat transformedImage;
 		ipm.applyHomography(blurredImage, transformedImage);		
     cv::imshow("transformed", transformedImage);    
-    ROS_INFO("Transformed! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+    ROS_INFO("IPM-transformed! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
-
-    // TESTING LANE DETECTION
-    // Thresholding
+    // Threshold the colors to find green
     cv::Mat ThreshImage;
     inRange(transformedImage, cv::Scalar(50,50,120),cv::Scalar(70,255,255),ThreshImage);
     cv::imshow("thresholded", ThreshImage);    
     ROS_INFO("Thresholded! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
-    // Sliding window histogram peak search -> clustering around peak
+    // Sliding window histogram peak search for lane points
     std::vector<Point> firstPoints;
     std::vector<Point> secondPoints;
     for (int window = 1; window <= height/WINDOW_SIZE; window++) {
@@ -140,7 +131,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
       int leftPeakX = firstPeakX < secondPeakX ? firstPeakX : secondPeakX;
       int rightPeakX = firstPeakX < secondPeakX ? secondPeakX : firstPeakX;
 
-      // DEBUG visualization of cluster center
+      // DEBUG visualization of histogram maximum
       cv::circle(transformedImage, Point(leftPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2), 3, cv::Scalar(0,255,0), 1, 8, 0);
       cv::circle(transformedImage, Point(rightPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2), 3, cv::Scalar(0,255,0), 1, 8, 0);
 
@@ -176,16 +167,10 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
       //if distance between appropriate values for rightmost point, use rightmost point
       if (secondPoints.at(i).x < width/4*3 && secondPoints.at(i).x > width/4*1) {
         rightmostPoints.push_back(secondPoints.at(i));
-
-        // DEBUG visualization of window of interest
-        //cv::circle(transformedImage, secondPoints.at(i), 12, cv::Scalar(200,200,0), 1, 8, 0);
       }
       //else try leftmost point since rightmost point is out of range
       else if (firstPoints.at(i).x < width/4*3 && firstPoints.at(i).x > width/4*1) {
         rightmostPoints.push_back(firstPoints.at(i));
-
-        // DEBUG visualization of window of interest
-        //cv::circle(transformedImage, firstPoints.at(i), 12, cv::Scalar(200,200,0), 1, 8, 0);
       } 
     }
 
@@ -195,16 +180,10 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
       //if distance between appropriate values for leftmost point, use leftmost point
       if (firstPoints.at(i).x < width/4*3 && firstPoints.at(i).x > width/4*1) {
         leftmostPoints.push_back(firstPoints.at(i));
-
-        // DEBUG visualization of window of interest
-        //cv::circle(transformedImage, firstPoints.at(i), 14, cv::Scalar(200,200,200), 1, 8, 0);
       } 
       //else try rightmost point since leftmost point is out of range
       else if (secondPoints.at(i).x < width/4*3 && secondPoints.at(i).x > width/4*1) {
         leftmostPoints.push_back(secondPoints.at(i));
-
-        // DEBUG visualization of window of interest
-        //cv::circle(transformedImage, secondPoints.at(i), 14, cv::Scalar(200,200,200), 1, 8, 0);
       }
     }
     ROS_INFO("Interesting points selected! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
@@ -252,17 +231,18 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
     }
 
     // DEBUG visualization
-    cv::imshow("windowed", transformedImage);    
-    //cv::waitKey(1);
+    cv::Mat transformedOriginalImage;
+    cvtColor(transformedImage,transformedOriginalImage,CV_HSV2BGR);
+    cv::imshow("windowed", transformedOriginalImage);    
     ROS_INFO("Finished planning trajectory! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+
+    //cv::waitKey(1);
   }
   catch (cv_bridge::Exception& e)
   {
     ROS_ERROR("Could not convert from '%s' to 'bgr8'?", msg->encoding.c_str());
   }
 }
-
-
 
 int main(int argc, char** argv)
 {
@@ -287,8 +267,6 @@ int main(int argc, char** argv)
 
   ROS_INFO("Hello world!");
   cv::namedWindow("raw");
-  cv::namedWindow("cropped");
-  cv::namedWindow("blurred");
   cv::namedWindow("transformed");
   cv::namedWindow("thresholded");
   cv::namedWindow("windowed");
