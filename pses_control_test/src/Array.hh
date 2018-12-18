@@ -1447,6 +1447,35 @@ Matrix<T> operator*(const T& a, const Matrix<T>& rhs)
   return tmp;
 }
 
+// custom matrix transpose
+template <typename T>
+Matrix<T> transpose(const Matrix<T>& m)
+{
+  Matrix<T> tmp;
+  tmp.resize(m.ncols(), m.nrows());
+  for (unsigned int row = 0; row < m.nrows(); row++)
+    for (unsigned int col = 0; col < m.ncols(); col++)
+      tmp[col][row] = m[row][col];
+	
+  return tmp;
+}
+
+// custom matrix multiplication
+template <typename T>
+Matrix<T> operator%(const Matrix<T>& lhs, const Matrix<T>& rhs)
+{
+  if (lhs.ncols() != rhs.nrows())
+    throw std::logic_error("Operator%: matrices have wrong dimensions");
+  Matrix<T> tmp;
+  tmp.resize(0, lhs.nrows(), rhs.ncols());
+  for (unsigned int rowLHS = 0; rowLHS < lhs.nrows(); rowLHS++)
+    for (unsigned int colRHS = 0; colRHS < rhs.ncols(); colRHS++)
+      for (unsigned int colLHS = 0; colLHS < lhs.ncols(); colLHS++)
+        tmp[rowLHS][colRHS] += lhs[rowLHS][colLHS] * rhs[colLHS][colRHS];
+	
+  return tmp;
+}
+
 template <typename T>
 inline Matrix<T>& Matrix<T>::operator*=(const Matrix<T>& rhs)
 {

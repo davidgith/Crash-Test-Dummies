@@ -14,28 +14,48 @@
 #include <tuple>
 
 #include "QuadProg++.hh"
-
 #include "IPM.h"
 
 using namespace cv;
 using namespace std;
 using namespace Eigen;
 
-// Model Calibration Macros
+// Optimizations
+#define DEBUG_VISUALIZATIONS true
+
+// IPM Calibration Configurations
+#define ROBOT_POSITION_PIXEL_X 465
+#define ROBOT_OFFSET_PIXEL_Y 60
 #define METER_PER_PIXEL_X 0.0033f
 #define METER_PER_PIXEL_Y 0.0048f
 
-#define TARGET_VELOCITY 0.05
+// Waypointing Configurations
+#define WINDOW_SIZE 10
+#define PEAK_MIN_DISTANCE 100
+#define MIN_LANE_POINT_PAIRS 13
+#define DETECTION_END_OFFSET_Y 100
 
+// Model Predictive Control Configurations
+#define MPC_DT 0.1f
+#define MPC_STEPS 25
+
+#define MPC_WEIGHT_U 0.01f
+#define MPC_WEIGHT_Y 1000.0f
+#define MPC_WEIGHT_PHI 0.0f
+
+#define U_LOWERBOUND (-3.1415f / 4)
+#define U_UPPERBOUND (3.1415f / 4)
+
+// Drive Configurations
+#define LEFT_LANE false
+#define TARGET_VELOCITY 0.2f
+
+// MPC Model Definitions
 #define MODEL_PARAM_L_H 0.1f
 #define MODEL_PARAM_L 0.1f
-
-#define MPC_TIMESTEP 0.02
-#define MPC_STEPS 50
-
-#define Y_OFFSET 0
-#define PHI_K_OFFSET Y_OFFSET + MPC_STEPS
-#define U_OFFSET PHI_K_OFFSET + MPC_STEPS
+#define N_STATES 2
+#define N_INPUTS 1
+#define N_QUADPROG_VARS (N_INPUTS * MPC_STEPS)
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 /* 
@@ -135,12 +155,6 @@ int findBestHistogramPeakX(cv::Mat& histogram) {
 // Callback on new kinect image
 void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control, IPM* ipm)
 {
-  const bool LEFT_LANE = false;
-  const int WINDOW_SIZE = 10;
-  const int PEAK_MIN_DISTANCE = 100;
-  const int MIN_LANE_POINT_PAIRS = 13;
-  const int DETECTION_END_OFFSET_Y = 100;
-
   clock_t begin = clock();
   
   try
@@ -302,11 +316,6 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control, IPM* ipm
     }
     ROS_INFO("Waypoints set! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
-    // DEBUG visualization of waypoints
-    for (int i = 0; i < wayPoints.size(); i++) {
-      cv::circle(transformedImage, wayPoints.at(i), 10, cv::Scalar(255,0,0), 1, 8, 0);
-    }
-
     // If we could not find more than three wayPoints, we stop and do nothing
     if (wayPoints.size() <= 3) {
       ROS_INFO("Too few waypoints, skipping! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
@@ -318,8 +327,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control, IPM* ipm
     std::vector<double> ys;
     std::vector<double> trajectory_coeffs;
     //Optional: add current robot position to fitting waypoints
-    xs.push_back(465);
-    ys.push_back(height + 60);
+    xs.push_back(ROBOT_POSITION_PIXEL_X);
+    ys.push_back(height + ROBOT_OFFSET_PIXEL_Y);
     for (int i = 0; i < wayPoints.size(); i++) {
       xs.push_back(wayPoints.at(i).x);
       ys.push_back(wayPoints.at(i).y);
@@ -329,7 +338,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control, IPM* ipm
       double(clock() - begin) / CLOCKS_PER_SEC,
       trajectory_coeffs.at(0), trajectory_coeffs.at(1), trajectory_coeffs.at(2));
 
-    // TODO: Calculate MPC solution from trajectory and state
+    // Calculate MPC solution from trajectory and state
     // Initialize linear discrete system
     quadprogpp::Matrix<double> A_d, B_d, C_d;
     A_d.resize(2,2);
@@ -337,48 +346,183 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control, IPM* ipm
     C_d.resize(1,2);
 
     A_d[0][0] = 1;
-    A_d[0][1] = TARGET_VELOCITY * MPC_TIMESTEP;
+    A_d[0][1] = TARGET_VELOCITY * MPC_DT;
     A_d[1][0] = 0;
     A_d[1][1] = 1;
 
-    B_d[0][0] = ((TARGET_VELOCITY * MPC_TIMESTEP) * (MODEL_PARAM_L_H + (TARGET_VELOCITY * MPC_TIMESTEP) / 2)) / MODEL_PARAM_L;
-    B_d[1][0] = (TARGET_VELOCITY * MPC_TIMESTEP) / MODEL_PARAM_L;
+    B_d[0][0] = ((TARGET_VELOCITY * MPC_DT) * (MODEL_PARAM_L_H + (TARGET_VELOCITY * MPC_DT) / 2)) / MODEL_PARAM_L;
+    B_d[1][0] = (TARGET_VELOCITY * MPC_DT) / MODEL_PARAM_L;
 
     C_d[0][0] = 1;
     C_d[0][1] = 0;
 
-    //solve_quadprog(G, g0, CE, ce0, CI, ci0, x);
+    // Initialize problem weights
+    quadprogpp::Matrix<double> Q;
+    double P = MPC_WEIGHT_U;
+    Q.resize(0, N_STATES, N_STATES);
+    Q[0][0] = MPC_WEIGHT_Y;
+    Q[0][1] = 0;
+    Q[1][0] = 0;
+    Q[1][1] = MPC_WEIGHT_PHI;
 
-
-
-
-
-    //*control = 50*(targetLocation.x - robotLocation.x); 
-    
-    ROS_INFO("Finished MPC code! t = %f");
-
-    // DEBUG visualization of original image space + robot space
-    cv::Rect helperROI(0, 0, width, 60);
-    cv::Mat transformedOriginalImage, transformedFullImage;
-    cvtColor(transformedImage,transformedOriginalImage,CV_HSV2BGR);
-    cv::Mat tmpMat = transformedOriginalImage(helperROI);
-    cv::vconcat(transformedOriginalImage, tmpMat, transformedFullImage);
-
-    // DEBUG Fill in and draw trajectory and robot position
-    for (int y = height + 60; y > 0; y--) {
-      int x = round(polyeval(trajectory_coeffs,y));
-      cv::circle(transformedFullImage, Point(x,y), 1, cv::Scalar(255,0,0), 1, 8, 0);
+    // Initialize reference trajectory via kinematic model
+    quadprogpp::Matrix<double> x_ref;
+    x_ref.resize(N_STATES * MPC_STEPS, 1);
+    double y_pixel = height + ROBOT_OFFSET_PIXEL_Y;
+    for (int i = 0; i < MPC_STEPS; i++) {
+      y_pixel -= TARGET_VELOCITY * MPC_DT / METER_PER_PIXEL_Y;
+      double x_ref_pixel = polyeval(trajectory_coeffs, y_pixel);
+      double x_ref_meters = (x_ref_pixel - ROBOT_POSITION_PIXEL_X) * METER_PER_PIXEL_X;
+      x_ref[2*i][0] = x_ref_meters;
+      x_ref[2*i+1][0] = 0; // unneeded since unweighted
     }
-    cv::circle(transformedFullImage, Point(465, height + 60), 8, cv::Scalar(255,0,0), 4, 8, 0);
 
-    // Show debug visualizations
-    cv::imshow("raw", image);
-    cv::imshow("transformed", transformedImage);    
-    cv::imshow("thresholdedGreen", ThreshImageGreen);  
-    cv::imshow("thresholdedPink", ThreshImagePink);    
-    cv::imshow("windowed", transformedImage);    
-    cv::imshow("windowedOrig", transformedFullImage);    
-    ROS_INFO("Finished debug output! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+    // Initialize quadratic programming problem
+    quadprogpp::Matrix<double> B_dash;
+    quadprogpp::Vector<double> tmpVec1;
+    quadprogpp::Vector<double> tmpVec2;
+    B_dash.resize(0, N_STATES * MPC_STEPS, N_INPUTS * MPC_STEPS);
+    tmpVec1.resize(0, N_INPUTS * MPC_STEPS);
+    tmpVec2.resize(0, N_INPUTS * MPC_STEPS);
+    tmpVec1[0] = B_d[0][0];
+    tmpVec2[0] = B_d[1][0];
+    for (int row = 0; row < MPC_STEPS; row++) {
+      // calculate 2 rows of B_dash each iteration
+      for (int col = tmpVec1.size()-1; col > 0; col--) {
+        tmpVec1[col] = tmpVec1[col-1];
+        tmpVec2[col] = tmpVec2[col-1];
+      }
+      tmpVec1[0] = A_d[0][0] * tmpVec1[1] + A_d[0][1] * tmpVec2[1];
+      tmpVec2[0] = A_d[1][0] * tmpVec1[1] + A_d[1][1] * tmpVec2[1];
+    
+      for (int col = 0; col < tmpVec1.size(); col++) {
+        B_dash[2*row][col] = tmpVec1[col];
+        B_dash[2*row+1][col] = tmpVec2[col];
+      }
+    }
+      
+    quadprogpp::Matrix<double> Q_dash;
+    Q_dash.resize(0, N_STATES * MPC_STEPS, N_STATES * MPC_STEPS);
+    for (int row = 0; row < MPC_STEPS; row++) {
+      Q_dash[2*row][2*row] = Q[0][0];
+      Q_dash[2*row][2*row+1] = Q[0][1];
+      Q_dash[2*row+1][2*row] = Q[1][0];
+      Q_dash[2*row+1][2*row+1] = Q[1][1];
+    }
+
+    quadprogpp::Matrix<double> P_dash;
+    P_dash.resize(0, N_INPUTS * MPC_STEPS, N_INPUTS * MPC_STEPS);
+    for (int row = 0; row < MPC_STEPS; row++) {
+      P_dash[row][row] = P;
+    }
+
+    // TODO get better base state and use predicted trajectory with delay
+    quadprogpp::Matrix<double> x0;
+    x0.resize(0, N_STATES, 1);
+    x0[0][0] = 0;
+    x0[1][0] = 0;
+
+    quadprogpp::Matrix<double> A_dash;
+    A_dash.resize(N_STATES * MPC_STEPS, N_STATES);
+    quadprogpp::Matrix<double> _tmpMat = A_d;
+    for (int i = 0; i < MPC_STEPS; i++) {
+      A_dash[2*i][0] = _tmpMat[0][0];
+      A_dash[2*i][1] = _tmpMat[0][1];
+      A_dash[2*i+1][0] = _tmpMat[1][0];
+      A_dash[2*i+1][1] = _tmpMat[1][1];
+      _tmpMat = _tmpMat % A_d;
+    }
+
+    quadprogpp::Matrix<double> chi0 = A_dash % x0 - x_ref;
+
+    quadprogpp::Matrix<double> G, CE, CI;
+    quadprogpp::Vector<double> g0, ce0, ci0, x;
+
+    G = transpose(B_dash) % Q_dash % B_dash + P_dash;
+    quadprogpp::Matrix<double> g0Mat = transpose(chi0) % Q_dash % B_dash;
+    g0 = g0Mat.extractRow(0);
+
+    // ROS_INFO("Dim Info! B_dash %d %d, Q_dash %d %d, P_dash %d %d, chi0 %d %d, G %d %d, g0Mat %d %d", 
+    //   B_dash.nrows(), B_dash.ncols(), 
+    //   Q_dash.nrows(), Q_dash.ncols(), 
+    //   P_dash.nrows(), P_dash.ncols(), 
+    //   chi0.nrows(), chi0.ncols(), 
+    //   G.nrows(), G.ncols(), 
+    //   g0Mat.nrows(), g0Mat.ncols());
+    // for (int i = 0; i < MPC_STEPS; i++)
+    //   ROS_INFO("g0(%d) = %f, B_dash = %f, chi0 = %f", i, g0[i], B_dash[i][0], chi0[i][0]);
+
+    // inequality constraints on input (10, 11) 
+    CI.resize(0, N_QUADPROG_VARS * 2, N_QUADPROG_VARS);
+    for (int i = 0; i < N_QUADPROG_VARS; i++) {
+      CI[i][i] = 1; //equation 10
+      CI[N_QUADPROG_VARS+i][i] = -1; //equation 11
+    }
+    CI = transpose(CI);
+    ci0.resize(0, N_QUADPROG_VARS * 2);
+    for (int i = 0; i < N_QUADPROG_VARS; i++) {
+      ci0[i] = -U_LOWERBOUND;
+      ci0[N_QUADPROG_VARS+i] = U_UPPERBOUND;
+    }
+
+    // equality constraint on state e.g. (12, 13, 16, 17) are skipped
+    CE.resize(0, N_QUADPROG_VARS, 0);
+    ce0.resize(0, 0);
+    ROS_INFO("Finished setting up QP problem! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+
+    // Solve control input via quadratic programming solver
+    quadprogpp::Vector<double> u;
+    u.resize(N_QUADPROG_VARS);
+    auto test = solve_quadprog(G, g0, CE, ce0, CI, ci0, u);
+    
+    for (int i = 0; i < N_QUADPROG_VARS; i++)
+      ROS_INFO("Finished MPC test! u(%f) = %f", MPC_DT * i, u[i]);
+
+    //for now, just use traditional MPC (first control input)
+    *control = round(750 * u[0] / U_UPPERBOUND); // TODO kennlinie einsetzen oder kaskadenregelung
+
+    ROS_INFO("Finished MPC code! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+
+    // Unnecessary visualizations
+    if (DEBUG_VISUALIZATIONS) {
+      // Visualization of waypoints
+      for (int i = 0; i < wayPoints.size(); i++) {
+        cv::circle(transformedImage, wayPoints.at(i), 10, cv::Scalar(255,0,0), 1, 8, 0);
+      }
+
+      // Visualization of original image space + robot space
+      cv::Rect helperROI(0, 0, width, 60);
+      cv::Mat transformedOriginalImage, transformedFullImage;
+      cvtColor(transformedImage, transformedOriginalImage, CV_HSV2BGR);
+      cv::Mat tmpMat = transformedOriginalImage(helperROI);
+      cv::vconcat(transformedOriginalImage, tmpMat, transformedFullImage);
+
+      // Fill in and draw trajectory and robot position
+      for (int y = height + ROBOT_OFFSET_PIXEL_Y; y > 0; y--) {
+        int x = round(polyeval(trajectory_coeffs, y));
+        cv::circle(transformedFullImage, Point(x, y), 1, cv::Scalar(255,0,0), 1, 8, 0);
+      }
+      cv::circle(transformedFullImage, Point(ROBOT_POSITION_PIXEL_X, height + ROBOT_OFFSET_PIXEL_Y), 8, cv::Scalar(255,0,0), 4, 8, 0);
+
+      // Draw predicted MPC trajectory
+      quadprogpp::Matrix<double> predicted_state = x0;
+      double predicted_y = height + ROBOT_OFFSET_PIXEL_Y;
+      for (int i = 0; i < MPC_STEPS; i++) {
+        predicted_state = A_d % predicted_state + B_d * u[i];
+        predicted_y -= TARGET_VELOCITY * MPC_DT / METER_PER_PIXEL_Y;
+        double predicted_x = predicted_state[0][0] / METER_PER_PIXEL_X + ROBOT_POSITION_PIXEL_X;
+        cv::circle(transformedFullImage, Point(round(predicted_x), round(predicted_y)), 2, cv::Scalar(0,0,255), -1, 8, 0);
+      }
+
+      // Show debug pictures
+      cv::imshow("raw", image);
+      cv::imshow("transformed", transformedImage);    
+      cv::imshow("thresholdedGreen", ThreshImageGreen);  
+      cv::imshow("thresholdedPink", ThreshImagePink);    
+      cv::imshow("windowed", transformedImage);    
+      cv::imshow("windowedOrig", transformedFullImage);    
+      ROS_INFO("Finished debug output! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+    }
 
     //cv::waitKey(1);
   }
@@ -422,7 +566,6 @@ int main(int argc, char** argv)
   ros::Publisher steeringCtrl =
       nh.advertise<std_msgs::Int16>("/uc_bridge/set_steering_level_msg", 1);
 
-  ROS_INFO("Hello world!");
   cv::namedWindow("raw");
   cv::namedWindow("transformed");
   cv::namedWindow("thresholdedGreen");
@@ -433,7 +576,7 @@ int main(int argc, char** argv)
 
   // Loop starts here:
   // loop rate value is set in Hz
-  ros::Rate loop_rate(25);
+  ros::Rate loop_rate(100);
   while (ros::ok())
   {
     steering.data = control;
