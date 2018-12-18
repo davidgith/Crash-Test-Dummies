@@ -133,7 +133,7 @@ int findBestHistogramPeakX(cv::Mat& histogram) {
 }
 
 // Callback on new kinect image
-void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
+void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control, IPM* ipm)
 {
   const bool LEFT_LANE = false;
   const int WINDOW_SIZE = 10;
@@ -148,39 +148,28 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
     // Read image
     cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image;
     int width = image.cols, height = image.rows;
-
-    // Convert image into HSV color space
-    cv::Mat HSVImage;
-    cvtColor(image,HSVImage,CV_BGR2HSV);
-    ROS_INFO("Received new image! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+    ROS_INFO("********************");
+    ROS_INFO("RECEIVED NEW IMAGE! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
     // Crop image
     cv::Rect myROI(0, height/4, width, height/4*3);
-    cv::Mat croppedImage = HSVImage(myROI);
+    cv::Mat croppedImage = image(myROI);
     height = height/4*3;
-    //ROS_INFO("Cropped! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+    ROS_INFO("Cropped! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
     // Lowpass-filter image
     cv::Mat blurredImage;
     cv::medianBlur( croppedImage, blurredImage, 3 );
-    //ROS_INFO("Blurred! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+    ROS_INFO("Blurred! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
-    // Define IPM transformation
-    vector<Point2f> origPoints;
-    origPoints.push_back(Point2f(0, height));
-    origPoints.push_back(Point2f(width, height));
-    origPoints.push_back(Point2f(width, 0));
-    origPoints.push_back(Point2f(0, 0));
-    vector<Point2f> dstPoints;
-    dstPoints.push_back(Point2f(395, height));
-    dstPoints.push_back(Point2f(565, height));
-    dstPoints.push_back(Point2f(width, 0));
-    dstPoints.push_back(Point2f(0, 0));
-    IPM ipm(Size(width, height), Size(width, height), origPoints, dstPoints);
+    // Convert image into HSV color space
+    cv::Mat HSVImage;
+    cvtColor(blurredImage,HSVImage,CV_BGR2HSV);
+    ROS_INFO("HSV! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
     // IPM-transform image
     cv::Mat transformedImage;
-		ipm.applyHomography(blurredImage, transformedImage);		
+		ipm->applyHomography(HSVImage, transformedImage);		
     ROS_INFO("IPM-transformed! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
     // Threshold the colors to find green and pink
@@ -319,8 +308,10 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
     }
 
     // If we could not find more than three wayPoints, we stop and do nothing
-    if (wayPoints.size() <= 3) 
+    if (wayPoints.size() <= 3) {
+      ROS_INFO("Too few waypoints, skipping! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
       return;
+    }
 
     // Fit a quadratic polynomial x(y) as nominal trajectory
     std::vector<double> xs;
@@ -363,6 +354,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
 
 
     //*control = 50*(targetLocation.x - robotLocation.x); 
+    
+    ROS_INFO("Finished MPC code! t = %f");
 
     // DEBUG visualization of original image space + robot space
     cv::Rect helperROI(0, 0, width, 60);
@@ -385,7 +378,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
     cv::imshow("thresholdedPink", ThreshImagePink);    
     cv::imshow("windowed", transformedImage);    
     cv::imshow("windowedOrig", transformedFullImage);    
-    ROS_INFO("Finished MPC cycle! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+    ROS_INFO("Finished debug output! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
     //cv::waitKey(1);
   }
@@ -402,13 +395,26 @@ int main(int argc, char** argv)
   // get ros node handle
   ros::NodeHandle nh;
 
+  // Define IPM transformation
+  vector<Point2f> origPoints;
+  origPoints.push_back(Point2f(0, 405));
+  origPoints.push_back(Point2f(960, 405));
+  origPoints.push_back(Point2f(960, 0));
+  origPoints.push_back(Point2f(0, 0));
+  vector<Point2f> dstPoints;
+  dstPoints.push_back(Point2f(395, 405));
+  dstPoints.push_back(Point2f(565, 405));
+  dstPoints.push_back(Point2f(960, 0));
+  dstPoints.push_back(Point2f(0, 0));
+  IPM ipm(Size(960, 405), Size(960, 405), origPoints, dstPoints);
+
   // sensor message container
   int control = 0;
   std_msgs::Int16 motor, steering;
 
   // generate subscriber for sensor messages
   ros::Subscriber imageSub = nh.subscribe<sensor_msgs::Image>(
-      "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, &control));
+      "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, &control, &ipm));
 
   // generate control message publisher
   ros::Publisher motorCtrl =
