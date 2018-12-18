@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <algorithm>    
 #include <eigen3/Eigen/Dense>
+#include <tuple>
 
 #include "QuadProg++.hh"
 
@@ -23,6 +24,18 @@ using namespace Eigen;
 // Model Calibration Macros
 #define METER_PER_PIXEL_X 0.0048f
 #define METER_PER_PIXEL_Y 0.0033f
+
+#define TARGET_VELOCITY 0.05
+
+#define MODEL_PARAM_L_H 0.1f
+#define MODEL_PARAM_L 0.1f
+
+#define MPC_TIMESTEP 0.02
+#define MPC_STEPS 50
+
+#define Y_OFFSET 0
+#define PHI_K_OFFSET Y_OFFSET + MPC_STEPS
+#define U_OFFSET PHI_K_OFFSET + MPC_STEPS
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 /* 
@@ -99,13 +112,33 @@ bool isLeftTurn(std::vector<Point>& leftmostPoints, std::vector<Point>& rightmos
   return leftSteps > rightSteps;
 }
 
+// Detect Histogram peak closest to the center of the image or -1 if none found
+int findBestHistogramPeakX(cv::Mat& histogram) {
+  int curMaxVal = 0, curMaxIndex = -1;
+  for (int i = 0; i < histogram.cols; i++) {
+    if (histogram.at<uchar>(0,i) < 127)
+      continue;
+
+    if (histogram.at<uchar>(0,i) > curMaxVal) {
+      curMaxVal = histogram.at<uchar>(0,i);
+      curMaxIndex = i;
+    } 
+    else if (histogram.at<uchar>(0,i) == curMaxVal) {
+      if (abs(i - histogram.cols / 2) < abs(curMaxIndex - histogram.cols / 2)) {
+        curMaxIndex = i;
+      }
+    }
+  }
+  return curMaxIndex;      
+}
+
 // Callback on new kinect image
 void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
 {
   const bool LEFT_LANE = false;
   const int WINDOW_SIZE = 10;
   const int PEAK_MIN_DISTANCE = 100;
-  const int MIN_LANE_POINT_PAIRS = 5;
+  const int MIN_LANE_POINT_PAIRS = 13;
   const int DETECTION_END_OFFSET_Y = 100;
 
   clock_t begin = clock();
@@ -115,7 +148,6 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
     // Read image
     cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image;
     int width = image.cols, height = image.rows;
-    cv::imshow("raw", image);
 
     // Convert image into HSV color space
     cv::Mat HSVImage;
@@ -149,134 +181,122 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
     // IPM-transform image
     cv::Mat transformedImage;
 		ipm.applyHomography(blurredImage, transformedImage);		
-    cv::imshow("transformed", transformedImage);    
     ROS_INFO("IPM-transformed! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
-    // Threshold the colors to find green
-    cv::Mat ThreshImage;
-    inRange(transformedImage, cv::Scalar(50,50,120),cv::Scalar(70,255,255),ThreshImage);
-    cv::imshow("thresholded", ThreshImage);    
+    // Threshold the colors to find green and pink
+    cv::Mat ThreshImageGreen, ThreshImagePink;
+    inRange(transformedImage, cv::Scalar(50,50,120),cv::Scalar(70,255,255),ThreshImageGreen);
+    inRange(transformedImage, cv::Scalar(155,50,120),cv::Scalar(175,255,255),ThreshImagePink);
     ROS_INFO("Thresholded! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
     // Sliding window histogram peak search for lane points
-    std::vector<Point> firstPoints;
-    std::vector<Point> secondPoints;
+    std::vector<std::tuple<Point, Point, Point>> detectedLanePoints;
     for (int window = 1; window <= height/WINDOW_SIZE - DETECTION_END_OFFSET_Y/WINDOW_SIZE; window++) {
       // Calculate column histogram for window
       cv::Rect roi(0, height - window * WINDOW_SIZE, width, WINDOW_SIZE);
-      cv::Mat windowedImage = ThreshImage(roi);
-      cv::Mat histogram;
-      cv::reduce(windowedImage, histogram, 0, CV_REDUCE_AVG);
+      cv::Mat windowedImageGreen = ThreshImageGreen(roi);
+      cv::Mat windowedImagePink = ThreshImagePink(roi);
+      cv::Mat histogramGreen, histogramPink;
+      cv::reduce(windowedImageGreen, histogramGreen, 0, CV_REDUCE_AVG);
+      cv::reduce(windowedImagePink, histogramPink, 0, CV_REDUCE_AVG);
 
-      // Manual histogram peak detection for one point
-      int curMaxVal = 0, curMaxIndex = 0;
-      for (int i = 0; i < histogram.cols; i++) {
-        if (histogram.at<uchar>(0,i) < 127)
-          continue;
-
-        if (histogram.at<uchar>(0,i) > curMaxVal) {
-          curMaxVal = histogram.at<uchar>(0,i);
-          curMaxIndex = i;
-        } 
-        else if (histogram.at<uchar>(0,i) == curMaxVal) {
-          if (abs(i-histogram.cols/2) < abs(curMaxIndex-histogram.cols/2)) {
-            curMaxIndex = i;
-          }
-        }
-      }
-      int firstPeakX = curMaxIndex;      
-
-
+      // Find good peaks for green (2)
+      int firstPeakX = findBestHistogramPeakX(histogramGreen);
       // Blacken region around found peak
-      if (firstPeakX > 0)
-        cv::circle(histogram, Point(firstPeakX, 0), PEAK_MIN_DISTANCE, cv::Scalar(0), CV_FILLED, 8, 0); 
-      
-      // Manual histogram peak detection for second point
-      curMaxVal = 0;
-      curMaxIndex = 0;
-      for (int i = 0; i < histogram.cols; i++) {
-        if (histogram.at<uchar>(0,i) < 127)
-          continue;
-
-        if (histogram.at<uchar>(0,i) > curMaxVal) {
-          curMaxVal = histogram.at<uchar>(0,i);
-          curMaxIndex = i;
-        } 
-        else if (histogram.at<uchar>(0,i) == curMaxVal) {
-          if (abs(i-histogram.cols/2) < abs(curMaxIndex-histogram.cols/2)) {
-            curMaxIndex = i;
-          }
-        }
-      }
-      int secondPeakX = curMaxIndex;     
-
-      // Order peaks
+      cv::circle(histogramGreen, Point(firstPeakX, 0), PEAK_MIN_DISTANCE, cv::Scalar(0), CV_FILLED, 8, 0); 
+      int secondPeakX = findBestHistogramPeakX(histogramGreen);   
+      // Order green peaks
       int leftPeakX = firstPeakX < secondPeakX ? firstPeakX : secondPeakX;
       int rightPeakX = firstPeakX < secondPeakX ? secondPeakX : firstPeakX;
 
-      // DEBUG visualization of histogram maximum
+      // Find good peak for pink (1)
+      int pinkPeakX = findBestHistogramPeakX(histogramPink);
+
+      // DEBUG visualization of histogram maxima
       cv::circle(transformedImage, Point(leftPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2), 3, cv::Scalar(0,255,0), 1, 8, 0);
       cv::circle(transformedImage, Point(rightPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2), 3, cv::Scalar(0,255,0), 1, 8, 0);
+      cv::circle(transformedImage, Point(pinkPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2), 3, cv::Scalar(0,255,0), 1, 8, 0);
 
       // Save points
-      firstPoints.push_back(Point(leftPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2));
-      secondPoints.push_back(Point(rightPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2));
+      auto points = std::make_tuple(Point(leftPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2),
+        Point(pinkPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2),
+        Point(rightPeakX, height - window * WINDOW_SIZE + WINDOW_SIZE/2));
+      detectedLanePoints.push_back(points);
     }
     ROS_INFO("Sliding window search done! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
-    // Select interesting points (horizontal pairs)
-    std::vector<Point> leftLanePairPoints;
-    std::vector<Point> rightLanePairPoints;
-    for (int i = 0; i < firstPoints.size(); i++) {
-      if (firstPoints.at(i).x == 0) {
-        // If only one point detected, skip this pair of points
-        continue;
-      }
 
-      leftLanePairPoints.push_back(firstPoints.at(i));
-      rightLanePairPoints.push_back(secondPoints.at(i));
+    // Select interesting tuples
+    std::vector<std::tuple<Point, Point, Point>> usefulPoints;
+    for (int i = 0; i < detectedLanePoints.size(); i++) {
+      // If middle point exists, this point is interesting
+      if (std::get<1>(detectedLanePoints.at(i)).x != -1)
+        usefulPoints.push_back(detectedLanePoints.at(i));
+      // Otherwise, the other two lane points must exist to be interesting
+      else if (std::get<0>(detectedLanePoints.at(i)).x != -1 
+        && std::get<2>(detectedLanePoints.at(i)).x != -1)
+        usefulPoints.push_back(detectedLanePoints.at(i));
     }
-
-    // Select interesting points (rightmost points)
+    // Select rightmost points
     std::vector<Point> rightmostPoints;
-    for (int i = 0; i < firstPoints.size(); i++) {
-      if (secondPoints.at(i).x != 0) {
+    for (int i = 0; i < detectedLanePoints.size(); i++) {
+      if (std::get<2>(detectedLanePoints.at(i)).x != -1) {
         // If second point detected, use second point
-        rightmostPoints.push_back(secondPoints.at(i));
+        rightmostPoints.push_back(std::get<2>(detectedLanePoints.at(i)));
       }
-      else if (firstPoints.at(i).x != 0) {
+      else if (std::get<0>(detectedLanePoints.at(i)).x != -1) {
         // If no second point but first point detected, use first point
-        rightmostPoints.push_back(firstPoints.at(i));
+        rightmostPoints.push_back(std::get<0>(detectedLanePoints.at(i)));
       }
     }
-
-    // Select interesting points (leftmost points)
+    // Select leftmost points
     std::vector<Point> leftmostPoints;
-    for (int i = 0; i < firstPoints.size(); i++) {
-      if (firstPoints.at(i).x == 0 && secondPoints.at(i).x != 0) {
+    for (int i = 0; i < detectedLanePoints.size(); i++) {
+      if (std::get<0>(detectedLanePoints.at(i)).x == -1 && std::get<2>(detectedLanePoints.at(i)).x != -1) {
         // If second point detected and no first point detected, use second point
-        leftmostPoints.push_back(secondPoints.at(i));
+        leftmostPoints.push_back(std::get<2>(detectedLanePoints.at(i)));
       }
-      else if (firstPoints.at(i).x != 0 && secondPoints.at(i).x != 0) {
+      else if (std::get<0>(detectedLanePoints.at(i)).x != -1 && std::get<2>(detectedLanePoints.at(i)).x != -1) {
         // If second point detected and first point detected, use first point
-        leftmostPoints.push_back(firstPoints.at(i));
+        leftmostPoints.push_back(std::get<0>(detectedLanePoints.at(i)));
       }
     }
     ROS_INFO("Interesting points selected! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
-    // Generate waypoints from interesting detected lane points
+
+    // Generate waypoints from detected lane points
     std::vector<Point> wayPoints;
-    if (leftLanePairPoints.size() > MIN_LANE_POINT_PAIRS) {
-      // Sufficient horizontal pairs -> waypoints 3/4 between existing pairs
-      for (int i = 0; i < leftLanePairPoints.size(); i++) {
-        Point leftLanePoint = leftLanePairPoints.at(i);
-        Point rightLanePoint = rightLanePairPoints.at(i);
-        Point wayPoint(leftLanePoint.x + (rightLanePoint.x - leftLanePoint.x)*3/4, leftLanePoint.y);
-        wayPoints.push_back(wayPoint);
+    if (usefulPoints.size() > MIN_LANE_POINT_PAIRS) {
+      // Sufficient useful horizontal tuples -> place waypoints relative to existing tuples
+      for (int i = 0; i < usefulPoints.size(); i++) {
+        Point leftLanePoint = std::get<0>(usefulPoints.at(i));
+        Point middleLanePoint = std::get<1>(usefulPoints.at(i));
+        Point rightLanePoint = std::get<2>(usefulPoints.at(i));
+
+        // If the middle point and the point on the driving side exists, place inbetween
+        if (LEFT_LANE && middleLanePoint.x != -1 && leftLanePoint.x != -1) {
+          Point wayPoint((middleLanePoint.x + leftLanePoint.x) / 2, middleLanePoint.y);
+          wayPoints.push_back(wayPoint);
+        }
+        else if (!LEFT_LANE && middleLanePoint.x != -1 && rightLanePoint.x != -1) {
+          Point wayPoint((middleLanePoint.x + rightLanePoint.x) / 2, middleLanePoint.y);
+          wayPoints.push_back(wayPoint);
+        }
+        // Otherwise, if the middle point does not exist, place in-between lane points
+        else if (middleLanePoint.x == -1) {
+          Point wayPoint(LEFT_LANE ? (leftLanePoint.x * 3 + rightLanePoint.x) / 4 : 
+            (leftLanePoint.x + rightLanePoint.x * 3) / 4, middleLanePoint.y);
+          wayPoints.push_back(wayPoint);
+        }
+        // Otherwise, the middle point must exist by construction
+        else {
+          Point wayPoint(LEFT_LANE ? middleLanePoint.x - 60 : middleLanePoint.x + 60, middleLanePoint.y);
+          wayPoints.push_back(wayPoint);
+        }
       }
     } 
     else if (isLeftTurn(leftmostPoints, rightmostPoints)) {
-      // Left turn -> drive left from rightmost points
+      // Left turn fallback -> drive left from rightmost points
       for (int i = 0; i < rightmostPoints.size(); i++) {
         Point lanePoint = rightmostPoints.at(i);
         Point wayPoint(std::max(0, LEFT_LANE ? lanePoint.x - 180 : lanePoint.x - 60), lanePoint.y);
@@ -284,7 +304,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
       }
     } 
     else {
-      // Right turn -> drive right from leftmost points
+      // Right turn fallback -> drive right from leftmost points
       for (int i = 0; i < leftmostPoints.size(); i++) {
         Point lanePoint = leftmostPoints.at(i);
         Point wayPoint(std::min(width, LEFT_LANE ? lanePoint.x + 60: lanePoint.x + 180), lanePoint.y);
@@ -310,83 +330,30 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
       xs.push_back(wayPoints.at(i).x);
       ys.push_back(wayPoints.at(i).y);
     }
-    polyfit(ys,xs,trajectory_coeffs,2); 
+    polyfit(ys, xs, trajectory_coeffs, 2); 
     ROS_INFO("Finished fitting trajectory! t = %f, coeffs: %f %f %f", 
       double(clock() - begin) / CLOCKS_PER_SEC,
       trajectory_coeffs.at(0), trajectory_coeffs.at(1), trajectory_coeffs.at(2));
 
-    // DEBUG Fill in and draw
-    for (int y = 600; y > 0; y--) {
-      int x = round(polyeval(trajectory_coeffs,y));
-      cv::circle(transformedImage, Point(x,y), 1, cv::Scalar(255,0,0), 1, 8, 0);
-    }
+    // TODO: Calculate MPC solution from trajectory and state
+    // Initialize linear discrete system
+    quadprogpp::Matrix<double> A_d, B_d, C_d;
+    A_d.resize(2,2);
+    B_d.resize(2,1);
+    C_d.resize(1,2);
 
-    // TODO: Calculate MPC from trajectory
-    quadprogpp::Matrix<double> G, CE, CI;
-    quadprogpp::Vector<double> g0, ce0, ci0, x;
-    int n, m, p;
-    double sum = 0.0;
-    char ch;
-    
-    n = 2;
-    G.resize(n, n);
-    {
-      std::istringstream is("4, -2,"
-                            "-2, 4 ");
+    A_d[0][0] = 1;
+    A_d[0][1] = TARGET_VELOCITY * MPC_TIMESTEP;
+    A_d[1][0] = 0;
+    A_d[1][1] = 1;
 
-      for (int i = 0; i < n; i++)	
-        for (int j = 0; j < n; j++)
-          is >> G[i][j] >> ch;
-    }
-    
-    g0.resize(n);
-    {
-      std::istringstream is("6.0, 0.0 ");
+    B_d[0][0] = ((TARGET_VELOCITY * MPC_TIMESTEP) * (MODEL_PARAM_L_H + (TARGET_VELOCITY * MPC_TIMESTEP) / 2)) / MODEL_PARAM_L;
+    B_d[1][0] = (TARGET_VELOCITY * MPC_TIMESTEP) / MODEL_PARAM_L;
 
-      for (int i = 0; i < n; i++)
-        is >> g0[i] >> ch;
-    }
-    
-    m = 1;
-    CE.resize(n, m);
-    {
-      std::istringstream is("1.0, "
-                            "1.0 ");
+    C_d[0][0] = 1;
+    C_d[0][1] = 0;
 
-      for (int i = 0; i < n; i++)
-        for (int j = 0; j < m; j++)
-          is >> CE[i][j] >> ch;
-    } 
-    
-    ce0.resize(m);
-    {
-      std::istringstream is("-3.0 ");
-      
-      for (int j = 0; j < m; j++)
-        is >> ce0[j] >> ch;
-    }
-    
-    p = 3;
-    CI.resize(n, p);
-    {
-      std::istringstream is("1.0, 0.0, 1.0, "
-                            "0.0, 1.0, 1.0 ");
-    
-      for (int i = 0; i < n; i++)
-        for (int j = 0; j < p; j++)
-          is >> CI[i][j] >> ch;
-    }
-    
-    ci0.resize(p);
-    {
-      std::istringstream is("0.0, 0.0, -2.0 ");
-
-      for (int j = 0; j < p; j++)
-        is >> ci0[j] >> ch;
-    }
-    x.resize(n);
-
-    solve_quadprog(G, g0, CE, ce0, CI, ci0, x);
+    //solve_quadprog(G, g0, CE, ce0, CI, ci0, x);
 
 
 
@@ -396,10 +363,23 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
     //*control = 50*(targetLocation.x - robotLocation.x); 
 
     // DEBUG visualization
-    //cv::Mat transformedOriginalImage;
-    //cvtColor(transformedImage,transformedOriginalImage,CV_HSV2BGR);
+    cv::Mat transformedOriginalImage;
+    cvtColor(transformedImage,transformedOriginalImage,CV_HSV2BGR);
+
+    // DEBUG Fill in and draw trajectory
+    for (int y = 600; y > 0; y--) {
+      int x = round(polyeval(trajectory_coeffs,y));
+      cv::circle(transformedOriginalImage, Point(x,y), 1, cv::Scalar(255,0,0), 1, 8, 0);
+    }
+
+    // Show debug visualizations
+    cv::imshow("raw", image);
+    cv::imshow("transformed", transformedImage);    
+    cv::imshow("thresholdedGreen", ThreshImageGreen);  
+    cv::imshow("thresholdedPink", ThreshImagePink);    
     cv::imshow("windowed", transformedImage);    
-    ROS_INFO("Finished planning trajectory! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+    cv::imshow("windowedOrig", transformedOriginalImage);    
+    ROS_INFO("Finished MPC cycle! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
     //cv::waitKey(1);
   }
@@ -433,8 +413,10 @@ int main(int argc, char** argv)
   ROS_INFO("Hello world!");
   cv::namedWindow("raw");
   cv::namedWindow("transformed");
-  cv::namedWindow("thresholded");
+  cv::namedWindow("thresholdedGreen");
+  cv::namedWindow("thresholdedPink");
   cv::namedWindow("windowed");
+  cv::namedWindow("windowedOrig");
   cv::startWindowThread();
 
   // Loop starts here:
