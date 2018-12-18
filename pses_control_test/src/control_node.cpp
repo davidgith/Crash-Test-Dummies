@@ -22,8 +22,8 @@ using namespace std;
 using namespace Eigen;
 
 // Model Calibration Macros
-#define METER_PER_PIXEL_X 0.0048f
-#define METER_PER_PIXEL_Y 0.0033f
+#define METER_PER_PIXEL_X 0.0033f
+#define METER_PER_PIXEL_Y 0.0048f
 
 #define TARGET_VELOCITY 0.05
 
@@ -326,6 +326,9 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
     std::vector<double> xs;
     std::vector<double> ys;
     std::vector<double> trajectory_coeffs;
+    //Optional: add current robot position to fitting waypoints
+    xs.push_back(465);
+    ys.push_back(height + 60);
     for (int i = 0; i < wayPoints.size(); i++) {
       xs.push_back(wayPoints.at(i).x);
       ys.push_back(wayPoints.at(i).y);
@@ -359,18 +362,21 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
 
 
 
-    //Point robotLocation(490, 600);
     //*control = 50*(targetLocation.x - robotLocation.x); 
 
-    // DEBUG visualization
-    cv::Mat transformedOriginalImage;
+    // DEBUG visualization of original image space + robot space
+    cv::Rect helperROI(0, 0, width, 60);
+    cv::Mat transformedOriginalImage, transformedFullImage;
     cvtColor(transformedImage,transformedOriginalImage,CV_HSV2BGR);
+    cv::Mat tmpMat = transformedOriginalImage(helperROI);
+    cv::vconcat(transformedOriginalImage, tmpMat, transformedFullImage);
 
-    // DEBUG Fill in and draw trajectory
-    for (int y = 600; y > 0; y--) {
+    // DEBUG Fill in and draw trajectory and robot position
+    for (int y = height + 60; y > 0; y--) {
       int x = round(polyeval(trajectory_coeffs,y));
-      cv::circle(transformedOriginalImage, Point(x,y), 1, cv::Scalar(255,0,0), 1, 8, 0);
+      cv::circle(transformedFullImage, Point(x,y), 1, cv::Scalar(255,0,0), 1, 8, 0);
     }
+    cv::circle(transformedFullImage, Point(465, height + 60), 8, cv::Scalar(255,0,0), 4, 8, 0);
 
     // Show debug visualizations
     cv::imshow("raw", image);
@@ -378,7 +384,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control)
     cv::imshow("thresholdedGreen", ThreshImageGreen);  
     cv::imshow("thresholdedPink", ThreshImagePink);    
     cv::imshow("windowed", transformedImage);    
-    cv::imshow("windowedOrig", transformedOriginalImage);    
+    cv::imshow("windowedOrig", transformedFullImage);    
     ROS_INFO("Finished MPC cycle! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
     //cv::waitKey(1);
