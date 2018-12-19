@@ -53,13 +53,14 @@ class deviation
 
 void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation, pses_control_2::TutorialsConfig* newconfig)
 {
+  static int imagecounter = 0; 
+  imagecounter++;
   try
   {
     cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image;
     cv::Mat HSVImage;
 
     cvtColor(image,HSVImage,CV_BGR2HSV);
-    ROS_INFO("Received new image!");
     //cv::imshow("row", HSVImage);
     
 
@@ -74,8 +75,11 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     int V_max = newconfig->V_max_int_param;  
     inRange(HSVImage,cv::Scalar(H_min,S_min,V_min),cv::Scalar(H_max,S_max,V_max),ThreshImage);
     medianBlur(ThreshImage, FiltedImage, 7);
-    cv::imshow("view", FiltedImage);
-    ROS_INFO("Shown new image!");
+    if(imagecounter == 30)
+    {
+      cv::imshow("view", FiltedImage);
+      imagecounter = 0;
+    }
     //cv::waitKey(30);
 
     //get submatrix
@@ -100,8 +104,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
 				}
 			}
 		}
-    int standarLineRight[20] = {62,62,63,64,65,66,66,67,68,68,69,70,71,71,72,73,73,74,75,76};
-    int standarLineleft[20] = {37,37,36,35,34,33,33,32,31,31,30,29,28,28,27,26,26,25,24,23};
+    int standarLineRight[20] = {61,61,61,62,62,62,63,63,63,63,64,64,64,65,65,65,66,66,66,66};
+    int standarLineleft[20] = {38,38,38,37,37,37,36,36,36,36,35,35,35,34,34,34,33,33,33,33};
     int turn = 1;
     turn = newconfig->turn;
     //get the deviation(Abweichung)
@@ -112,12 +116,10 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     devi.distance = 0;
     if(turn == 1)
     {
-
+      int lastValidSearch = 0;
       for(int y = 19; y >= 0; y--)
       {
-        noVision = 0;
-        int lastValidSearch = 0;
-        for(int search = 0; search < 20; search++)
+        for(int search = 0; search < 30; search++)
         {
           int startPonit = standarLineRight[y];
           int toLeft = startPonit - search;
@@ -135,7 +137,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
             break;
           }
           //if not find, use last valid search
-          if(search == 19)
+          if(search == 29)
           {
             noVision++;
             devi.distance = devi.distance + lastValidSearch;
@@ -146,12 +148,10 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
 
     if(turn == -1)
     {
+      int lastValidSearch = 0;
       for(int y = 19; y >= 0; y--)
       {
-
-        noVision = 0;
-        int lastValidSearch = 0;
-        for(int search = 0; search < 20; search++)
+        for(int search = 0; search < 30; search++)
         {
           int startPonit = standarLineRight[y];
           int toLeft = startPonit - search;
@@ -169,7 +169,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
             break;
           }
           //if not find, use last valid search
-          if(search == 19)
+          if(search == 29)
           {
             noVision++;
             devi.distance = devi.distance + lastValidSearch;
@@ -184,7 +184,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     devi.P = newconfig->P_int_param;
     devi.I = newconfig->I_int_param;
     devi.D = newconfig->D_int_param;
-		*control_deviation = devi.P * devi.distanceMem[0] + devi.D * (devi.distanceMem[0] - devi.distanceMem[2]) + devi.I * devi.distanceSum;
+		*control_deviation = (devi.P * devi.distanceMem[0] + devi.D * (devi.distanceMem[0] - devi.distanceMem[2]) + devi.I * devi.distanceSum/100)/100;
     //a flag, works when no vision, stop the car
     if(noVision == 20)
     {
@@ -228,7 +228,6 @@ int main(int argc, char** argv)
   ros::Publisher steeringCtrl =
       nh.advertise<std_msgs::Int16>("/uc_bridge/set_steering_level_msg", 1);
 
-  ROS_INFO("Hello world!");
   cv::namedWindow("view");
   cv::startWindowThread();
   //change the exposure
@@ -261,7 +260,7 @@ int main(int argc, char** argv)
     {
       steering.data = -1000;
     }
-
+    ROS_INFO("steering %d",steering.data);
     lastSteering = steering.data;
     // publish command messages on their topics
     steeringCtrl.publish(steering);

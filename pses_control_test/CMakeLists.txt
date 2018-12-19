@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(OpenCV REQUIRED)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -139,7 +140,14 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(pses_experimental_control_node src/control_node.cpp src/IPM.cpp src/IPM.h)
+add_executable(pses_experimental_control_node 
+  src/control_node.cpp 
+  src/IPM.cpp 
+  src/IPM.h
+  src/Array.cc
+  src/Array.hh
+  src/QuadProg++.cc
+  src/QuadProg++.hh)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

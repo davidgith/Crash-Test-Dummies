@@ -9,6 +9,8 @@ The package is functionally dependent on the pses_ucbridge package and the pses 
 
 ### Installing
 
+Install eigen3 and any other required libraries.
+
 Build the package with catkin_make:
 
 `catkin_make`
