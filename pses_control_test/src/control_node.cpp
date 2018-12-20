@@ -12,6 +12,8 @@
 #include <algorithm>    
 #include <eigen3/Eigen/Dense>
 #include <tuple>
+#include <queue>
+#include <mutex>
 
 #include "QuadProg++.hh"
 #include "IPM.h"
@@ -21,7 +23,7 @@ using namespace std;
 using namespace Eigen;
 
 // Optimizations
-#define DEBUG_VISUALIZATIONS true
+#define DEBUG_OUTPUT true
 
 // IPM Calibration Configurations
 #define ROBOT_POSITION_PIXEL_X 465
@@ -36,8 +38,11 @@ using namespace Eigen;
 #define DETECTION_END_OFFSET_Y 100
 
 // Model Predictive Control Configurations
+#define MPC_DEADTIME_COMPENSATION false
+#define MPC_USE_TRAJECTORY_TRACKING_CONTROL false 
+
 #define MPC_DT 0.1f
-#define MPC_STEPS 25
+#define MPC_STEPS 20
 
 #define MPC_WEIGHT_U 0.01f
 #define MPC_WEIGHT_Y 1000.0f
@@ -76,8 +81,8 @@ using namespace Eigen;
  *  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-void polyfit(const std::vector<double> &xv, const std::vector<double> &yv, std::vector<double> &coeff, int order)
-{
+
+void polyfit(const std::vector<double> &xv, const std::vector<double> &yv, std::vector<double> &coeff, int order) {
 	Eigen::MatrixXd A(xv.size(), order+1);
 	Eigen::VectorXd yv_mapped = Eigen::VectorXd::Map(&yv.front(), yv.size());
 	Eigen::VectorXd result;
@@ -153,12 +158,23 @@ int findBestHistogramPeakX(cv::Mat& histogram) {
 }
 
 // Callback on new kinect image
-void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control, IPM* ipm)
+void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* u_mutex, std::queue<double>* u_queue)
 {
   clock_t begin = clock();
+
+  std::queue<double> prev_u_queue;
+  {
+    // Pure MPC
+    // exclusive access to control queue
+    std::lock_guard<std::mutex> lck (*u_mutex);
+
+    // copy current queue for prediction
+    prev_u_queue = std::queue<double>(*u_queue);
+  }
   
   try
   {
+#pragma region
     // Read image
     cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image;
     int width = image.cols, height = image.rows;
@@ -191,7 +207,9 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control, IPM* ipm
     inRange(transformedImage, cv::Scalar(50,50,120),cv::Scalar(70,255,255),ThreshImageGreen);
     inRange(transformedImage, cv::Scalar(155,50,120),cv::Scalar(175,255,255),ThreshImagePink);
     ROS_INFO("Thresholded! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+#pragma endregion Image Preprocessing
 
+#pragma region
     // Sliding window histogram peak search for lane points
     std::vector<std::tuple<Point, Point, Point>> detectedLanePoints;
     for (int window = 1; window <= height/WINDOW_SIZE - DETECTION_END_OFFSET_Y/WINDOW_SIZE; window++) {
@@ -321,7 +339,9 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control, IPM* ipm
       ROS_INFO("Too few waypoints, skipping! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
       return;
     }
+#pragma endregion Waypoint Extraction
 
+#pragma region
     // Fit a quadratic polynomial x(y) as nominal trajectory
     std::vector<double> xs;
     std::vector<double> ys;
@@ -337,7 +357,9 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control, IPM* ipm
     ROS_INFO("Finished fitting trajectory! t = %f, coeffs: %f %f %f", 
       double(clock() - begin) / CLOCKS_PER_SEC,
       trajectory_coeffs.at(0), trajectory_coeffs.at(1), trajectory_coeffs.at(2));
+#pragma endregion Trajectory Planning
 
+#pragma region
     // Calculate MPC solution from trajectory and state
     // Initialize linear discrete system
     quadprogpp::Matrix<double> A_d, B_d, C_d;
@@ -416,11 +438,18 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control, IPM* ipm
       P_dash[row][row] = P;
     }
 
-    // TODO get better base state and use predicted trajectory with delay
+    // Get base state and use predicted trajectory with delay
     quadprogpp::Matrix<double> x0;
     x0.resize(0, N_STATES, 1);
     x0[0][0] = 0;
     x0[1][0] = 0;
+    int compensation_steps = round(double(clock() - begin) / CLOCKS_PER_SEC / MPC_DT);
+    if (MPC_DEADTIME_COMPENSATION) {
+      for (int i = 0; i < compensation_steps; i++) {
+        x0 = A_d % x0 + B_d * prev_u_queue.front();
+        prev_u_queue.pop();
+      }
+    }
 
     quadprogpp::Matrix<double> A_dash;
     A_dash.resize(N_STATES * MPC_STEPS, N_STATES);
@@ -442,16 +471,6 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control, IPM* ipm
     quadprogpp::Matrix<double> g0Mat = transpose(chi0) % Q_dash % B_dash;
     g0 = g0Mat.extractRow(0);
 
-    // ROS_INFO("Dim Info! B_dash %d %d, Q_dash %d %d, P_dash %d %d, chi0 %d %d, G %d %d, g0Mat %d %d", 
-    //   B_dash.nrows(), B_dash.ncols(), 
-    //   Q_dash.nrows(), Q_dash.ncols(), 
-    //   P_dash.nrows(), P_dash.ncols(), 
-    //   chi0.nrows(), chi0.ncols(), 
-    //   G.nrows(), G.ncols(), 
-    //   g0Mat.nrows(), g0Mat.ncols());
-    // for (int i = 0; i < MPC_STEPS; i++)
-    //   ROS_INFO("g0(%d) = %f, B_dash = %f, chi0 = %f", i, g0[i], B_dash[i][0], chi0[i][0]);
-
     // inequality constraints on input (10, 11) 
     CI.resize(0, N_QUADPROG_VARS * 2, N_QUADPROG_VARS);
     for (int i = 0; i < N_QUADPROG_VARS; i++) {
@@ -465,26 +484,31 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control, IPM* ipm
       ci0[N_QUADPROG_VARS+i] = U_UPPERBOUND;
     }
 
-    // equality constraint on state e.g. (12, 13, 16, 17) are skipped
+    // other constraints (12, 13, 14, 15, 16, 17) are skipped
     CE.resize(0, N_QUADPROG_VARS, 0);
     ce0.resize(0, 0);
-    ROS_INFO("Finished setting up QP problem! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
     // Solve control input via quadratic programming solver
     quadprogpp::Vector<double> u;
     u.resize(N_QUADPROG_VARS);
-    auto test = solve_quadprog(G, g0, CE, ce0, CI, ci0, u);
-    
-    for (int i = 0; i < N_QUADPROG_VARS; i++)
-      ROS_INFO("Finished MPC test! u(%f) = %f", MPC_DT * i, u[i]);
+    solve_quadprog(G, g0, CE, ce0, CI, ci0, u);
 
-    //for now, just use traditional MPC (first control input)
-    *control = round(750 * u[0] / U_UPPERBOUND); // TODO kennlinie einsetzen oder kaskadenregelung
+    {
+      // exclusive access to control queue
+      std::lock_guard<std::mutex> lck (*u_mutex);
+
+      // Set next control actions
+      std::queue<double> empty;
+      std::swap(*u_queue, empty);
+      for (int i = 0; i < N_QUADPROG_VARS; i++) 
+        u_queue->push(u[i]); 
+    }
 
     ROS_INFO("Finished MPC code! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+#pragma endregion MPC
 
-    // Unnecessary visualizations
-    if (DEBUG_VISUALIZATIONS) {
+#pragma region
+    if (DEBUG_OUTPUT) {
       // Visualization of waypoints
       for (int i = 0; i < wayPoints.size(); i++) {
         cv::circle(transformedImage, wayPoints.at(i), 10, cv::Scalar(255,0,0), 1, 8, 0);
@@ -497,16 +521,20 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control, IPM* ipm
       cv::Mat tmpMat = transformedOriginalImage(helperROI);
       cv::vconcat(transformedOriginalImage, tmpMat, transformedFullImage);
 
+      // Prediction starting state
+      double predicted_y = height + ROBOT_OFFSET_PIXEL_Y;
+      if (MPC_DEADTIME_COMPENSATION)
+        predicted_y -= compensation_steps * TARGET_VELOCITY * MPC_DT / METER_PER_PIXEL_Y;
+
       // Fill in and draw trajectory and robot position
-      for (int y = height + ROBOT_OFFSET_PIXEL_Y; y > 0; y--) {
+      for (int y = predicted_y; y > 0; y--) {
         int x = round(polyeval(trajectory_coeffs, y));
         cv::circle(transformedFullImage, Point(x, y), 1, cv::Scalar(255,0,0), 1, 8, 0);
       }
-      cv::circle(transformedFullImage, Point(ROBOT_POSITION_PIXEL_X, height + ROBOT_OFFSET_PIXEL_Y), 8, cv::Scalar(255,0,0), 4, 8, 0);
+      cv::circle(transformedFullImage, Point(ROBOT_POSITION_PIXEL_X, predicted_y), 8, cv::Scalar(255,0,0), 4, 8, 0);
 
       // Draw predicted MPC trajectory
       quadprogpp::Matrix<double> predicted_state = x0;
-      double predicted_y = height + ROBOT_OFFSET_PIXEL_Y;
       for (int i = 0; i < MPC_STEPS; i++) {
         predicted_state = A_d % predicted_state + B_d * u[i];
         predicted_y -= TARGET_VELOCITY * MPC_DT / METER_PER_PIXEL_Y;
@@ -522,9 +550,13 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control, IPM* ipm
       cv::imshow("windowed", transformedImage);    
       cv::imshow("windowedOrig", transformedFullImage);    
       ROS_INFO("Finished debug output! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
-    }
 
-    //cv::waitKey(1);
+      // for (int i = 0; i < N_QUADPROG_VARS; i++)
+      //   ROS_INFO("Finished MPC test! u(%f) = %f", MPC_DT * i, u[i]);
+
+      //cv::waitKey(1);
+    }
+#pragma endregion DEBUG OUTPUT
   }
   catch (cv_bridge::Exception& e)
   {
@@ -552,13 +584,17 @@ int main(int argc, char** argv)
   dstPoints.push_back(Point2f(0, 0));
   IPM ipm(Size(960, 405), Size(960, 405), origPoints, dstPoints);
 
+  // Define MPC data
+  std::mutex u_mutex;
+  std::queue<double> u_queue;
+
   // sensor message container
   int control = 0;
   std_msgs::Int16 motor, steering;
 
   // generate subscriber for sensor messages
   ros::Subscriber imageSub = nh.subscribe<sensor_msgs::Image>(
-      "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, &control, &ipm));
+      "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, &ipm, &u_mutex, &u_queue));
 
   // generate control message publisher
   ros::Publisher motorCtrl =
@@ -576,15 +612,39 @@ int main(int argc, char** argv)
 
   // Loop starts here:
   // loop rate value is set in Hz
-  ros::Rate loop_rate(100);
+  ros::Rate loop_rate(round(1/MPC_DT));
   while (ros::ok())
   {
-    steering.data = control;
+    {
+      // exclusive access to control queue
+      std::lock_guard<std::mutex> lck (u_mutex);
 
-    // publish command messages on their topics
-    steeringCtrl.publish(steering);
-    // side note: setting steering and motor even though nothing might have
-    // changed is actually stupid but for this demo it doesn't matter too much.
+      // TODO speed regulation
+
+      // publish command messages on their topics
+      // TODO bessere Kennlinie einsetzen oder Kaskadenregelung
+      if (!u_queue.empty()) {
+        if (MPC_USE_TRAJECTORY_TRACKING_CONTROL) {
+          // TODO use odometry data for trajectory tracking control
+          double phi_L = u_queue.front();
+          u_queue.pop();
+          int u_steering = round(750 * phi_L / U_UPPERBOUND);
+
+          steering.data = max(-1000, min(1000, u_steering));
+          // steering.data = u;
+          steeringCtrl.publish(steering);
+        }
+        else {
+          double phi_L = u_queue.front();
+          u_queue.pop();
+          int u_steering = round(750 * phi_L / U_UPPERBOUND);
+
+          steering.data = max(-1000, min(1000, u_steering));
+          // steering.data = u;
+          steeringCtrl.publish(steering);
+        }
+      }
+    }
 
     // clear input/output buffers
     ros::spinOnce();
