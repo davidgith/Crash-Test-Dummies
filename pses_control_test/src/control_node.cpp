@@ -18,12 +18,12 @@
 #include "QuadProg++.hh"
 #include "IPM.h"
 
+#include <dynamic_reconfigure/server.h>
+#include <pses_control_test/ParamsConfig.h>
+
 using namespace cv;
 using namespace std;
 using namespace Eigen;
-
-// Optimizations
-#define DEBUG_OUTPUT true
 
 // IPM Calibration Configurations
 #define ROBOT_POSITION_PIXEL_X 465
@@ -37,13 +37,7 @@ using namespace Eigen;
 #define MIN_LANE_POINT_PAIRS 13
 #define DETECTION_END_OFFSET_Y 100
 
-// Model Predictive Control Configurations
-#define MPC_DEADTIME_COMPENSATION false
-#define MPC_USE_TRAJECTORY_TRACKING_CONTROL false 
-
-#define MPC_DT 0.1f
-#define MPC_STEPS 20
-
+// Model Predictive Control Parameters
 #define MPC_WEIGHT_U 0.01f
 #define MPC_WEIGHT_Y 1000.0f
 #define MPC_WEIGHT_PHI 0.0f
@@ -51,16 +45,44 @@ using namespace Eigen;
 #define U_LOWERBOUND (-3.1415f / 4)
 #define U_UPPERBOUND (3.1415f / 4)
 
-// Drive Configurations
-#define LEFT_LANE false
-#define TARGET_VELOCITY 0.2f
-
 // MPC Model Definitions
 #define MODEL_PARAM_L_H 0.1f
 #define MODEL_PARAM_L 0.1f
 #define N_STATES 2
 #define N_INPUTS 1
 #define N_QUADPROG_VARS (N_INPUTS * MPC_STEPS)
+
+// Optimizations
+static bool DEBUG_OUTPUT = true;
+
+// Model Predictive Control Configurations
+static bool MPC_DEADTIME_COMPENSATION = false;
+static bool MPC_USE_TRAJECTORY_TRACKING_CONTROL = false;
+static double MPC_DT = 0.1f;
+static int MPC_STEPS = 20;
+
+// Drive Configurations
+static bool INTERPOLATE_WITH_CURRENT_POSITION = false;
+static bool LEFT_LANE = false;
+static double TARGET_VELOCITY = 0.2f;
+static int FRAME_INTERVAL = 1;
+
+static int currentFrameCounter = 0;
+
+void callback(pses_control_test::ParamsConfig &config, uint32_t level) 
+{
+  DEBUG_OUTPUT = config.debug_output;
+
+  MPC_DEADTIME_COMPENSATION = config.mpc_deadtime_comp;
+  MPC_USE_TRAJECTORY_TRACKING_CONTROL = config.mpc_mode_trajectory_tracking;
+  MPC_DT = config.mpc_timestep;
+  MPC_STEPS = config.mpc_number_timesteps;
+
+  INTERPOLATE_WITH_CURRENT_POSITION = config.wp_interpolate_using_robot_position;
+  LEFT_LANE = config.ctrl_left_lane;
+  TARGET_VELOCITY = config.ctrl_velocity;
+  FRAME_INTERVAL = config.skip_frames;
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 /* 
@@ -160,6 +182,11 @@ int findBestHistogramPeakX(cv::Mat& histogram) {
 // Callback on new kinect image
 void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* u_mutex, std::queue<double>* u_queue)
 {
+  // Only use every FRAME_INTERVALth frame
+  currentFrameCounter = (currentFrameCounter + 1) % FRAME_INTERVAL;
+  if (currentFrameCounter != 0)
+    return;
+
   clock_t begin = clock();
 
   std::queue<double> prev_u_queue;
@@ -346,9 +373,13 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
     std::vector<double> xs;
     std::vector<double> ys;
     std::vector<double> trajectory_coeffs;
+
     //Optional: add current robot position to fitting waypoints
-    xs.push_back(ROBOT_POSITION_PIXEL_X);
-    ys.push_back(height + ROBOT_OFFSET_PIXEL_Y);
+    if (INTERPOLATE_WITH_CURRENT_POSITION) {
+      xs.push_back(ROBOT_POSITION_PIXEL_X);
+      ys.push_back(height + ROBOT_OFFSET_PIXEL_Y);
+    }
+
     for (int i = 0; i < wayPoints.size(); i++) {
       xs.push_back(wayPoints.at(i).x);
       ys.push_back(wayPoints.at(i).y);
@@ -401,25 +432,25 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
 
     // Initialize quadratic programming problem
     quadprogpp::Matrix<double> B_dash;
-    quadprogpp::Vector<double> tmpVec1;
-    quadprogpp::Vector<double> tmpVec2;
+    quadprogpp::Vector<double> oddRow;
+    quadprogpp::Vector<double> evenRow;
     B_dash.resize(0, N_STATES * MPC_STEPS, N_INPUTS * MPC_STEPS);
-    tmpVec1.resize(0, N_INPUTS * MPC_STEPS);
-    tmpVec2.resize(0, N_INPUTS * MPC_STEPS);
-    tmpVec1[0] = B_d[0][0];
-    tmpVec2[0] = B_d[1][0];
+    oddRow.resize(0, N_INPUTS * MPC_STEPS);
+    evenRow.resize(0, N_INPUTS * MPC_STEPS);
+    oddRow[0] = B_d[0][0];
+    evenRow[0] = B_d[1][0];
     for (int row = 0; row < MPC_STEPS; row++) {
       // calculate 2 rows of B_dash each iteration
-      for (int col = tmpVec1.size()-1; col > 0; col--) {
-        tmpVec1[col] = tmpVec1[col-1];
-        tmpVec2[col] = tmpVec2[col-1];
+      for (int col = oddRow.size()-1; col > 0; col--) {
+        oddRow[col] = oddRow[col-1];
+        evenRow[col] = evenRow[col-1];
       }
-      tmpVec1[0] = A_d[0][0] * tmpVec1[1] + A_d[0][1] * tmpVec2[1];
-      tmpVec2[0] = A_d[1][0] * tmpVec1[1] + A_d[1][1] * tmpVec2[1];
+      oddRow[0] = A_d[0][0] * oddRow[1] + A_d[0][1] * evenRow[1];
+      evenRow[0] = A_d[1][0] * oddRow[1] + A_d[1][1] * evenRow[1];
     
-      for (int col = 0; col < tmpVec1.size(); col++) {
-        B_dash[2*row][col] = tmpVec1[col];
-        B_dash[2*row+1][col] = tmpVec2[col];
+      for (int col = 0; col < oddRow.size(); col++) {
+        B_dash[2*row][col] = oddRow[col];
+        B_dash[2*row+1][col] = evenRow[col];
       }
     }
       
@@ -571,6 +602,13 @@ int main(int argc, char** argv)
   // get ros node handle
   ros::NodeHandle nh;
 
+  // Dynamic Reconfiguration
+  dynamic_reconfigure::Server<pses_control_test::ParamsConfig> server;
+  dynamic_reconfigure::Server<pses_control_test::ParamsConfig>::CallbackType f;
+
+  f = boost::bind(&callback, _1, _2);
+  server.setCallback(f);
+
   // Define IPM transformation
   vector<Point2f> origPoints;
   origPoints.push_back(Point2f(0, 405));
@@ -622,7 +660,7 @@ int main(int argc, char** argv)
       // TODO speed regulation
 
       // publish command messages on their topics
-      // TODO bessere Kennlinie einsetzen oder Kaskadenregelung
+      // TODO bessere Kennlinie einsetzen oder Kaskadenregelung für Winkel
       if (!u_queue.empty()) {
         if (MPC_USE_TRAJECTORY_TRACKING_CONTROL) {
           // TODO use odometry data for trajectory tracking control
@@ -651,6 +689,4 @@ int main(int argc, char** argv)
     // this is needed to ensure a const. loop rate
     loop_rate.sleep();
   }
-
-  ros::spin();
 }
