@@ -8,6 +8,8 @@
 #include <pses_control_2/TutorialsConfig.h>
 #include "opencv2/opencv.hpp"
 
+#define stopSign 99999999;
+
 void callback(pses_control_2::TutorialsConfig &config, uint32_t level, pses_control_2::TutorialsConfig* newconfig) 
 {
     *newconfig = config;
@@ -153,7 +155,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
       {
         for(int search = 0; search < 30; search++)
         {
-          int startPonit = standarLineRight[y];
+          int startPonit = standarLineleft[y];
           int toLeft = startPonit - search;
           int toRight = startPonit + search;
           if(subMatrix[y][toLeft] == 1)
@@ -185,10 +187,10 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     devi.I = newconfig->I_int_param;
     devi.D = newconfig->D_int_param;
 		*control_deviation = (devi.P * devi.distanceMem[0] + devi.D * (devi.distanceMem[0] - devi.distanceMem[2]) + devi.I * devi.distanceSum/100)/100;
-    //a flag, works when no vision, stop the car
+    //a flag, works when no vision, to stop the car
     if(noVision == 20)
     {
-      	*control_deviation = 99999999;
+      	*control_deviation = stopSign;
     }
     cv::waitKey(1);
     ROS_INFO("Control deviation set! deviation = %d", *control_deviation);
@@ -237,21 +239,26 @@ int main(int argc, char** argv)
   // Loop starts here:
   // loop rate value is set in Hz
   ros::Rate loop_rate(25);
-  int lastSteering = 0;
+
+  //control variable
+  int lastValidDeviation;
+  //lastside can be replaced later by a flag, which can be set because of other event
+  int lastside = 1;
+  int laneChangeCnt = 50;
   while (ros::ok())
   {
     //stop the car because no vision
-    if(control_deviation == 99999999)
+    if(control_deviation == stopSign)
     {
       motor.data = 0;
       motorCtrl.publish(motor);
     }
+    else
+    {
+      lastValidDeviation = control_deviation
+    }
     steering.data = control_deviation;
-    //avoid suddenly steer change
-    //if(abs(steering.data - lastSteering) > 200)
-    //{
-    //  steering.data = lastSteering + ((steering.data - lastSteering)/abs(steering.data - lastSteering))*200;
-    //}
+
     if(steering.data >= 1000)
     {
       steering.data = 1000;
@@ -261,7 +268,22 @@ int main(int argc, char** argv)
       steering.data = -1000;
     }
     ROS_INFO("steering %d",steering.data);
-    lastSteering = steering.data;
+    if((lastside !=  newconfig.turn) && (control_deviation != stopSign))
+    {
+      steering.data = 1000 * newconfig.turn * (-1);
+      if(laneChangeCnt < 25)
+      {
+        steering.data = 1000 * newconfig.turn;
+      }
+      motor.data = 500;
+      laneChangeCnt--;
+      //finish lane change and reset the procedure
+      if(laneChangeCnt == 0)
+      {
+        lastside = newconfig.turn;
+        laneChangeCnt = 50;
+      }
+    }
     // publish command messages on their topics
     steeringCtrl.publish(steering);
     // side note: setting steering and motor even though nothing might have
