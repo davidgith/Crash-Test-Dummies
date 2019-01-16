@@ -27,9 +27,9 @@ void callback(pses_control_2::TutorialsConfig &config, uint32_t level, pses_cont
 class deviation
 {
 	public:
-		int P = 70;
+		int P = 413;
 		int I = 0;
-		int D = 5;
+		int D = 3;
 		int distance = 0;
 		int distanceMem[40] = { 0 };
 		int distanceSum = 0;
@@ -106,7 +106,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
 		}
     int standarLineRight[20] = {61,61,61,62,62,62,63,63,63,63,64,64,64,65,65,65,66,66,66,66};
     int standarLineleft[20] = {38,38,38,37,37,37,36,36,36,36,35,35,35,34,34,34,33,33,33,33};
-    int turn = -1;
+    int turn = 1;
     turn = newconfig->turn;
     //get the deviation(Abweichung)
 		deviation devi;
