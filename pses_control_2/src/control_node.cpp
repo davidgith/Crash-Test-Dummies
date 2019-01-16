@@ -27,9 +27,9 @@ void callback(pses_control_2::TutorialsConfig &config, uint32_t level, pses_cont
 class deviation
 {
 	public:
-		int P = 70;
+		int P = 413;
 		int I = 0;
-		int D = 5;
+		int D = 3;
 		int distance = 0;
 		int distanceMem[40] = { 0 };
 		int distanceSum = 0;
