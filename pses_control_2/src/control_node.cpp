@@ -244,7 +244,7 @@ int main(int argc, char** argv)
   int lastValidDeviation;
   //lastside can be replaced later by a flag, which can be set because of other event
   int lastside = 1;
-  int laneChangeCnt = 50;
+  int laneChangeCnt = 200;
   while (ros::ok())
   {
     //stop the car because no vision
@@ -270,10 +270,10 @@ int main(int argc, char** argv)
     ROS_INFO("steering %d",steering.data);
     if((lastside !=  newconfig.turn) && (control_deviation != stopSign))
     {
-      steering.data = 1000 * newconfig.turn * (-1);
-      if(laneChangeCnt < 25)
+      steering.data = 1000 * newconfig.turn;
+      if(laneChangeCnt < 100)
       {
-        steering.data = 1000 * newconfig.turn;
+        steering.data = 1000 * newconfig.turn * (-1);
       }
       motor.data = 500;
       laneChangeCnt--;
@@ -281,7 +281,7 @@ int main(int argc, char** argv)
       if(laneChangeCnt == 0)
       {
         lastside = newconfig.turn;
-        laneChangeCnt = 50;
+        laneChangeCnt = 200;
       }
     }
     // publish command messages on their topics

@@ -42,8 +42,8 @@ using namespace Eigen;
 #define MPC_WEIGHT_Y 1000.0f
 #define MPC_WEIGHT_PHI 0.0f
 
-#define U_LOWERBOUND (-3.1415f / 4)
-#define U_UPPERBOUND (3.1415f / 4)
+#define U_LOWERBOUND (-3.1415f / 12)
+#define U_UPPERBOUND (3.1415f / 12)
 
 // MPC Model Definitions
 #define MODEL_PARAM_L_H 0.1f
@@ -574,18 +574,18 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
       }
 
       // Show debug pictures
-      cv::imshow("raw", image);
-      cv::imshow("transformed", transformedImage);    
-      cv::imshow("thresholdedGreen", ThreshImageGreen);  
-      cv::imshow("thresholdedPink", ThreshImagePink);    
-      cv::imshow("windowed", transformedImage);    
+      // cv::imshow("raw", image);
+      // cv::imshow("transformed", transformedImage);    
+      // cv::imshow("thresholdedGreen", ThreshImageGreen);  
+      // cv::imshow("thresholdedPink", ThreshImagePink);    
+      // cv::imshow("windowed", transformedImage);    
       cv::imshow("windowedOrig", transformedFullImage);    
       ROS_INFO("Finished debug output! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
       // for (int i = 0; i < N_QUADPROG_VARS; i++)
       //   ROS_INFO("Finished MPC test! u(%f) = %f", MPC_DT * i, u[i]);
 
-      //cv::waitKey(1);
+      cv::waitKey(1);
     }
 #pragma endregion DEBUG OUTPUT
   }
@@ -666,7 +666,7 @@ int main(int argc, char** argv)
           // TODO use odometry data for trajectory tracking control
           double phi_L = u_queue.front();
           u_queue.pop();
-          int u_steering = round(750 * phi_L / U_UPPERBOUND);
+          int u_steering = round(1000 * phi_L / U_UPPERBOUND);
 
           steering.data = max(-1000, min(1000, u_steering));
           // steering.data = u;
@@ -675,7 +675,7 @@ int main(int argc, char** argv)
         else {
           double phi_L = u_queue.front();
           u_queue.pop();
-          int u_steering = round(750 * phi_L / U_UPPERBOUND);
+          int u_steering = round(1000 * phi_L / U_UPPERBOUND);
 
           steering.data = max(-1000, min(1000, u_steering));
           // steering.data = u;

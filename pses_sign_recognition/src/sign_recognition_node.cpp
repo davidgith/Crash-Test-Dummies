@@ -49,49 +49,49 @@ int main(int argc, char** argv)
 
   ROS_INFO("Hello world!");
 
-  // Loop starts here:
-  // loop rate value is set in Hz
-  ros::Rate loop_rate(25);
-  while (ros::ok())
-  {
- /*   // simple wall crash avoidance algorithm ..
-    if (usr.range < 0.3 && usl.range >= 0.3)
-    {
-      steering.data = -750;
-      motor.data = 300;
-    }
-    else if (usl.range < 0.3 && usr.range >= 0.3)
-    {
-      steering.data = 750;
-      motor.data = 300;
-    }
-    else if (usl.range > 0.5 && usr.range > 0.5)
-    {
-      steering.data = 0;
-      motor.data = 300;
-    }
-    else
-    {
-      steering.data = 0;
-      motor.data = 0;
-    }
-    if (usf.range < 0.3)
-    {
-      motor.data = 0;
-      steering.data = 0;
-    }
+//   // Loop starts here:
+//   // loop rate value is set in Hz
+//   ros::Rate loop_rate(1);
+//   while (ros::ok())
+//   {
+//  /*   // simple wall crash avoidance algorithm ..
+//     if (usr.range < 0.3 && usl.range >= 0.3)
+//     {
+//       steering.data = -750;
+//       motor.data = 300;
+//     }
+//     else if (usl.range < 0.3 && usr.range >= 0.3)
+//     {
+//       steering.data = 750;
+//       motor.data = 300;
+//     }
+//     else if (usl.range > 0.5 && usr.range > 0.5)
+//     {
+//       steering.data = 0;
+//       motor.data = 300;
+//     }
+//     else
+//     {
+//       steering.data = 0;
+//       motor.data = 0;
+//     }
+//     if (usf.range < 0.3)
+//     {
+//       motor.data = 0;
+//       steering.data = 0;
+//     }
 
-    // publish command messages on their topics
-    motorCtrl.publish(motor);
-    steeringCtrl.publish(steering);
-    // side note: setting steering and motor even though nothing might have
-    // changed is actually stupid but for this demo it doesn't matter too much.
-*/
-    // clear input/output buffers
-    ros::spinOnce();
-    // this is needed to ensure a const. loop rate
-    loop_rate.sleep();
-  }
+//     // publish command messages on their topics
+//     motorCtrl.publish(motor);
+//     steeringCtrl.publish(steering);
+//     // side note: setting steering and motor even though nothing might have
+//     // changed is actually stupid but for this demo it doesn't matter too much.
+// */
+//     // clear input/output buffers
+//     ros::spinOnce();
+//     // this is needed to ensure a const. loop rate
+//     loop_rate.sleep();
+//   }
 
   ros::spin();
 }
