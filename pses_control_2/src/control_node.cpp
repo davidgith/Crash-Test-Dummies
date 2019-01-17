@@ -8,7 +8,7 @@
 #include <pses_control_2/TutorialsConfig.h>
 #include "opencv2/opencv.hpp"
 
-#define stopSign 99999999;
+#define stopSign 99999999
 
 void callback(pses_control_2::TutorialsConfig &config, uint32_t level, pses_control_2::TutorialsConfig* newconfig) 
 {
@@ -255,7 +255,7 @@ int main(int argc, char** argv)
     }
     else
     {
-      lastValidDeviation = control_deviation
+      lastValidDeviation = control_deviation;
     }
     steering.data = control_deviation;
 
