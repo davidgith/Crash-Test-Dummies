@@ -34,7 +34,7 @@ using namespace Eigen;
 // Waypointing Configurations
 #define WINDOW_SIZE 10
 #define PEAK_MIN_DISTANCE 100
-#define MIN_LANE_POINT_PAIRS 13
+#define MIN_LANE_POINT_PAIRS 8
 #define DETECTION_END_OFFSET_Y 100
 
 // Model Predictive Control Parameters
@@ -318,6 +318,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
     // Generate waypoints from detected lane points
     std::vector<Point> wayPoints;
     if (usefulPoints.size() > MIN_LANE_POINT_PAIRS) {
+      std::vector<Point> usefulWaypoints;
+
       // Sufficient useful horizontal tuples -> place waypoints relative to existing tuples
       for (int i = 0; i < usefulPoints.size(); i++) {
 
@@ -332,7 +334,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
           else
             leftLanePoint = std::get<2>(usefulPoints.at(i));
         }
-        // Else both exist or don't exist, either way take them as found
+        // Else take the detected points
         else {
           leftLanePoint = std::get<0>(usefulPoints.at(i));
           rightLanePoint = std::get<2>(usefulPoints.at(i));
@@ -341,25 +343,72 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
         // If the middle point and the point on the driving side exists, place inbetween
         if (LEFT_LANE && middleLanePoint.x != -1 && leftLanePoint.x != -1) {
           Point wayPoint((middleLanePoint.x + leftLanePoint.x) / 2, middleLanePoint.y);
-          wayPoints.push_back(wayPoint);
+          usefulWaypoints.push_back(wayPoint);
         }
         else if (!LEFT_LANE && middleLanePoint.x != -1 && rightLanePoint.x != -1) {
           Point wayPoint((middleLanePoint.x + rightLanePoint.x) / 2, middleLanePoint.y);
-          wayPoints.push_back(wayPoint);
+          usefulWaypoints.push_back(wayPoint);
         }
         // Otherwise, if the middle point does not exist, place in-between lane points
         else if (middleLanePoint.x == -1) {
           Point wayPoint(LEFT_LANE ? (leftLanePoint.x * 3 + rightLanePoint.x) / 4 : 
             (leftLanePoint.x + rightLanePoint.x * 3) / 4, middleLanePoint.y);
-          wayPoints.push_back(wayPoint);
+          usefulWaypoints.push_back(wayPoint);
         }
         // Otherwise, the middle point must exist by construction
         else {
           Point wayPoint(LEFT_LANE ? middleLanePoint.x - 60 : middleLanePoint.x + 60, middleLanePoint.y);
-          wayPoints.push_back(wayPoint);
+          usefulWaypoints.push_back(wayPoint);
         }
       }
+
+      // Optional waypoint post-processing: Infer more waypoints from left/right points
+      int leftmostIndex = 0;
+      int rightmostIndex = 0;
+      int usefulIndex = 0;
+
+      // Get average x of useful waypoints
+      int avgWaypointX = 0;
+      for (int i = 0; i < usefulWaypoints.size(); i++)
+        avgWaypointX += usefulWaypoints.at(i).x;
+      avgWaypointX /= usefulWaypoints.size();
+
+      // Now build the actual waypoints: 
+      for (int window = 1; window <= height/WINDOW_SIZE - DETECTION_END_OFFSET_Y/WINDOW_SIZE; window++) {
+        // The current point height of this window is
+        int currHeight = height - window * WINDOW_SIZE + WINDOW_SIZE/2;
+
+        // Cycle through points until at the correct height
+        while (usefulIndex < usefulWaypoints.size() && usefulWaypoints.at(usefulIndex).y > currHeight) {
+          usefulIndex++;
+        }
+        while (rightmostIndex < rightmostPoints.size() && rightmostPoints.at(rightmostIndex).y > currHeight) {
+          rightmostIndex++;
+        }
+
+        // If a useful point exists for this window, use the useful point and increment pointer
+        if (usefulIndex < usefulWaypoints.size() && usefulWaypoints.at(usefulIndex).y == currHeight) {
+          wayPoints.push_back(usefulWaypoints.at(usefulIndex));
+        }
+        // Otherwise, the rightmost point is used to infer from
+        else if (rightmostIndex < rightmostPoints.size() && rightmostPoints.at(rightmostIndex).y == currHeight) {
+          // Treat it as the right lane point if it is right of the average x of the useful waypoints
+          if (rightmostPoints.at(rightmostIndex).x > avgWaypointX) {
+            Point lanePoint = rightmostPoints.at(rightmostIndex);
+            Point wayPoint(std::max(0, LEFT_LANE ? lanePoint.x - 180 : lanePoint.x - 60), lanePoint.y);
+            wayPoints.push_back(wayPoint);
+          } 
+          // Otherwise it is the left lane point
+          else {
+            Point lanePoint = rightmostPoints.at(rightmostIndex);
+            Point wayPoint(std::min(width, LEFT_LANE ? lanePoint.x + 60: lanePoint.x + 180), lanePoint.y);
+            wayPoints.push_back(wayPoint);
+          }
+        }
+      }
+
     } 
+    // If we do not have enough useful point pairs, we fallback to detecting a turn
     else if (isLeftTurn(leftmostPoints, rightmostPoints)) {
       // Left turn fallback -> drive left from rightmost points
       for (int i = 0; i < rightmostPoints.size(); i++) {
