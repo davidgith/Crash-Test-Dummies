@@ -320,9 +320,23 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
     if (usefulPoints.size() > MIN_LANE_POINT_PAIRS) {
       // Sufficient useful horizontal tuples -> place waypoints relative to existing tuples
       for (int i = 0; i < usefulPoints.size(); i++) {
-        Point leftLanePoint = std::get<0>(usefulPoints.at(i));
+
+        // The useful left/right points are not necessarily on the left/right lane
         Point middleLanePoint = std::get<1>(usefulPoints.at(i));
-        Point rightLanePoint = std::get<2>(usefulPoints.at(i));
+        Point leftLanePoint(-1, -1);
+        Point rightLanePoint(-1, -1);
+        // If there is only one sidelane point, it is placed in relation to the existing middle point
+        if (std::get<0>(usefulPoints.at(i)).x == -1 && std::get<2>(usefulPoints.at(i)).x != -1) {
+          if (std::get<2>(usefulPoints.at(i)).x > middleLanePoint.x)
+            rightLanePoint = std::get<2>(usefulPoints.at(i));
+          else
+            leftLanePoint = std::get<2>(usefulPoints.at(i));
+        }
+        // Else both exist or don't exist, either way take them as found
+        else {
+          leftLanePoint = std::get<0>(usefulPoints.at(i));
+          rightLanePoint = std::get<2>(usefulPoints.at(i));
+        }
 
         // If the middle point and the point on the driving side exists, place inbetween
         if (LEFT_LANE && middleLanePoint.x != -1 && leftLanePoint.x != -1) {
