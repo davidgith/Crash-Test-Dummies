@@ -56,7 +56,6 @@ static bool DEBUG_OUTPUT = true;
 
 // Model Predictive Control Configurations
 static bool MPC_DEADTIME_COMPENSATION = false;
-static bool MPC_USE_TRAJECTORY_TRACKING_CONTROL = false;
 static double MPC_DT = 0.1f;
 static int MPC_STEPS = 20;
 static double MPC_RECALC_INTERVAL = 1;
@@ -75,7 +74,6 @@ void callback(pses_control_test::ParamsConfig &config, uint32_t level)
   DEBUG_OUTPUT = config.debug_output;
 
   MPC_DEADTIME_COMPENSATION = config.mpc_deadtime_comp;
-  MPC_USE_TRAJECTORY_TRACKING_CONTROL = config.mpc_mode_trajectory_tracking;
   MPC_DT = config.mpc_timestep;
   MPC_STEPS = config.mpc_number_timesteps;
   MPC_RECALC_INTERVAL = config.mpc_update_rate;
@@ -730,10 +728,7 @@ int main(int argc, char** argv)
     {
       std::lock_guard<std::mutex> lck (u_mutex);
 
-      // TODO speed regulation
-
       // publish command messages on their topics
-      // TODO bessere Kennlinie einsetzen oder Kaskadenregelung für Winkel
       if (!u_queue.empty()) {
         double phi_L = u_queue.front();
 
@@ -743,10 +738,6 @@ int main(int argc, char** argv)
         }
 
         int u_steering = round(1000 * phi_L / U_UPPERBOUND);
-
-        if (MPC_USE_TRAJECTORY_TRACKING_CONTROL) {
-          // TODO use odometry data for trajectory tracking control
-        }
 
         steering.data = max(-1000, min(1000, u_steering));
         // steering.data = u;
