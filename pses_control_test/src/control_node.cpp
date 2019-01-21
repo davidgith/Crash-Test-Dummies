@@ -34,8 +34,7 @@ using namespace Eigen;
 // Waypointing Configurations
 #define WINDOW_SIZE 10
 #define PEAK_MIN_DISTANCE 100
-#define MIN_LANE_POINT_PAIRS 8
-#define DETECTION_END_OFFSET_Y 100
+#define MIN_LANE_POINT_PAIRS 3
 
 // Model Predictive Control Parameters
 #define MPC_WEIGHT_U 0.01f
@@ -60,12 +59,13 @@ static bool MPC_DEADTIME_COMPENSATION = false;
 static bool MPC_USE_TRAJECTORY_TRACKING_CONTROL = false;
 static double MPC_DT = 0.1f;
 static int MPC_STEPS = 20;
+static double MPC_RECALC_INTERVAL = 1;
+static int DETECTION_END_OFFSET_Y = 100;
 
 // Drive Configurations
 static bool INTERPOLATE_WITH_CURRENT_POSITION = false;
 static bool LEFT_LANE = false;
 static double TARGET_VELOCITY = 0.2f;
-static double MPC_RECALC_INTERVAL = 1;
 
 static double timeSinceApplyingLastInput = 0;
 static double timeLastMPCCalc = 0;
@@ -79,6 +79,7 @@ void callback(pses_control_test::ParamsConfig &config, uint32_t level)
   MPC_DT = config.mpc_timestep;
   MPC_STEPS = config.mpc_number_timesteps;
   MPC_RECALC_INTERVAL = config.mpc_update_rate;
+  DETECTION_END_OFFSET_Y = config.detection_end_offset;
 
   INTERPOLATE_WITH_CURRENT_POSITION = config.wp_interpolate_using_robot_position;
   LEFT_LANE = config.ctrl_left_lane;
@@ -312,13 +313,13 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
         leftmostPoints.push_back(std::get<0>(detectedLanePoints.at(i)));
       }
     }
-    ROS_INFO("Interesting points selected! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+    ROS_INFO("Interesting points selected! t = %f", usefulPoints.size(), double(clock() - begin) / CLOCKS_PER_SEC);
 
 
     // Generate waypoints from detected lane points
+    std::vector<Point> usefulWaypoints;
     std::vector<Point> wayPoints;
-    if (usefulPoints.size() > MIN_LANE_POINT_PAIRS) {
-      std::vector<Point> usefulWaypoints;
+    if (usefulPoints.size() >= MIN_LANE_POINT_PAIRS) {
 
       // Sufficient useful horizontal tuples -> place waypoints relative to existing tuples
       for (int i = 0; i < usefulPoints.size(); i++) {
@@ -390,16 +391,16 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
         if (usefulIndex < usefulWaypoints.size() && usefulWaypoints.at(usefulIndex).y == currHeight) {
           wayPoints.push_back(usefulWaypoints.at(usefulIndex));
         }
-        // Otherwise, the rightmost point is used to infer from
+        // Otherwise, the rightmost point could be used to infer from
         else if (rightmostIndex < rightmostPoints.size() && rightmostPoints.at(rightmostIndex).y == currHeight) {
           // Treat it as the right lane point if it is right of the average x of the useful waypoints
-          if (rightmostPoints.at(rightmostIndex).x > avgWaypointX) {
+          if (rightmostPoints.at(rightmostIndex).x > avgWaypointX + 40) {
             Point lanePoint = rightmostPoints.at(rightmostIndex);
             Point wayPoint(std::max(0, LEFT_LANE ? lanePoint.x - 180 : lanePoint.x - 60), lanePoint.y);
             wayPoints.push_back(wayPoint);
           } 
           // Otherwise it is the left lane point
-          else {
+          else if (rightmostPoints.at(rightmostIndex).x < avgWaypointX - 40) {
             Point lanePoint = rightmostPoints.at(rightmostIndex);
             Point wayPoint(std::min(width, LEFT_LANE ? lanePoint.x + 60: lanePoint.x + 180), lanePoint.y);
             wayPoints.push_back(wayPoint);
@@ -606,17 +607,20 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
 
 #pragma region
     if (DEBUG_OUTPUT) {
-      // Visualization of waypoints
-      for (int i = 0; i < wayPoints.size(); i++) {
-        cv::circle(transformedImage, wayPoints.at(i), 10, cv::Scalar(255,0,0), 1, 8, 0);
-      }
-
       // Visualization of original image space + robot space
       cv::Rect helperROI(0, 0, width, 60);
       cv::Mat transformedOriginalImage, transformedFullImage;
       cvtColor(transformedImage, transformedOriginalImage, CV_HSV2BGR);
-      cv::Mat tmpMat = transformedOriginalImage(helperROI);
-      cv::vconcat(transformedOriginalImage, tmpMat, transformedFullImage);
+      cv::Mat bottomFill = transformedOriginalImage(helperROI).clone();
+      cv::rectangle(bottomFill, Point(0,0), Point(width, 60), cv::Scalar(0,0,0), -1);
+      cv::vconcat(transformedOriginalImage, bottomFill, transformedFullImage);
+
+      // Visualization of waypoints
+      for (int i = 0; i < wayPoints.size(); i++) {
+        cv::circle(transformedFullImage, wayPoints.at(i), 10, cv::Scalar(0,255,0), 1, 8, 0);
+      }
+
+      
 
       // Prediction starting state
       double predicted_y = height + ROBOT_OFFSET_PIXEL_Y;
