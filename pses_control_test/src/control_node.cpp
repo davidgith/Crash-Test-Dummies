@@ -65,9 +65,10 @@ static int MPC_STEPS = 20;
 static bool INTERPOLATE_WITH_CURRENT_POSITION = false;
 static bool LEFT_LANE = false;
 static double TARGET_VELOCITY = 0.2f;
-static int FRAME_INTERVAL = 1;
+static double MPC_RECALC_INTERVAL = 1;
 
-static int currentFrameCounter = 0;
+static double timeSinceApplyingLastInput = 0;
+static double timeLastMPCCalc = 0;
 
 void callback(pses_control_test::ParamsConfig &config, uint32_t level) 
 {
@@ -77,11 +78,11 @@ void callback(pses_control_test::ParamsConfig &config, uint32_t level)
   MPC_USE_TRAJECTORY_TRACKING_CONTROL = config.mpc_mode_trajectory_tracking;
   MPC_DT = config.mpc_timestep;
   MPC_STEPS = config.mpc_number_timesteps;
+  MPC_RECALC_INTERVAL = config.mpc_update_rate;
 
   INTERPOLATE_WITH_CURRENT_POSITION = config.wp_interpolate_using_robot_position;
   LEFT_LANE = config.ctrl_left_lane;
   TARGET_VELOCITY = config.ctrl_velocity;
-  FRAME_INTERVAL = config.skip_frames;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -182,16 +183,18 @@ int findBestHistogramPeakX(cv::Mat& histogram) {
 // Callback on new kinect image
 void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* u_mutex, std::queue<double>* u_queue)
 {
-  // Only use every FRAME_INTERVALth frame
-  currentFrameCounter = (currentFrameCounter + 1) % FRAME_INTERVAL;
-  if (currentFrameCounter != 0)
+  // Only use frame if time interval since last calculation has passed
+  double currTime = ros::Time::now().toSec();
+  ROS_INFO("currTime: %f, last time: %f", currTime, timeLastMPCCalc);
+  if (currTime <= timeLastMPCCalc + MPC_RECALC_INTERVAL)
     return;
+  
+  timeLastMPCCalc = currTime;
 
   clock_t begin = clock();
 
   std::queue<double> prev_u_queue;
   {
-    // Pure MPC
     // exclusive access to control queue
     std::lock_guard<std::mutex> lck (*u_mutex);
 
@@ -582,10 +585,10 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
       cv::imshow("windowedOrig", transformedFullImage);    
       ROS_INFO("Finished debug output! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
-      // for (int i = 0; i < N_QUADPROG_VARS; i++)
-      //   ROS_INFO("Finished MPC test! u(%f) = %f", MPC_DT * i, u[i]);
+      for (int i = 0; i < N_QUADPROG_VARS; i++)
+        ROS_INFO("Finished MPC test! u(%f) = %f", MPC_DT * i, u[i]);
 
-      cv::waitKey(1);
+      //cv::waitKey(1);
     }
 #pragma endregion DEBUG OUTPUT
   }
@@ -650,11 +653,14 @@ int main(int argc, char** argv)
 
   // Loop starts here:
   // loop rate value is set in Hz
-  ros::Rate loop_rate(round(1/MPC_DT));
+  int while_loop_rate = 100;
+  ros::Rate loop_rate(while_loop_rate);
   while (ros::ok())
   {
+    timeSinceApplyingLastInput += 1.0f / while_loop_rate;
+
+    // exclusive access to control queue while setting control inputs
     {
-      // exclusive access to control queue
       std::lock_guard<std::mutex> lck (u_mutex);
 
       // TODO speed regulation
@@ -662,27 +668,29 @@ int main(int argc, char** argv)
       // publish command messages on their topics
       // TODO bessere Kennlinie einsetzen oder Kaskadenregelung für Winkel
       if (!u_queue.empty()) {
+        double phi_L = u_queue.front();
+
+        if (timeSinceApplyingLastInput > MPC_DT) {
+          timeSinceApplyingLastInput = 0;
+          u_queue.pop();
+        }
+
+        int u_steering = round(1000 * phi_L / U_UPPERBOUND);
+
         if (MPC_USE_TRAJECTORY_TRACKING_CONTROL) {
           // TODO use odometry data for trajectory tracking control
-          double phi_L = u_queue.front();
-          u_queue.pop();
-          int u_steering = round(1000 * phi_L / U_UPPERBOUND);
-
-          steering.data = max(-1000, min(1000, u_steering));
-          // steering.data = u;
-          steeringCtrl.publish(steering);
         }
-        else {
-          double phi_L = u_queue.front();
-          u_queue.pop();
-          int u_steering = round(1000 * phi_L / U_UPPERBOUND);
 
-          steering.data = max(-1000, min(1000, u_steering));
-          // steering.data = u;
-          steeringCtrl.publish(steering);
-        }
+        steering.data = max(-1000, min(1000, u_steering));
+        // steering.data = u;
+        steeringCtrl.publish(steering);
+        ROS_INFO("u = %d", steering.data);
       }
     }
+
+    // Fallback time clearing
+      if (timeSinceApplyingLastInput > MPC_DT) 
+        timeSinceApplyingLastInput = 0;
 
     // clear input/output buffers
     ros::spinOnce();
