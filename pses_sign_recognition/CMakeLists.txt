@@ -8,10 +8,37 @@ project(pses_sign_recognition)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  cv_bridge
   roscpp
-  #sensor_msgs
-  #std_msgs
+  #rospy
+  sensor_msgs
+  std_msgs
+  image_transport
+  genmsg
+  message_filters
+  tf
 )
+
+SET(INCLUDE_DIRS
+  ${OpenCV_INCLUDE_DIRS}
+)
+# Make sure the compiler can find include files from our library.
+INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
+
+INCLUDE_DIRECTORIES(find_object_2d/include/find_object/ObjWidget)
+
+find_package(OpenCV REQUIRED)
+# find_package(xfeatures2d REQUIRED) 
+find_package(Qt5Core)
+find_package(Qt5Widgets)
+find_package(Qt5Gui)
+#find_package(find_object_2d)
+
+set(QT_USE_QTGUI TRUE)
+set(QT_USE_QTOPENGL TRUE)
+set(QT_USE_QTXML TRUE)
+set(QT_LIBRARIES Qt5::Widgets Qt5::Gui Qt5::Core)
+
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -118,6 +145,7 @@ catkin_package(
 include_directories(
  #include
  ${catkin_INCLUDE_DIRS}
+ ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -148,6 +176,8 @@ include_directories(
 ## Specify libraries to link a library or executable target against
  target_link_libraries(sign_recognition
    ${catkin_LIBRARIES}
+   ${QT_LIBRARIES}
+   ${OpenCV_LIBS}
  )
 
 #############
