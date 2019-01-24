@@ -16,7 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
   image_transport
   genmsg
   message_filters
-  tf
+  #tf
+  sensor_msgs
 )
 
 SET(INCLUDE_DIRS

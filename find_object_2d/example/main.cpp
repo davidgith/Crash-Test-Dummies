@@ -56,20 +56,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 // From this project
-//#include "/find_object_2d/include/find_object/ObjWidget.h"
-//#include "find_object/QtOpenCV.h"
+#include "find_object/ObjWidget.h"
+#include "find_object/QtOpenCV.h"
 
-#include "opencv2/opencv.hpp"
-#include <cv_bridge/cv_bridge.h>
-#include <opencv2/highgui/highgui.hpp>
-#include "opencv2/xfeatures2d.hpp"
-using namespace cv::xfeatures2d;
-
-#include <ros/ros.h>
-#include <sensor_msgs/Range.h>
-#include <std_msgs/Int16.h>
-#include <image_transport/image_transport.h>
-
+using namespace find_object;
 
 void showUsage()
 {
@@ -79,119 +69,12 @@ void showUsage()
 	exit(1);
 }
 
-// gets called whenever a new message is availible in the input puffer
-void imageCallback(const sensor_msgs::ImageConstPtr& msg)
-{
-  static int imagecounter = 0; 
-  imagecounter++;
-  cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image;
-  
-  if(imagecounter == 30)
-    {
-      cv::imshow("view", image);
-      imagecounter = 0;
-    } 
-
-  cv::waitKey(1);
-}
-
 int main(int argc, char * argv[])
 {
-  // init this node
-  ros::init(argc, argv, "sign_recognition_node");
-  // get ros node handle
-  ros::NodeHandle nh;
-/*
-  // sensor message container
-  sensor_msgs::Range usr, usf, usl;
-  std_msgs::Int16 motor, steering;
-
-  // generate subscriber for sensor messages
-  ros::Subscriber usrSub = nh.subscribe<sensor_msgs::Range>(
-      "/uc_bridge/usr", 10, boost::bind(usrCallback, _1, &usr));
-  ros::Subscriber uslSub = nh.subscribe<sensor_msgs::Range>(
-      "/uc_bridge/usl", 10, boost::bind(uslCallback, _1, &usl));
-  ros::Subscriber usfSub = nh.subscribe<sensor_msgs::Range>(
-      "/uc_bridge/usf", 10, boost::bind(usfCallback, _1, &usf));
-
-  // generate control message publisher
-  ros::Publisher motorCtrl =
-      nh.advertise<std_msgs::Int16>("/uc_bridge/set_motor_level_msg", 1);
-  ros::Publisher steeringCtrl =
-      nh.advertise<std_msgs::Int16>("/uc_bridge/set_steering_level_msg", 1);
-
-*/
-
-  ROS_INFO("Hello world!");
-
-//   // Loop starts here:
-//   // loop rate value is set in Hz
-//   ros::Rate loop_rate(1);
-//   while (ros::ok())
-//   {
-//  /*   // simple wall crash avoidance algorithm ..
-//     if (usr.range < 0.3 && usl.range >= 0.3)
-//     {
-//       steering.data = -750;
-//       motor.data = 300;
-//     }
-//     else if (usl.range < 0.3 && usr.range >= 0.3)
-//     {
-//       steering.data = 750;
-//       motor.data = 300;
-//     }
-//     else if (usl.range > 0.5 && usr.range > 0.5)
-//     {
-//       steering.data = 0;
-//       motor.data = 300;
-//     }
-//     else
-//     {
-//       steering.data = 0;
-//       motor.data = 0;
-//     }
-//     if (usf.range < 0.3)
-//     {
-//       motor.data = 0;
-//       steering.data = 0;
-//     }
-
-//     // publish command messages on their topics
-//     motorCtrl.publish(motor);
-//     steeringCtrl.publish(steering);
-//     // side note: setting steering and motor even though nothing might have
-//     // changed is actually stupid but for this demo it doesn't matter too much.
-// */
-//     // clear input/output buffers
-//     ros::spinOnce();
-//     // this is needed to ensure a const. loop rate
-//     loop_rate.sleep();
-//   }
-if(argc<3)
+	if(argc<3)
 	{
-		ros::Subscriber imageSub = nh.subscribe<sensor_msgs::Image>(
-      "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1));
+		showUsage();
 	}
-
-  cv::namedWindow("view");
-  cv::startWindowThread();
-  //change the exposure
-  cv::VideoCapture cap;
-  cap.set(cv::CAP_PROP_EXPOSURE,10);
-  ros::Rate loop_rate(25);
-  while (ros::ok())
-  {
-
-    // clear input/output buffers
-    ros::spinOnce();
-    // this is needed to ensure a const. loop rate
-    loop_rate.sleep();
-
-
-  
-
-
-
 	QTime time;
 
 	// GUI stuff
@@ -204,7 +87,6 @@ if(argc<3)
 
 	if(!objectImg.empty() && !sceneImg.empty())
 	{
-		printf("Let's start");
 		printf("Loading images: %d ms\n", time.restart());
 		std::vector<cv::KeyPoint> objectKeypoints;
 		std::vector<cv::KeyPoint> sceneKeypoints;
@@ -315,8 +197,8 @@ if(argc<3)
 		// PROCESS NEAREST NEIGHBOR RESULTS
 		////////////////////////////
 		// Set gui data
-//		ObjWidget objWidget(0, objectKeypoints, QMultiMap<int,int>(), cvtCvMat2QImage(objectImg));
-//		ObjWidget sceneWidget(0, sceneKeypoints, QMultiMap<int,int>(), cvtCvMat2QImage(sceneImg));
+		ObjWidget objWidget(0, objectKeypoints, QMultiMap<int,int>(), cvtCvMat2QImage(objectImg));
+		ObjWidget sceneWidget(0, sceneKeypoints, QMultiMap<int,int>(), cvtCvMat2QImage(sceneImg));
 
 		// Find correspondences by NNDR (Nearest Neighbor Distance Ratio)
 		float nndrRatio = 0.8f;
@@ -395,21 +277,21 @@ if(argc<3)
 			{
 				if(outlier_mask.at(k))
 				{
-//					objWidget.setKptColor(indexes_1.at(k), color);
-//					sceneWidget.setKptColor(indexes_2.at(k), color);
+					objWidget.setKptColor(indexes_1.at(k), color);
+					sceneWidget.setKptColor(indexes_2.at(k), color);
 				}
 				else
 				{
-//					objWidget.setKptColor(indexes_1.at(k), QColor(255,0,0,alpha));
-//					sceneWidget.setKptColor(indexes_2.at(k), QColor(255,0,0,alpha));
+					objWidget.setKptColor(indexes_1.at(k), QColor(255,0,0,alpha));
+					sceneWidget.setKptColor(indexes_2.at(k), QColor(255,0,0,alpha));
 				}
 			}
 			QPen rectPen(color);
 			rectPen.setWidth(4);
-//			QGraphicsRectItem * rectItem = new QGraphicsRectItem(objWidget.pixmap().rect());
-//			rectItem->setPen(rectPen);
-//			rectItem->setTransform(hTransform);
-//			sceneWidget.addRect(rectItem);
+			QGraphicsRectItem * rectItem = new QGraphicsRectItem(objWidget.pixmap().rect());
+			rectItem->setPen(rectPen);
+			rectItem->setTransform(hTransform);
+			sceneWidget.addRect(rectItem);
 			printf("Inliers=%d Outliers=%d\n", inliers, outliers);
 		}
 		else
@@ -418,50 +300,43 @@ if(argc<3)
 		}
 
 		// Wait for gui
-		// objWidget.setGraphicsViewMode(false);
-		// objWidget.setWindowTitle("Object");
-		// if(objWidget.pixmap().width() <= 800)
-		// {
-		// 	objWidget.setMinimumSize(objWidget.pixmap().width(), objWidget.pixmap().height());
-		// }
-		// else
-		// {
-		// 	objWidget.setMinimumSize(800, 600);
-		// 	objWidget.setAutoScale(false);
-		// }
+		objWidget.setGraphicsViewMode(false);
+		objWidget.setWindowTitle("Object");
+		if(objWidget.pixmap().width() <= 800)
+		{
+			objWidget.setMinimumSize(objWidget.pixmap().width(), objWidget.pixmap().height());
+		}
+		else
+		{
+			objWidget.setMinimumSize(800, 600);
+			objWidget.setAutoScale(false);
+		}
 
-		// sceneWidget.setGraphicsViewMode(false);
-		// sceneWidget.setWindowTitle("Scene");
-		// if(sceneWidget.pixmap().width() <= 800)
-		// {
-		// 	sceneWidget.setMinimumSize(sceneWidget.pixmap().width(), sceneWidget.pixmap().height());
-		// }
-		// else
-		// {
-		// 	sceneWidget.setMinimumSize(800, 600);
-		// 	sceneWidget.setAutoScale(false);
-		// }
+		sceneWidget.setGraphicsViewMode(false);
+		sceneWidget.setWindowTitle("Scene");
+		if(sceneWidget.pixmap().width() <= 800)
+		{
+			sceneWidget.setMinimumSize(sceneWidget.pixmap().width(), sceneWidget.pixmap().height());
+		}
+		else
+		{
+			sceneWidget.setMinimumSize(800, 600);
+			sceneWidget.setAutoScale(false);
+		}
 
-		// sceneWidget.show();
-		// objWidget.show();
+		sceneWidget.show();
+		objWidget.show();
 
 		int r = app.exec();
 		printf("Closing...\n");
 
 		return r;
-
-    
 	}
 	else
 	{
 		printf("Images are not valid!\n");
 		showUsage();
 	}
-  }
 
 	return 1;
-
-
-
-  ros::spin();
 }
