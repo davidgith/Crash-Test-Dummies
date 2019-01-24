@@ -33,7 +33,7 @@ class deviation
 		int I = 0;
 		int D = 3;
 		int distance = 0;
-		int distanceMem[40] = { 0 };
+		int distanceMem[25] = { 0 };
 		int distanceSum = 0;
 
 		void pushIntoDistanceMem(int element)
@@ -46,7 +46,7 @@ class deviation
 		}
 		void getDistanceMemSum()
 		{
-			for (int i = 0; i < 40; i++)
+			for (int i = 0; i < 25; i++)
 			{
 				distanceSum += distanceMem[i];
 			}
@@ -114,8 +114,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
 		deviation devi;
     //stop flag;
     int noVision = 0;
-
     devi.distance = 0;
+    //tur0 == 1 means it goes alone right side, -1 left side
     if(turn == 1)
     {
       int lastValidSearch = 0;
@@ -186,7 +186,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     devi.P = newconfig->P_int_param;
     devi.I = newconfig->I_int_param;
     devi.D = newconfig->D_int_param;
-		*control_deviation = (devi.P * devi.distanceMem[0] + devi.D * (devi.distanceMem[0] - devi.distanceMem[2]) + devi.I * devi.distanceSum/100)/100;
+    //we actually only used PD Regler
+		*control_deviation = (devi.P * devi.distanceMem[0] + devi.D * (devi.distanceMem[0] - devi.distanceMem[10]) + devi.I * devi.distanceSum/100)/100;
     //a flag, works when no vision, to stop the car
     if(noVision == 20)
     {
