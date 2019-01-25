@@ -26,8 +26,8 @@ using namespace std;
 using namespace Eigen;
 
 // IPM Calibration Configurations
-#define ROBOT_POSITION_PIXEL_X 465
-#define ROBOT_OFFSET_PIXEL_Y 60
+#define ROBOT_POSITION_PIXEL_X 453
+#define ROBOT_OFFSET_PIXEL_Y 76
 #define METER_PER_PIXEL_X 0.0038f
 #define METER_PER_PIXEL_Y 0.005f
 
@@ -311,7 +311,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
         leftmostPoints.push_back(std::get<0>(detectedLanePoints.at(i)));
       }
     }
-    ROS_INFO("Interesting points selected! t = %f", usefulPoints.size(), double(clock() - begin) / CLOCKS_PER_SEC);
+    ROS_INFO("Interesting points selected! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
 
     // Generate waypoints from detected lane points
@@ -606,11 +606,11 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
 #pragma region
     if (DEBUG_OUTPUT) {
       // Visualization of original image space + robot space
-      cv::Rect helperROI(0, 0, width, 60);
+      cv::Rect helperROI(0, 0, width, ROBOT_OFFSET_PIXEL_Y);
       cv::Mat transformedOriginalImage, transformedFullImage;
       cvtColor(transformedImage, transformedOriginalImage, CV_HSV2BGR);
       cv::Mat bottomFill = transformedOriginalImage(helperROI).clone();
-      cv::rectangle(bottomFill, Point(0,0), Point(width, 60), cv::Scalar(0,0,0), -1);
+      cv::rectangle(bottomFill, Point(0,0), Point(width, ROBOT_OFFSET_PIXEL_Y), cv::Scalar(0,0,0), -1);
       cv::vconcat(transformedOriginalImage, bottomFill, transformedFullImage);
 
       // Visualization of waypoints
@@ -653,7 +653,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
       for (int i = 0; i < N_QUADPROG_VARS; i++)
         ROS_INFO("Finished MPC test! u(%f) = %f", MPC_DT * i, u[i]);
 
-      cv::waitKey(1);
+      //cv::waitKey(1);
     }
 #pragma endregion DEBUG OUTPUT
   }
