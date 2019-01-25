@@ -28,8 +28,8 @@ using namespace Eigen;
 // IPM Calibration Configurations
 #define ROBOT_POSITION_PIXEL_X 465
 #define ROBOT_OFFSET_PIXEL_Y 60
-#define METER_PER_PIXEL_X 0.0033f
-#define METER_PER_PIXEL_Y 0.0048f
+#define METER_PER_PIXEL_X 0.0038f
+#define METER_PER_PIXEL_Y 0.005f
 
 // Waypointing Configurations
 #define WINDOW_SIZE 10
@@ -653,7 +653,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
       for (int i = 0; i < N_QUADPROG_VARS; i++)
         ROS_INFO("Finished MPC test! u(%f) = %f", MPC_DT * i, u[i]);
 
-      //cv::waitKey(1);
+      cv::waitKey(1);
     }
 #pragma endregion DEBUG OUTPUT
   }
