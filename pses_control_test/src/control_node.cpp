@@ -66,6 +66,10 @@ static bool INTERPOLATE_WITH_CURRENT_POSITION = false;
 static bool LEFT_LANE = false;
 static double TARGET_VELOCITY = 0.2f;
 
+// Extra Configurations
+static bool DIRECT_TRAJECTORY = false;
+static bool FILL_PINK_LANE = false;
+
 static double timeSinceApplyingLastInput = 0;
 static double timeLastMPCCalc = 0;
 
@@ -82,6 +86,9 @@ void callback(pses_control_test::ParamsConfig &config, uint32_t level)
   INTERPOLATE_WITH_CURRENT_POSITION = config.wp_interpolate_using_robot_position;
   LEFT_LANE = config.ctrl_left_lane;
   TARGET_VELOCITY = config.ctrl_velocity;
+
+  DIRECT_TRAJECTORY = config.direct_trajectory;
+  FILL_PINK_LANE = config.fill_pink_lane;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -275,6 +282,38 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
     }
     ROS_INFO("Sliding window search done! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
+    // Fill-in pink lane for the picture
+    if (FILL_PINK_LANE) {
+      Point lastPink = Point(-1, -1);
+      for (int i = detectedLanePoints.size() - 1; i >= 0; i--) {
+        Point currPink = std::get<1>(detectedLanePoints.at(i));
+        if (currPink.x != -1) {
+          if (lastPink.x != -1) {
+            cv::line(transformedImage, lastPink, currPink, cv::Scalar(165,150,255), 7);
+          }
+
+          lastPink = currPink;
+        }
+      }
+
+      // Continue line backwards
+      Point bestPrevLastPink = Point(-1, -1);
+      for (int i = detectedLanePoints.size() - 1; i >= 0; i--) {
+        Point currPink = std::get<1>(detectedLanePoints.at(i));
+        if (currPink.x != -1 && currPink.y != lastPink.y && currPink.y + 80 > lastPink.y) {
+          bestPrevLastPink = currPink;
+          break;
+        }
+      }
+
+      if (lastPink.x != -1 && bestPrevLastPink.x != -1) {
+        Point delta = lastPink - bestPrevLastPink;
+        int deltaStepsUntilOutOfBounds = (height + ROBOT_OFFSET_PIXEL_Y - lastPink.y - 1) / delta.y;
+        //ROS_INFO("test %d %d %d %d %d", deltaStepsUntilOutOfBounds, delta.x, delta.y, bestPrevLastPink.x, bestPrevLastPink.y);
+        Point drawEndPoint = Point(lastPink.x + delta.x * deltaStepsUntilOutOfBounds, lastPink.y + delta.y * deltaStepsUntilOutOfBounds);
+        cv::line(transformedImage, lastPink, drawEndPoint, cv::Scalar(165,150,255), 7);
+      }
+    }
 
     // Select interesting tuples
     std::vector<std::tuple<Point, Point, Point>> usefulPoints;
@@ -287,6 +326,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
         && std::get<2>(detectedLanePoints.at(i)).x != -1)
         usefulPoints.push_back(detectedLanePoints.at(i));
     }
+
     // Select rightmost points
     std::vector<Point> rightmostPoints;
     for (int i = 0; i < detectedLanePoints.size(); i++) {
@@ -299,6 +339,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
         rightmostPoints.push_back(std::get<0>(detectedLanePoints.at(i)));
       }
     }
+
     // Select leftmost points
     std::vector<Point> leftmostPoints;
     for (int i = 0; i < detectedLanePoints.size(); i++) {
@@ -405,9 +446,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
           }
         }
       }
-
     } 
-    // If we do not have enough useful point pairs, we fallback to detecting a turn
+    // If we do not have enough useful point pairs, we fallback to detecting leftward/rightward
     else if (isLeftTurn(leftmostPoints, rightmostPoints)) {
       // Left turn fallback -> drive left from rightmost points
       for (int i = 0; i < rightmostPoints.size(); i++) {
@@ -434,25 +474,39 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
 #pragma endregion Waypoint Extraction
 
 #pragma region
-    // Fit a quadratic polynomial x(y) as nominal trajectory
+    // Fit a polynomial x(y) as nominal trajectory
     std::vector<double> xs;
     std::vector<double> ys;
     std::vector<double> trajectory_coeffs;
 
-    //Optional: add current robot position to fitting waypoints
-    if (INTERPOLATE_WITH_CURRENT_POSITION) {
+    if (DIRECT_TRAJECTORY) {
+      // Linear polynomial from robot position to waypoint
       xs.push_back(ROBOT_POSITION_PIXEL_X);
       ys.push_back(height + ROBOT_OFFSET_PIXEL_Y);
+
+      xs.push_back(wayPoints.at(0).x);
+      ys.push_back(wayPoints.at(0).y);
+
+      polyfit(ys, xs, trajectory_coeffs, 1); 
+
+    } else {
+      // Quadratic polynomial:
+      //Optional: add current robot position to fitting waypoints
+      if (INTERPOLATE_WITH_CURRENT_POSITION) {
+        xs.push_back(ROBOT_POSITION_PIXEL_X);
+        ys.push_back(height + ROBOT_OFFSET_PIXEL_Y);
+      }
+
+      for (int i = 0; i < wayPoints.size(); i++) {
+        xs.push_back(wayPoints.at(i).x);
+        ys.push_back(wayPoints.at(i).y);
+      }
+
+      polyfit(ys, xs, trajectory_coeffs, 2); 
     }
 
-    for (int i = 0; i < wayPoints.size(); i++) {
-      xs.push_back(wayPoints.at(i).x);
-      ys.push_back(wayPoints.at(i).y);
-    }
-    polyfit(ys, xs, trajectory_coeffs, 2); 
-    ROS_INFO("Finished fitting trajectory! t = %f, coeffs: %f %f %f", 
-      double(clock() - begin) / CLOCKS_PER_SEC,
-      trajectory_coeffs.at(0), trajectory_coeffs.at(1), trajectory_coeffs.at(2));
+    ROS_INFO("Finished fitting trajectory! t = %f", 
+      double(clock() - begin) / CLOCKS_PER_SEC);
 #pragma endregion Trajectory Planning
 
 #pragma region
@@ -641,19 +695,24 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
         cv::circle(transformedFullImage, Point(round(predicted_x), round(predicted_y)), 2, cv::Scalar(0,0,255), -1, 8, 0);
       }
 
+      // Transform back into original image
+      // TODO
+      cv::Mat fullImage;
+      ipm->applyHomographyInv(transformedFullImage, fullImage);		
+
       // Show debug pictures
       // cv::imshow("raw", image);
       // cv::imshow("transformed", transformedImage);    
       // cv::imshow("thresholdedGreen", ThreshImageGreen);  
       // cv::imshow("thresholdedPink", ThreshImagePink);    
-      // cv::imshow("windowed", transformedImage);    
-      cv::imshow("windowedOrig", transformedFullImage);    
+      cv::imshow("windowed", transformedFullImage);    
+      cv::imshow("windowedOrig", fullImage);    
       ROS_INFO("Finished debug output! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
       for (int i = 0; i < N_QUADPROG_VARS; i++)
         ROS_INFO("Finished MPC test! u(%f) = %f", MPC_DT * i, u[i]);
 
-      //cv::waitKey(1);
+      cv::waitKey(1);
     }
 #pragma endregion DEBUG OUTPUT
   }
@@ -708,10 +767,10 @@ int main(int argc, char** argv)
   ros::Publisher steeringCtrl =
       nh.advertise<std_msgs::Int16>("/uc_bridge/set_steering_level_msg", 1);
 
-  cv::namedWindow("raw");
-  cv::namedWindow("transformed");
-  cv::namedWindow("thresholdedGreen");
-  cv::namedWindow("thresholdedPink");
+  // cv::namedWindow("raw");
+  // cv::namedWindow("transformed");
+  // cv::namedWindow("thresholdedGreen");
+  // cv::namedWindow("thresholdedPink");
   cv::namedWindow("windowed");
   cv::namedWindow("windowedOrig");
   cv::startWindowThread();
@@ -742,7 +801,7 @@ int main(int argc, char** argv)
         steering.data = max(-1000, min(1000, u_steering));
         // steering.data = u;
         steeringCtrl.publish(steering);
-        ROS_INFO("u = %d", steering.data);
+        //ROS_INFO("u = %d", steering.data);
       }
     }
 

@@ -17,6 +17,7 @@ public:
 	// Apply IPM on points
 	cv::Point2d applyHomography(const cv::Point2d& _point, const cv::Mat& _H);
 	void applyHomography( const cv::Mat& _origBGR, cv::Mat& _ipmBGR, int borderMode = cv::BORDER_CONSTANT);
+	void applyHomographyInv( const cv::Mat& _ipmBGR, cv::Mat& _origBGR, int borderMode = cv::BORDER_CONSTANT);
 
 private:
 	void createMaps();
@@ -35,6 +36,7 @@ private:
 
 	// Maps	
 	cv::Mat m_mapX, m_mapY;
+	cv::Mat m_invMapX, m_invMapY;
 };
 
 #endif /*__IPM_H__*/
