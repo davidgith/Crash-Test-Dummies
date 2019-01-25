@@ -41,12 +41,12 @@ using namespace Eigen;
 #define MPC_WEIGHT_Y 1000.0f
 #define MPC_WEIGHT_PHI 0.0f
 
-#define U_LOWERBOUND (-3.1415f / 12)
-#define U_UPPERBOUND (3.1415f / 12)
+#define U_LOWERBOUND (-3.1415f * 21 / 180)
+#define U_UPPERBOUND (3.1415f * 21 / 180)
 
 // MPC Model Definitions
-#define MODEL_PARAM_L_H 0.1f
-#define MODEL_PARAM_L 0.1f
+#define MODEL_PARAM_L_H 0.13f
+#define MODEL_PARAM_L 0.26f
 #define N_STATES 2
 #define N_INPUTS 1
 #define N_QUADPROG_VARS (N_INPUTS * MPC_STEPS)
