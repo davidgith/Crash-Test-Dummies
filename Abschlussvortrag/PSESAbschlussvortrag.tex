@@ -1,0 +1,96 @@
+\documentclass[nochapterpage,bigchapter,linedtoc,longdoc,colorback,accentcolor=tud4c]{tudreport}
+\usepackage{ngerman}
+
+\usepackage[stable]{footmisc}
+\usepackage[ngerman]{hyperref}
+
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{booktabs}
+
+\hypersetup{%
+  pdftitle={PSES Abschlussbericht},
+  pdfauthor={Crash Test Dummies},
+  pdfsubject={Beispieltext},
+  pdfview=FitH,
+  pdfstartview=FitV
+}
+
+%%% Zum Tester der Marginalien %%%
+  \newif\ifTUDmargin\TUDmarginfalse
+  %%% Wird der Folgende Zeile einkommentiert,
+  %%% werden Marginalien gesetzt.
+  % \TUDmargintrue
+  \ifTUDmargin\makeatletter
+    \TUD@setmarginpar{2}
+  \makeatother\fi
+%%% ENDE: Zum Tester der Marginalien %%%
+
+\newlength{\longtablewidth}
+\setlength{\longtablewidth}{0.7\linewidth}
+\addtolength{\longtablewidth}{-\marginparsep}
+\addtolength{\longtablewidth}{-\marginparwidth}
+
+
+% \settitlepicture{tudreport-pic}
+% \printpicturesize
+
+\title{Abschlussbericht\\Projektseminar\\Echtzeitsysteme}
+\subtitle{Crash Test Dummies}
+\subsubtitle{Kai Cui\\Feiyu Chang\\Regis Fayard\\Lars Semmler\\David Botschek}
+%\setinstitutionlogo[width]{TUD_sublogo}
+%\sponsor{\color{tud9b}\rule{\linewidth}{7mm}}
+\sponsor{\hfill\includegraphics[height=6ex]{tud_logo}\hspace{1em}\includegraphics[height=6ex]{TUD_chaos}}
+
+\begin{document}
+\maketitle 
+
+\tableofcontents
+
+  \chapter{Einführung}
+  
+  In der Automobilindustrie wird immer mehr auf autonomes Fahren gesetzt. Hier werden in der Entwicklung ständig neue Meilensteine erreicht, sodass ein Fahren ohne eine Person am Steuer immer realistischer wird.
+  \\
+  
+  Eine kleine Einführung will hier das Projektseminar Echtzeitsysteme der TU Darmstadt bieten. Anhand eines Modellautos werden Ansätze realitätsnaher Algorithmen diskutiert und ausprobiert. Die Kommunikation mit dem Auto geschieht mit Hilfe des Programms Robot Operating System (ROS). Mit dieser Methode testet auch der Kooperationspartner „Fachgebiet Fahrzeugtechnik (FZD)“ Lösungen am echten Auto, was die Relevanz dieses Projektseminars unterstreicht.
+  Ein weiterer, nicht weniger wichtiger Schwerpunkt des Seminars ist die erfolgreiche Planung und Durchführung der Gruppenarbeit. Die 5 Mitglieder der einzelnen Gruppen werden aus verschiedenen Vertiefungsrichtungen zugeteilt, damit jeder eigenes Knowhow mitbringen kann. Die verschiedenen Rollen und Verantwortlichkeiten werden im Team erprobt.
+  
+  \paragraph{Fahrzeug}
+  Dem Fahrzeug stehen verschiedene Sensoren wie der Ultraschall-, Gyro-, und Hallsensor sowie eine Kinect-Kamera zur Verfügung um das Umfeld möglichst realitätsnah wahrzunehmen. Durch die Kamera kann man sowohl auf ein Farbbild als auch auf ein Tiefenbild zugreifen was eine präzise Bildverarbeitung ermöglicht.
+  
+  \paragraph{Aufgaben}
+  Die verschiedenen Fortschritte wurden nach einzelnen Aufgaben gestaffelt. Das Abfahren eines Rundkurses anhand der Analyse zweier Linien stellte die Basis- und Pflichtaufgabe dar. Weitere Aufgaben durften selbst vorgeschlagen werden, als mögliche Beispiele wurden Spurwechsel, Hinderniserkennung und Verkehrsschilderkennung vorgeschlagen.
+  Unsere Gruppe entschied sich für Spurwechsel und Erkennung der Schilder.
+  Zum Projektumfang zählten aber genauso auch das Festlegen von und Prüfen in Testszenarien um die Funktionalität und Zuverlässigkeit autonomer Steuerungen sicherzustellen.  
+  
+  \chapter{Projektorganisation}
+  
+  Für einen reibungslosen Ablauf haben wir zu Beginn geplant, wie wir unsere Kommunikation gestalten wollen und konnten mit Hilfe unten aufgführter Tools eine erfolgsversprechende Roadmap erzielen.
+  Die Seminarorganisation schrieb ein regelmäßiges Treffen mit dem Seminarleiter vor um Hilfestellungen und Tipps zu ermöglichen. Vom Fachgebiet Fahrzeugtechnik wurde alle 2 Wochen eine Fragerunde zu regelungstechnischen Problemen angeboten. Dieses Treffen diente auch als Austausch mit den anderen Gruppen.
+  In unsere Kleingruppe entschieden wir uns dazu, einmal wöchentlich zusammen am Auto zu arbeiten um gegenseitiges Helfen zu ermöglichen und immer wieder den Stand abzuklären sowie den nächsten kurzen Abschnitt zu planen.
+  Den Rest der Woche wurde selbstständig an den neu zugeteilten Aufgaben weitergearbeitet.
+  Bei akuten Fragen und Problemen fand ebenso eine ständige Kommunikation über WhatsApp statt.
+  
+  \subparagraph{Trello}
+  Damit wir die Aufgaben präzise und strukturiert festhalten konnten haben wir uns für das Organisations-Tool Trello entschieden. Hiermit konnten wir durch Anlegen von Listen unsere Punkte in „ToDo“, „Meeting“, „Gemacht“ und „Aufgaben für die Zukunft“ aufteilen.
+  
+  \subparagraph{Github}
+  Für die Synchronisierung des Programmcodes haben wir das Versionsverwaltungsprogramm GitHub genutzt. Dadurch konnten wir komfortabel den Programmiercode des Fahrzeugs austauschen sowie bei Fehlern auf alte Code-Zustände zurückgreifen.
+  
+  \chapter{Testcases}
+  
+  \chapter{Regelansätze}
+  
+  \section{1.Ansatz}
+  
+  \section{2.Ansatz}
+  
+  \chapter{Schildererkennung}
+  
+  \chapter{Auswertung}
+  
+  \chapter{Konklusion}
+  
+
+  \listoffigures\addcontentsline{toc}{chapter}{\listfigurename}
+\end{document}
