@@ -29,7 +29,7 @@ void callback(pses_control_2::TutorialsConfig &config, uint32_t level, pses_cont
 class deviation
 {
 	public:
-		int P = 413;
+		int P = 270;
 		int I = 0;
 		int D = 3;
 		int distance = 0;
@@ -61,14 +61,15 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
   {
     cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image;
     cv::Mat HSVImage;
-
+    cv::Mat HSVImage2;
     cvtColor(image,HSVImage,CV_BGR2HSV);
-    //cv::imshow("row", HSVImage);
-    
+    cvtColor(image,HSVImage2,CV_BGR2HSV);
 
-    // filter green
+    // filter green and pink
     cv::Mat ThreshImage;
+    cv::Mat ThreshImage2;
     cv::Mat FiltedImage;
+    cv::Mat FiltedImage2;
     int H_min = newconfig->H_min_int_param;
     int H_max = newconfig->H_max_int_param;
     int S_min = newconfig->S_min_int_param;
@@ -76,22 +77,25 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     int V_min = newconfig->V_min_int_param;
     int V_max = newconfig->V_max_int_param;  
     inRange(HSVImage,cv::Scalar(H_min,S_min,V_min),cv::Scalar(H_max,S_max,V_max),ThreshImage);
+    inRange(HSVImage2,cv::Scalar(135,S_min,V_min),cv::Scalar(175,S_max,V_max),ThreshImage2);
     medianBlur(ThreshImage, FiltedImage, 7);
-    if(imagecounter == 30)
-    {
-      cv::imshow("view", FiltedImage);
-      imagecounter = 0;
-    }
-    //cv::waitKey(30);
-
+    medianBlur(ThreshImage2, FiltedImage2, 7);
+    //cv::imshow("view", FiltedImage2);
+    // if(imagecounter == 30)
+    // {
+    //   cv::imshow("view", FiltedImage);
+    //   cv::imshow("view2", FiltedImage2);
+    //   imagecounter = 0;
+    // }
+    //for greea line
     //get submatrix
     int subMatrix[20][100];
 		double colpick = FiltedImage.cols / 100.0;
 		double rowpick = FiltedImage.rows / 60.0;
 		for (int c = 0; c < 100; c++)
 		{
-      //take the lower half
-			for (int r = 19; r >= 0; r--)
+      //take 1/3 lower part of the FiltedImage and store it in the submatirx
+			for (int r = 0; r <= 19; r++)
 			{
 				int col = c * colpick;
 				int row = (r+40) * rowpick;
@@ -108,16 +112,117 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
 		}
     int standarLineRight[20] = {61,61,61,62,62,62,63,63,63,63,64,64,64,65,65,65,66,66,66,66};
     int standarLineleft[20] = {38,38,38,37,37,37,36,36,36,36,35,35,35,34,34,34,33,33,33,33};
-    int turn = 1;
-    turn = newconfig->turn;
+
+    //for pink line
+     int pinkLine[30] = {0};
+    double colpick2 = FiltedImage2.cols / 100.0;
+		double rowpick2 = FiltedImage2.rows / 60.0;
+    for(int r = 0; r < 30; r++)
+    {
+      for(int c = 0; c < 100; c ++)
+      {
+        int row2 = (r+30) * rowpick2;
+        int col2 = c * colpick2;
+        uchar pixel2 = FiltedImage2.at<uchar>(row2, col2);
+        if(pixel2 > 100)
+        {
+          pinkLine[r] = c;
+        }     
+      }
+    }
+
+
+    //with y = a*x^2 + b -----tmp1 = b  tmp2 = a
+    // double tmp1 = 0;
+    // double tmp2 = 0;
+    // int tmp2cnt = 0;
+    // for(int i = 29; i >= 0; i--)
+    // {
+    //   if(pinkLine[i] != 0)
+    //   {
+    //     tmp1 = pinkLine[i];
+    //     break;
+    //   }
+    // }
+    // for(int i = 28; i >= 0; i--)
+    // {
+    //   if(pinkLine[i] != 0)
+    //   {
+    //     tmp2 = tmp2 + (pinkLine[i] - tmp1)/((29-i)*(29-i));
+    //     tmp2cnt++;
+    //   }
+    // }
+    // tmp2 = tmp2 / tmp2cnt;
+    // for(int i = 29; i >= 0; i--)
+    // {
+    //   pinkLine[i] = (int)(tmp1 + tmp2*(29-i)*(29-i));
+    //   if(pinkLine[i] < 0)
+    //   {
+    //     pinkLine[i] = 0;
+    //   }
+    //   if(pinkLine[i] > 99)
+    //   {
+    //     pinkLine[i] = 99;
+    //   }
+    // }
+
+    // int subMatrix2[30][100] = {0};
+    // for(int r = 0; r < 30; r++)
+    // {
+    //   subMatrix2[r][pinkLine[r]]  = 1;
+    // }
+
+    //with y = a*x + b
+    double tmp1 = 0;
+    double tmp2 = 0;
+    int tmp2cnt = 0;
+    for(int i = 29; i >= 0; i--)
+    {
+      if(pinkLine[i] != 0)
+      {
+        tmp1 = pinkLine[i];
+        break;
+      }
+    }
+    for(int i = 28; i >= 0; i--)
+    {
+      if(pinkLine[i] != 0)
+      {
+        tmp2 = tmp2 + (pinkLine[i] - tmp1)/((29-i));
+        tmp2cnt++;
+      }
+    }
+    tmp2 = tmp2 / tmp2cnt;
+    for(int i = 29; i >= 0; i--)
+    {
+      pinkLine[i] = (int)(tmp1 + tmp2*(29-i));
+      if(pinkLine[i] < 0)
+      {
+        pinkLine[i] = 0;
+      }
+      if(pinkLine[i] > 99)
+      {
+        pinkLine[i] = 99;
+      }
+    }
+
+    int subMatrix2[30][100] = {0};
+    for(int r = 0; r < 30; r++)
+    {
+      subMatrix2[r][pinkLine[r]]  = 1;
+    }
+
+
+    int turn = newconfig->turn;
     //get the deviation(Abweichung)
 		deviation devi;
     //stop flag;
     int noVision = 0;
     devi.distance = 0;
-    //tur0 == 1 means it goes alone right side, -1 left side
+    //tur0 == 1 means it goes alone right side green line, -1 pink line
     if(turn == 1)
     {
+      ROS_INFO("green green green");
       int lastValidSearch = 0;
       for(int y = 19; y >= 0; y--)
       {
@@ -150,21 +255,22 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
 
     if(turn == -1)
     {
+      ROS_INFO("pink pink pink");
       int lastValidSearch = 0;
       for(int y = 19; y >= 0; y--)
       {
         for(int search = 0; search < 30; search++)
         {
-          int startPonit = standarLineleft[y];
+          int startPonit = standarLineRight[y];
           int toLeft = startPonit - search;
           int toRight = startPonit + search;
-          if(subMatrix[y][toLeft] == 1)
+          if(subMatrix2[y + 10][toLeft] == 1)
           {
             lastValidSearch = -search;
             devi.distance = devi.distance - search;
             break;
           }
-          if(subMatrix[y][toRight] == 1)
+          if(subMatrix2[y + 10][toRight] == 1)
           {
             lastValidSearch = +search;
             devi.distance = devi.distance + search;
@@ -187,13 +293,13 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     devi.I = newconfig->I_int_param;
     devi.D = newconfig->D_int_param;
     //we actually only used PD Regler
-		*control_deviation = (devi.P * devi.distanceMem[0] + devi.D * (devi.distanceMem[0] - devi.distanceMem[10]) + devi.I * devi.distanceSum/100)/100;
+		*control_deviation = (devi.P * devi.distanceMem[0] - devi.D * (devi.distanceMem[0] - devi.distanceMem[3]) + devi.I * devi.distanceSum/100)/100;
     //a flag, works when no vision, to stop the car
     if(noVision == 20)
     {
       	*control_deviation = stopSign;
     }
-    cv::waitKey(1);
+    //cv::waitKey(10);
     ROS_INFO("Control deviation set! deviation = %d", *control_deviation);
   }
   catch (cv_bridge::Exception& e)
@@ -244,12 +350,40 @@ int main(int argc, char** argv)
   //control variable
   int lastValidDeviation;
   //lastside can be replaced later by a flag, which can be set because of other event
-  int lastside = 1;
-  int laneChangeCnt = 200;
+  int lastside = newconfig.turn;
+  int laneChangeCnt = 50;
   while (ros::ok())
   {
-    //stop the car because no vision
-    if(control_deviation == stopSign)
+    steering.data = control_deviation;
+
+    if(steering.data >= 900)
+    {
+      steering.data = 900;
+    }
+      if(steering.data <= -900)
+    {
+      steering.data = -900;
+    }
+
+    // if(lastside !=  newconfig.turn)
+    // {
+    //   steering.data = 900 * newconfig.turn;
+    //   if(laneChangeCnt < 20)
+    //   {
+    //     steering.data = 900 * newconfig.turn * (-1);
+    //   }
+    //   motor.data = 400;
+    //   laneChangeCnt--;
+    //   //finish lane change and reset the procedure
+    //   if(laneChangeCnt == 0)
+    //   {
+    //     lastside = newconfig.turn;
+    //     laneChangeCnt = 200;
+    //   }
+    // }
+
+    // //stop the car because no vision
+    if((control_deviation == stopSign) && (lastside == newconfig.turn))
     {
       motor.data = 0;
       motorCtrl.publish(motor);
@@ -258,34 +392,8 @@ int main(int argc, char** argv)
     {
       lastValidDeviation = control_deviation;
     }
-    steering.data = control_deviation;
-
-    if(steering.data >= 1000)
-    {
-      steering.data = 1000;
-    }
-      if(steering.data <= -1000)
-    {
-      steering.data = -1000;
-    }
-    ROS_INFO("steering %d",steering.data);
-    if((lastside !=  newconfig.turn) && (control_deviation != stopSign))
-    {
-      steering.data = 1000 * newconfig.turn;
-      if(laneChangeCnt < 100)
-      {
-        steering.data = 1000 * newconfig.turn * (-1);
-      }
-      motor.data = 500;
-      laneChangeCnt--;
-      //finish lane change and reset the procedure
-      if(laneChangeCnt == 0)
-      {
-        lastside = newconfig.turn;
-        laneChangeCnt = 200;
-      }
-    }
     // publish command messages on their topics
+    ROS_INFO("steering %d     motor %d", steering.data, motor.data);
     steeringCtrl.publish(steering);
     // side note: setting steering and motor even though nothing might have
     // changed is actually stupid but for this demo it doesn't matter too much.
