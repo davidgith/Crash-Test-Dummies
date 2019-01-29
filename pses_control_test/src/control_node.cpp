@@ -37,8 +37,8 @@ using namespace Eigen;
 #define MIN_LANE_POINT_PAIRS 3
 
 // Model Predictive Control Parameters
-#define MPC_WEIGHT_U 0.01f
-#define MPC_WEIGHT_Y 1000.0f
+static double MPC_WEIGHT_U = 0.01f;
+static double MPC_WEIGHT_Y = 10.0f;
 #define MPC_WEIGHT_PHI 0.0f
 
 #define U_LOWERBOUND (-3.1415f * 21 / 180)
@@ -50,6 +50,8 @@ using namespace Eigen;
 #define N_STATES 2
 #define N_INPUTS 1
 #define N_QUADPROG_VARS (N_INPUTS * MPC_STEPS)
+
+#define STOP_SIGNAL -1024
 
 // Optimizations
 static bool DEBUG_OUTPUT = true;
@@ -67,8 +69,9 @@ static bool LEFT_LANE = false;
 static double TARGET_VELOCITY = 0.2f;
 
 // Extra Configurations
-static bool DIRECT_TRAJECTORY = false;
+static bool DIRECT_TRAJECTORY = true;
 static bool FILL_PINK_LANE = false;
+static int MOTOR_CTRL = 0;
 
 static double timeSinceApplyingLastInput = 0;
 static double timeLastMPCCalc = 0;
@@ -81,14 +84,17 @@ void callback(pses_control_test::ParamsConfig &config, uint32_t level)
   MPC_DT = config.mpc_timestep;
   MPC_STEPS = config.mpc_number_timesteps;
   MPC_RECALC_INTERVAL = config.mpc_update_rate;
+  MPC_WEIGHT_Y = config.mpc_weight_state;
+  MPC_WEIGHT_U = config.mpc_weight_ctrl;
+
   DETECTION_END_OFFSET_Y = config.detection_end_offset;
 
-  INTERPOLATE_WITH_CURRENT_POSITION = config.wp_interpolate_using_robot_position;
   LEFT_LANE = config.ctrl_left_lane;
   TARGET_VELOCITY = config.ctrl_velocity;
 
   DIRECT_TRAJECTORY = config.direct_trajectory;
   FILL_PINK_LANE = config.fill_pink_lane;
+  MOTOR_CTRL = config.motor_ctrl;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -469,6 +475,9 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
     // If we could not find more than three wayPoints, we stop and do nothing
     if (wayPoints.size() <= 3) {
       ROS_INFO("Too few waypoints, skipping! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+      std::queue<double> empty;
+      std::swap(*u_queue, empty);
+      u_queue->push(STOP_SIGNAL); 
       return;
     }
 #pragma endregion Waypoint Extraction
@@ -802,6 +811,12 @@ int main(int argc, char** argv)
         // steering.data = u;
         steeringCtrl.publish(steering);
         //ROS_INFO("u = %d", steering.data);
+
+        // If an error occurs, stop the car, else drive with given speed
+        if (phi_L == STOP_SIGNAL)
+          motorCtrl.publish(0);
+        else 
+          motorCtrl.publish(MOTOR_CTRL);
       }
     }
 
