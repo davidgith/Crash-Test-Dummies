@@ -10,9 +10,12 @@
 
 #define stopSign 99999999
 
-void callback(pses_control_2::TutorialsConfig &config, uint32_t level, pses_control_2::TutorialsConfig* newconfig) 
+static int control_deviation = 0;
+static pses_control_2::TutorialsConfig newconfig;
+
+void callback(pses_control_2::TutorialsConfig &config) 
 {
-    *newconfig = config;
+    newconfig = config;
     ROS_INFO("Parameter are reconfigured:\n P:%d\n I:%d\n D:%d\n H_min:%d\n H_max:%d\n S_min:%d\n S_max:%d\n V_min:%d\n V_max:%d\n turn:%d\n", 
     config.P_int_param, 
     config.I_int_param, 
@@ -53,7 +56,7 @@ class deviation
 		}
 };
 
-void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation, pses_control_2::TutorialsConfig* newconfig)
+void imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
   static int imagecounter = 0; 
   imagecounter++;
@@ -70,12 +73,12 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     cv::Mat ThreshImage2;
     cv::Mat FiltedImage;
     cv::Mat FiltedImage2;
-    int H_min = newconfig->H_min_int_param;
-    int H_max = newconfig->H_max_int_param;
-    int S_min = newconfig->S_min_int_param;
-    int S_max = newconfig->S_max_int_param;
-    int V_min = newconfig->V_min_int_param;
-    int V_max = newconfig->V_max_int_param;  
+    int H_min = newconfig.H_min_int_param;
+    int H_max = newconfig.H_max_int_param;
+    int S_min = newconfig.S_min_int_param;
+    int S_max = newconfig.S_max_int_param;
+    int V_min = newconfig.V_min_int_param;
+    int V_max = newconfig.V_max_int_param;  
     inRange(HSVImage,cv::Scalar(H_min,S_min,V_min),cv::Scalar(H_max,S_max,V_max),ThreshImage);
     inRange(HSVImage2,cv::Scalar(135,S_min,V_min),cv::Scalar(175,S_max,V_max),ThreshImage2);
     medianBlur(ThreshImage, FiltedImage, 7);
@@ -213,7 +216,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     }
 
 
-    int turn = newconfig->turn;
+    int turn = newconfig.turn;
     //get the deviation(Abweichung)
 		deviation devi;
     //stop flag;
@@ -289,23 +292,27 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int* control_deviation
     
 		devi.pushIntoDistanceMem(devi.distance);
 		devi.getDistanceMemSum();
-    devi.P = newconfig->P_int_param;
-    devi.I = newconfig->I_int_param;
-    devi.D = newconfig->D_int_param;
+    devi.P = newconfig.P_int_param;
+    devi.I = newconfig.I_int_param;
+    devi.D = newconfig.D_int_param;
     //we actually only used PD Regler
-		*control_deviation = (devi.P * devi.distanceMem[0] - devi.D * (devi.distanceMem[0] - devi.distanceMem[3]) + devi.I * devi.distanceSum/100)/100;
+		control_deviation = (devi.P * devi.distanceMem[0] - devi.D * (devi.distanceMem[0] - devi.distanceMem[3]) + devi.I * devi.distanceSum/100)/100;
     //a flag, works when no vision, to stop the car
     if(noVision == 20)
     {
-      	*control_deviation = stopSign;
+      	control_deviation = stopSign;
     }
     //cv::waitKey(10);
-    ROS_INFO("Control deviation set! deviation = %d", *control_deviation);
+    ROS_INFO("Control deviation set! deviation = %d", control_deviation);
   }
   catch (cv_bridge::Exception& e)
   {
     ROS_ERROR("Could not convert from '%s' to 'bgr8'.", msg->encoding.c_str());
   }
+}
+
+void imageCallbackTest(const sensor_msgs::ImageConstPtr& msg) {
+
 }
 
 int main(int argc, char** argv)
@@ -316,20 +323,20 @@ int main(int argc, char** argv)
   ros::NodeHandle nh;
 
   //reconfig
-  pses_control_2::TutorialsConfig newconfig;
   dynamic_reconfigure::Server<pses_control_2::TutorialsConfig> server;
   dynamic_reconfigure::Server<pses_control_2::TutorialsConfig>::CallbackType f;
 
-  f = boost::bind(&callback, _1, _2, &newconfig);
+  f = boost::bind(&callback, _1);
   server.setCallback(f);
 
   // sensor message container
-  int control_deviation = 0;
   std_msgs::Int16 motor, steering;
 
   // generate subscriber for sensor messages
+  // ros::Subscriber imageSub = nh.subscribe<sensor_msgs::Image>(
+  //     "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, &control_deviation, &newconfig));
   ros::Subscriber imageSub = nh.subscribe<sensor_msgs::Image>(
-      "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, &control_deviation, &newconfig));
+      "kinect2/qhd/image_color", 1, imageCallback, ros::TransportHints().tcpNoDelay());
 
   // generate control message publisher
   ros::Publisher motorCtrl =
