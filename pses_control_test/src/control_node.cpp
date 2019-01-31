@@ -721,7 +721,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
       for (int i = 0; i < N_QUADPROG_VARS; i++)
         ROS_INFO("Finished MPC test! u(%f) = %f", MPC_DT * i, u[i]);
 
-      //cv::waitKey(1);
+      cv::waitKey(1);
     }
 #pragma endregion DEBUG OUTPUT
   }
