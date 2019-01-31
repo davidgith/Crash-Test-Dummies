@@ -1,0 +1,23 @@
+1.Die schriften befinden sich in "texmf" 
+2.Kopieren der Unterverzeichnisse von texmf in den MikTeX-Ordner.
+(i. d. R. C:\Programme\MikTex 2.7 oder C:\Program Files\MikTex 2.7)
+Das Verzeichnis updmap.d wird nicht benötigt. 
+3.Eine Konsole öffnen (z. B. mit der Eingabe von cmd unter Ausführen im Startmenü) 
+4.Auf der Konsole erst den Befehl 
+cd %PROGRAMFILES%\MikTex 2.7
+und dann den Befehl 
+texhash
+ausführen. 
+5.Dannach den Befehl 
+initexmf --edit-config-file updmap
+ausführen. 
+6.Folgende Zeilen in die sich öffnende Datei einfügen und speichern: 
+Map 5ch.map
+Map 5fp.map
+Map 5sf.map
+(Entspricht dem Inhalt der Datei updmap.d\20tex-tudfonts.cfg.) 
+7.Zuletzt die Befehle
+initexmf -u 
+initexmf --mkmaps
+initexmf -u
+ausführen. 
