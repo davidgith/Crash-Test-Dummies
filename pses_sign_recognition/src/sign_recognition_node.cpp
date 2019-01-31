@@ -40,6 +40,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp> // for homography
+#include <opencv2/imgproc/imgproc.hpp>
 
 #include <opencv2/opencv_modules.hpp>
 
@@ -80,127 +81,32 @@ void showUsage()
 }
 
 // gets called whenever a new message is availible in the input puffer
-void imageCallback(const sensor_msgs::ImageConstPtr& msg)
+void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[])
 {
   static int imagecounter = 0; 
   imagecounter++;
   cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image;
+  cv::Mat imageGrey;
+  cv::cvtColor(image, imageGrey, CV_BGR2GRAY);
   
-  if(imagecounter == 30)
+  if(imagecounter == 1)
     {
-      cv::imshow("view", image);
+      cv::imshow("view", imageGrey);
       imagecounter = 0;
     } 
 
+  ROS_INFO("image callback");
   cv::waitKey(1);
-}
-
-int main(int argc, char * argv[])
-{
-  // init this node
-  ros::init(argc, argv, "sign_recognition_node");
-  // get ros node handle
-  ros::NodeHandle nh;
-/*
-  // sensor message container
-  sensor_msgs::Range usr, usf, usl;
-  std_msgs::Int16 motor, steering;
-
-  // generate subscriber for sensor messages
-  ros::Subscriber usrSub = nh.subscribe<sensor_msgs::Range>(
-      "/uc_bridge/usr", 10, boost::bind(usrCallback, _1, &usr));
-  ros::Subscriber uslSub = nh.subscribe<sensor_msgs::Range>(
-      "/uc_bridge/usl", 10, boost::bind(uslCallback, _1, &usl));
-  ros::Subscriber usfSub = nh.subscribe<sensor_msgs::Range>(
-      "/uc_bridge/usf", 10, boost::bind(usfCallback, _1, &usf));
-
-  // generate control message publisher
-  ros::Publisher motorCtrl =
-      nh.advertise<std_msgs::Int16>("/uc_bridge/set_motor_level_msg", 1);
-  ros::Publisher steeringCtrl =
-      nh.advertise<std_msgs::Int16>("/uc_bridge/set_steering_level_msg", 1);
-
-*/
-
-  ROS_INFO("Hello world!");
-
-//   // Loop starts here:
-//   // loop rate value is set in Hz
-//   ros::Rate loop_rate(1);
-//   while (ros::ok())
-//   {
-//  /*   // simple wall crash avoidance algorithm ..
-//     if (usr.range < 0.3 && usl.range >= 0.3)
-//     {
-//       steering.data = -750;
-//       motor.data = 300;
-//     }
-//     else if (usl.range < 0.3 && usr.range >= 0.3)
-//     {
-//       steering.data = 750;
-//       motor.data = 300;
-//     }
-//     else if (usl.range > 0.5 && usr.range > 0.5)
-//     {
-//       steering.data = 0;
-//       motor.data = 300;
-//     }
-//     else
-//     {
-//       steering.data = 0;
-//       motor.data = 0;
-//     }
-//     if (usf.range < 0.3)
-//     {
-//       motor.data = 0;
-//       steering.data = 0;
-//     }
-
-//     // publish command messages on their topics
-//     motorCtrl.publish(motor);
-//     steeringCtrl.publish(steering);
-//     // side note: setting steering and motor even though nothing might have
-//     // changed is actually stupid but for this demo it doesn't matter too much.
-// */
-//     // clear input/output buffers
-//     ros::spinOnce();
-//     // this is needed to ensure a const. loop rate
-//     loop_rate.sleep();
-//   }
-if(argc<3)
-	{
-		ros::Subscriber imageSub = nh.subscribe<sensor_msgs::Image>(
-      "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1));
-	}
-
-  cv::namedWindow("view");
-  cv::startWindowThread();
-  //change the exposure
-  cv::VideoCapture cap;
-  cap.set(cv::CAP_PROP_EXPOSURE,10);
-  ros::Rate loop_rate(25);
-  while (ros::ok())
-  {
-
-    // clear input/output buffers
-    ros::spinOnce();
-    // this is needed to ensure a const. loop rate
-    loop_rate.sleep();
 
 
-  
-
-
-
-	QTime time;
-
-	// GUI stuff
-	QApplication app(argc, argv);
+  QTime time;
 
 	time.start();
+  // File input = new File("digital_image_processing.jpg");
 	//Load as grayscale
 	cv::Mat objectImg = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
 	cv::Mat sceneImg = cv::imread(argv[2], cv::IMREAD_GRAYSCALE);
+  //cv::Mat sceneImg = cv::imread(image, cv::IMREAD_GRAYSCALE);
 
 	if(!objectImg.empty() && !sceneImg.empty())
 	{
@@ -216,7 +122,7 @@ if(argc<3)
 		////////////////////////////
 		cv::Ptr<cv::FeatureDetector> detector;
 		// The detector can be any of (see OpenCV features2d.hpp):
-#if CV_MAJOR_VERSION == 2
+    #if CV_MAJOR_VERSION == 2
 		// detector = cv::Ptr(new cv::DenseFeatureDetector());
 		// detector = cv::Ptr(new cv::FastFeatureDetector());
 		// detector = cv::Ptr(new cv::GFTTDetector());
@@ -226,9 +132,9 @@ if(argc<3)
 		// detector = cv::Ptr(new cv::StarFeatureDetector());
 		// detector = cv::Ptr(new cv::SURF(600.0));
 		// detector = cv::Ptr(new cv::BRISK());
-#else
+    #else
 		detector = cv::xfeatures2d::SIFT::create();
-#endif
+    #endif
 		detector->detect(objectImg, objectKeypoints);
 		printf("Object: %d keypoints detected in %d ms\n", (int)objectKeypoints.size(), time.restart());
 		detector->detect(sceneImg, sceneKeypoints);
@@ -238,7 +144,7 @@ if(argc<3)
 		// EXTRACT DESCRIPTORS
 		////////////////////////////
 		cv::Ptr<cv::DescriptorExtractor> extractor;
-#if CV_MAJOR_VERSION == 2
+    #if CV_MAJOR_VERSION == 2
 		// The extractor can be any of (see OpenCV features2d.hpp):
 		// extractor = cv::Ptr(new cv::BriefDescriptorExtractor());
 		// extractor = cv::Ptr(new cv::ORB());
@@ -246,9 +152,9 @@ if(argc<3)
 		// extractor = cv::Ptr(new cv::SURF(600.0));
 		// extractor = cv::Ptr(new cv::BRISK());
 		// extractor = cv::Ptr(new cv::FREAK());
-#else
+    #else
 		extractor = cv::xfeatures2d::SIFT::create();
-#endif
+    #endif
 		extractor->compute(objectImg, objectKeypoints, objectDescriptors);
 		printf("Object: %d descriptors extracted in %d ms\n", objectDescriptors.rows, time.restart());
 		extractor->compute(sceneImg, sceneKeypoints, sceneDescriptors);
@@ -315,8 +221,8 @@ if(argc<3)
 		// PROCESS NEAREST NEIGHBOR RESULTS
 		////////////////////////////
 		// Set gui data
-//		ObjWidget objWidget(0, objectKeypoints, QMultiMap<int,int>(), cvtCvMat2QImage(objectImg));
-//		ObjWidget sceneWidget(0, sceneKeypoints, QMultiMap<int,int>(), cvtCvMat2QImage(sceneImg));
+    //		ObjWidget objWidget(0, objectKeypoints, QMultiMap<int,int>(), cvtCvMat2QImage(objectImg));
+    //		ObjWidget sceneWidget(0, sceneKeypoints, QMultiMap<int,int>(), cvtCvMat2QImage(sceneImg));
 
 		// Find correspondences by NNDR (Nearest Neighbor Distance Ratio)
 		float nndrRatio = 0.8f;
@@ -395,21 +301,21 @@ if(argc<3)
 			{
 				if(outlier_mask.at(k))
 				{
-//					objWidget.setKptColor(indexes_1.at(k), color);
-//					sceneWidget.setKptColor(indexes_2.at(k), color);
+    //					objWidget.setKptColor(indexes_1.at(k), color);
+    //					sceneWidget.setKptColor(indexes_2.at(k), color);
 				}
 				else
 				{
-//					objWidget.setKptColor(indexes_1.at(k), QColor(255,0,0,alpha));
-//					sceneWidget.setKptColor(indexes_2.at(k), QColor(255,0,0,alpha));
+    //					objWidget.setKptColor(indexes_1.at(k), QColor(255,0,0,alpha));
+    //					sceneWidget.setKptColor(indexes_2.at(k), QColor(255,0,0,alpha));
 				}
 			}
 			QPen rectPen(color);
 			rectPen.setWidth(4);
-//			QGraphicsRectItem * rectItem = new QGraphicsRectItem(objWidget.pixmap().rect());
-//			rectItem->setPen(rectPen);
-//			rectItem->setTransform(hTransform);
-//			sceneWidget.addRect(rectItem);
+    //			QGraphicsRectItem * rectItem = new QGraphicsRectItem(objWidget.pixmap().rect());
+    //			rectItem->setPen(rectPen);
+    //			rectItem->setTransform(hTransform);
+    //			sceneWidget.addRect(rectItem);
 			printf("Inliers=%d Outliers=%d\n", inliers, outliers);
 		}
 		else
@@ -445,10 +351,10 @@ if(argc<3)
 		// sceneWidget.show();
 		// objWidget.show();
 
-		int r = app.exec();
+	  //	int r = app.exec();
 		printf("Closing...\n");
 
-		return r;
+		//return r;
 
     
 	}
@@ -457,11 +363,63 @@ if(argc<3)
 		printf("Images are not valid!\n");
 		showUsage();
 	}
+
+
+
+}
+
+int main(int argc, char * argv[])
+{
+  // init this node
+  ros::init(argc, argv, "sign_recognition_node");
+  // get ros node handle
+  ros::NodeHandle nh;
+
+  ROS_INFO("Hello world!");
+
+//   // Loop starts here:
+//   // loop rate value is set in Hz
+//   ros::Rate loop_rate(1);
+//   while (ros::ok())
+//   {
+//     // clear input/output buffers
+//     ros::spinOnce();
+//     // this is needed to ensure a const. loop rate
+//     loop_rate.sleep();
+//   }
+if(argc<3)
+	{
+	
+	}
+  
+
+	// GUI stuff
+	QApplication app(argc, argv);
+  
+  ros::Subscriber imageSub = nh.subscribe<sensor_msgs::Image>(
+      "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, argc, argv));
+
+
+  cv::namedWindow("view");
+  cv::startWindowThread();
+  //change the exposure
+  cv::VideoCapture cap;
+  cap.set(cv::CAP_PROP_EXPOSURE,10);
+
+
+  
+  ros::Rate loop_rate(25);
+  
+  while (ros::ok())
+  {
+
+  // clear input/output buffers
+  ros::spinOnce();
+  // this is needed to ensure a const. loop rate
+  loop_rate.sleep();
   }
 
 	return 1;
-
-
 
   ros::spin();
 }

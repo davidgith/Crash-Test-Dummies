@@ -26,7 +26,7 @@ SET(INCLUDE_DIRS
 # Make sure the compiler can find include files from our library.
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 
-INCLUDE_DIRECTORIES(find_object_2d/include/find_object/ObjWidget)
+INCLUDE_DIRECTORIES(/include/find_object/ObjWidget)
 
 find_package(OpenCV REQUIRED)
 # find_package(xfeatures2d REQUIRED) 
