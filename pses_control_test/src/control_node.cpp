@@ -705,7 +705,6 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
       }
 
       // Transform back into original image
-      // TODO
       cv::Mat fullImage;
       ipm->applyHomographyInv(transformedFullImage, fullImage);		
 
@@ -813,10 +812,10 @@ int main(int argc, char** argv)
         //ROS_INFO("u = %d", steering.data);
 
         // If an error occurs, stop the car, else drive with given speed
-        if (phi_L == STOP_SIGNAL)
-          motorCtrl.publish(0);
-        else 
-          motorCtrl.publish(MOTOR_CTRL);
+        motor.data = 0;
+        if (phi_L != STOP_SIGNAL)
+        	motor.data = MOTOR_CTRL;
+        motorCtrl.publish(motor);
       }
     }
 
