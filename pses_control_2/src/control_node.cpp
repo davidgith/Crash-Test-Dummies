@@ -83,7 +83,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
     inRange(HSVImage2,cv::Scalar(135,S_min,V_min),cv::Scalar(175,S_max,V_max),ThreshImage2);
     medianBlur(ThreshImage, FiltedImage, 7);
     medianBlur(ThreshImage2, FiltedImage2, 7);
-    //cv::imshow("view", FiltedImage2);
+    cv::imshow("view", image);
+    cv::imshow("view2", FiltedImage);
     // if(imagecounter == 30)
     // {
     //   cv::imshow("view", FiltedImage);
@@ -302,7 +303,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
     {
       	control_deviation = stopSign;
     }
-    //cv::waitKey(10);
+    cv::waitKey(10);
     ROS_INFO("Control deviation set! deviation = %d", control_deviation);
   }
   catch (cv_bridge::Exception& e)
@@ -345,6 +346,7 @@ int main(int argc, char** argv)
       nh.advertise<std_msgs::Int16>("/uc_bridge/set_steering_level_msg", 1);
 
   cv::namedWindow("view");
+  cv::namedWindow("view2");
   cv::startWindowThread();
   //change the exposure
   cv::VideoCapture cap;
