@@ -1,0 +1,15 @@
+\contentsline {chapter}{\numberline {1}Einf\IeC {\"u}hrung}{3}{chapter.1}% 
+\contentsline {paragraph}{Fahrzeug}{3}{paragraph*.4}% 
+\contentsline {paragraph}{Aufgaben}{3}{paragraph*.5}% 
+\contentsline {chapter}{\numberline {2}Projektorganisation}{5}{chapter.2}% 
+\contentsline {subparagraph}{Trello}{5}{subparagraph*.6}% 
+\contentsline {subparagraph}{Github}{5}{subparagraph*.7}% 
+\contentsline {chapter}{\numberline {3}Testcases}{7}{chapter.3}% 
+\contentsline {chapter}{\numberline {4}Regelans\IeC {\"a}tze}{9}{chapter.4}% 
+\contentsline {section}{\numberline {4.1}1.Ansatz}{9}{section.4.1}% 
+\contentsline {section}{\numberline {4.2}2.Ansatz}{9}{section.4.2}% 
+\contentsline {chapter}{\numberline {5}Schildererkennung}{11}{chapter.5}% 
+\contentsline {chapter}{\numberline {6}Auswertung}{13}{chapter.6}% 
+\contentsline {chapter}{\numberline {7}Konklusion}{15}{chapter.7}% 
+\contentsline {chapter}{Abbildungsverzeichnis}{17}{section*.10}% 
+\contentsfinish 

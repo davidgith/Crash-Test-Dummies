@@ -26,10 +26,10 @@ using namespace std;
 using namespace Eigen;
 
 // IPM Calibration Configurations
-#define ROBOT_POSITION_PIXEL_X 465
-#define ROBOT_OFFSET_PIXEL_Y 60
-#define METER_PER_PIXEL_X 0.0033f
-#define METER_PER_PIXEL_Y 0.0048f
+#define ROBOT_POSITION_PIXEL_X 453
+#define ROBOT_OFFSET_PIXEL_Y 76
+#define METER_PER_PIXEL_X 0.0038f
+#define METER_PER_PIXEL_Y 0.005f
 
 // Waypointing Configurations
 #define WINDOW_SIZE 10
@@ -37,19 +37,21 @@ using namespace Eigen;
 #define MIN_LANE_POINT_PAIRS 3
 
 // Model Predictive Control Parameters
-#define MPC_WEIGHT_U 0.01f
-#define MPC_WEIGHT_Y 1000.0f
+static double MPC_WEIGHT_U = 0.01f;
+static double MPC_WEIGHT_Y = 10.0f;
 #define MPC_WEIGHT_PHI 0.0f
 
-#define U_LOWERBOUND (-3.1415f / 12)
-#define U_UPPERBOUND (3.1415f / 12)
+#define U_LOWERBOUND (-3.1415f * 21 / 180)
+#define U_UPPERBOUND (3.1415f * 21 / 180)
 
 // MPC Model Definitions
-#define MODEL_PARAM_L_H 0.1f
-#define MODEL_PARAM_L 0.1f
+#define MODEL_PARAM_L_H 0.13f
+#define MODEL_PARAM_L 0.26f
 #define N_STATES 2
 #define N_INPUTS 1
 #define N_QUADPROG_VARS (N_INPUTS * MPC_STEPS)
+
+#define STOP_SIGNAL -1024
 
 // Optimizations
 static bool DEBUG_OUTPUT = true;
@@ -66,6 +68,11 @@ static bool INTERPOLATE_WITH_CURRENT_POSITION = false;
 static bool LEFT_LANE = false;
 static double TARGET_VELOCITY = 0.2f;
 
+// Extra Configurations
+static bool DIRECT_TRAJECTORY = true;
+static bool FILL_PINK_LANE = false;
+static int MOTOR_CTRL = 0;
+
 static double timeSinceApplyingLastInput = 0;
 static double timeLastMPCCalc = 0;
 
@@ -77,11 +84,17 @@ void callback(pses_control_test::ParamsConfig &config, uint32_t level)
   MPC_DT = config.mpc_timestep;
   MPC_STEPS = config.mpc_number_timesteps;
   MPC_RECALC_INTERVAL = config.mpc_update_rate;
+  MPC_WEIGHT_Y = config.mpc_weight_state;
+  MPC_WEIGHT_U = config.mpc_weight_ctrl;
+
   DETECTION_END_OFFSET_Y = config.detection_end_offset;
 
-  INTERPOLATE_WITH_CURRENT_POSITION = config.wp_interpolate_using_robot_position;
   LEFT_LANE = config.ctrl_left_lane;
   TARGET_VELOCITY = config.ctrl_velocity;
+
+  DIRECT_TRAJECTORY = config.direct_trajectory;
+  FILL_PINK_LANE = config.fill_pink_lane;
+  MOTOR_CTRL = config.motor_ctrl;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -275,6 +288,38 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
     }
     ROS_INFO("Sliding window search done! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
+    // Fill-in pink lane for the picture
+    if (FILL_PINK_LANE) {
+      Point lastPink = Point(-1, -1);
+      for (int i = detectedLanePoints.size() - 1; i >= 0; i--) {
+        Point currPink = std::get<1>(detectedLanePoints.at(i));
+        if (currPink.x != -1) {
+          if (lastPink.x != -1) {
+            cv::line(transformedImage, lastPink, currPink, cv::Scalar(165,150,255), 7);
+          }
+
+          lastPink = currPink;
+        }
+      }
+
+      // Continue line backwards
+      Point bestPrevLastPink = Point(-1, -1);
+      for (int i = detectedLanePoints.size() - 1; i >= 0; i--) {
+        Point currPink = std::get<1>(detectedLanePoints.at(i));
+        if (currPink.x != -1 && currPink.y != lastPink.y && currPink.y + 80 > lastPink.y) {
+          bestPrevLastPink = currPink;
+          break;
+        }
+      }
+
+      if (lastPink.x != -1 && bestPrevLastPink.x != -1) {
+        Point delta = lastPink - bestPrevLastPink;
+        int deltaStepsUntilOutOfBounds = (height + ROBOT_OFFSET_PIXEL_Y - lastPink.y - 1) / delta.y;
+        //ROS_INFO("test %d %d %d %d %d", deltaStepsUntilOutOfBounds, delta.x, delta.y, bestPrevLastPink.x, bestPrevLastPink.y);
+        Point drawEndPoint = Point(lastPink.x + delta.x * deltaStepsUntilOutOfBounds, lastPink.y + delta.y * deltaStepsUntilOutOfBounds);
+        cv::line(transformedImage, lastPink, drawEndPoint, cv::Scalar(165,150,255), 7);
+      }
+    }
 
     // Select interesting tuples
     std::vector<std::tuple<Point, Point, Point>> usefulPoints;
@@ -287,6 +332,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
         && std::get<2>(detectedLanePoints.at(i)).x != -1)
         usefulPoints.push_back(detectedLanePoints.at(i));
     }
+
     // Select rightmost points
     std::vector<Point> rightmostPoints;
     for (int i = 0; i < detectedLanePoints.size(); i++) {
@@ -299,6 +345,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
         rightmostPoints.push_back(std::get<0>(detectedLanePoints.at(i)));
       }
     }
+
     // Select leftmost points
     std::vector<Point> leftmostPoints;
     for (int i = 0; i < detectedLanePoints.size(); i++) {
@@ -311,7 +358,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
         leftmostPoints.push_back(std::get<0>(detectedLanePoints.at(i)));
       }
     }
-    ROS_INFO("Interesting points selected! t = %f", usefulPoints.size(), double(clock() - begin) / CLOCKS_PER_SEC);
+    ROS_INFO("Interesting points selected! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
 
     // Generate waypoints from detected lane points
@@ -405,9 +452,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
           }
         }
       }
-
     } 
-    // If we do not have enough useful point pairs, we fallback to detecting a turn
+    // If we do not have enough useful point pairs, we fallback to detecting leftward/rightward
     else if (isLeftTurn(leftmostPoints, rightmostPoints)) {
       // Left turn fallback -> drive left from rightmost points
       for (int i = 0; i < rightmostPoints.size(); i++) {
@@ -429,30 +475,47 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
     // If we could not find more than three wayPoints, we stop and do nothing
     if (wayPoints.size() <= 3) {
       ROS_INFO("Too few waypoints, skipping! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
+      std::queue<double> empty;
+      std::swap(*u_queue, empty);
+      u_queue->push(STOP_SIGNAL); 
       return;
     }
 #pragma endregion Waypoint Extraction
 
 #pragma region
-    // Fit a quadratic polynomial x(y) as nominal trajectory
+    // Fit a polynomial x(y) as nominal trajectory
     std::vector<double> xs;
     std::vector<double> ys;
     std::vector<double> trajectory_coeffs;
 
-    //Optional: add current robot position to fitting waypoints
-    if (INTERPOLATE_WITH_CURRENT_POSITION) {
+    if (DIRECT_TRAJECTORY) {
+      // Linear polynomial from robot position to waypoint
       xs.push_back(ROBOT_POSITION_PIXEL_X);
       ys.push_back(height + ROBOT_OFFSET_PIXEL_Y);
+
+      xs.push_back(wayPoints.at(0).x);
+      ys.push_back(wayPoints.at(0).y);
+
+      polyfit(ys, xs, trajectory_coeffs, 1); 
+
+    } else {
+      // Quadratic polynomial:
+      //Optional: add current robot position to fitting waypoints
+      if (INTERPOLATE_WITH_CURRENT_POSITION) {
+        xs.push_back(ROBOT_POSITION_PIXEL_X);
+        ys.push_back(height + ROBOT_OFFSET_PIXEL_Y);
+      }
+
+      for (int i = 0; i < wayPoints.size(); i++) {
+        xs.push_back(wayPoints.at(i).x);
+        ys.push_back(wayPoints.at(i).y);
+      }
+
+      polyfit(ys, xs, trajectory_coeffs, 2); 
     }
 
-    for (int i = 0; i < wayPoints.size(); i++) {
-      xs.push_back(wayPoints.at(i).x);
-      ys.push_back(wayPoints.at(i).y);
-    }
-    polyfit(ys, xs, trajectory_coeffs, 2); 
-    ROS_INFO("Finished fitting trajectory! t = %f, coeffs: %f %f %f", 
-      double(clock() - begin) / CLOCKS_PER_SEC,
-      trajectory_coeffs.at(0), trajectory_coeffs.at(1), trajectory_coeffs.at(2));
+    ROS_INFO("Finished fitting trajectory! t = %f", 
+      double(clock() - begin) / CLOCKS_PER_SEC);
 #pragma endregion Trajectory Planning
 
 #pragma region
@@ -606,11 +669,11 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
 #pragma region
     if (DEBUG_OUTPUT) {
       // Visualization of original image space + robot space
-      cv::Rect helperROI(0, 0, width, 60);
+      cv::Rect helperROI(0, 0, width, ROBOT_OFFSET_PIXEL_Y);
       cv::Mat transformedOriginalImage, transformedFullImage;
       cvtColor(transformedImage, transformedOriginalImage, CV_HSV2BGR);
       cv::Mat bottomFill = transformedOriginalImage(helperROI).clone();
-      cv::rectangle(bottomFill, Point(0,0), Point(width, 60), cv::Scalar(0,0,0), -1);
+      cv::rectangle(bottomFill, Point(0,0), Point(width, ROBOT_OFFSET_PIXEL_Y), cv::Scalar(0,0,0), -1);
       cv::vconcat(transformedOriginalImage, bottomFill, transformedFullImage);
 
       // Visualization of waypoints
@@ -641,13 +704,18 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
         cv::circle(transformedFullImage, Point(round(predicted_x), round(predicted_y)), 2, cv::Scalar(0,0,255), -1, 8, 0);
       }
 
+      // Transform back into original image
+      // TODO
+      cv::Mat fullImage;
+      ipm->applyHomographyInv(transformedFullImage, fullImage);		
+
       // Show debug pictures
       // cv::imshow("raw", image);
       // cv::imshow("transformed", transformedImage);    
       // cv::imshow("thresholdedGreen", ThreshImageGreen);  
       // cv::imshow("thresholdedPink", ThreshImagePink);    
-      // cv::imshow("windowed", transformedImage);    
-      cv::imshow("windowedOrig", transformedFullImage);    
+      cv::imshow("windowed", transformedFullImage);    
+      cv::imshow("windowedOrig", fullImage);    
       ROS_INFO("Finished debug output! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
       for (int i = 0; i < N_QUADPROG_VARS; i++)
@@ -708,10 +776,10 @@ int main(int argc, char** argv)
   ros::Publisher steeringCtrl =
       nh.advertise<std_msgs::Int16>("/uc_bridge/set_steering_level_msg", 1);
 
-  cv::namedWindow("raw");
-  cv::namedWindow("transformed");
-  cv::namedWindow("thresholdedGreen");
-  cv::namedWindow("thresholdedPink");
+  // cv::namedWindow("raw");
+  // cv::namedWindow("transformed");
+  // cv::namedWindow("thresholdedGreen");
+  // cv::namedWindow("thresholdedPink");
   cv::namedWindow("windowed");
   cv::namedWindow("windowedOrig");
   cv::startWindowThread();
@@ -742,7 +810,13 @@ int main(int argc, char** argv)
         steering.data = max(-1000, min(1000, u_steering));
         // steering.data = u;
         steeringCtrl.publish(steering);
-        ROS_INFO("u = %d", steering.data);
+        //ROS_INFO("u = %d", steering.data);
+
+        // If an error occurs, stop the car, else drive with given speed
+        if (phi_L == STOP_SIGNAL)
+          motorCtrl.publish(0);
+        else 
+          motorCtrl.publish(MOTOR_CTRL);
       }
     }
 

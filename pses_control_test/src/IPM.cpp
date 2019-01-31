@@ -22,6 +22,12 @@ void IPM::applyHomography(const Mat& _inputImg, Mat& _dstImg, int _borderMode)
 	remap(_inputImg, _dstImg, m_mapX, m_mapY, INTER_LINEAR, _borderMode);//, BORDER_CONSTANT, Scalar(0,0,0,0));
 }
 
+void IPM::applyHomographyInv(const Mat& _inputImg, Mat& _dstImg, int _borderMode)
+{
+	// Generate IPM image from src
+	remap(_inputImg, _dstImg, m_invMapX, m_invMapY, INTER_LINEAR, _borderMode);//, BORDER_CONSTANT, Scalar(0,0,0,0));
+}
+
 Point2d IPM::applyHomography( const Point2d& _point, const Mat& _H )
 {
 	Point2d ret = Point2d( -1, -1 );
@@ -54,5 +60,20 @@ void IPM::createMaps()
 			ptRowY[i] = pt.y;
 		}
 	}
+
+	m_invMapX.create(m_origSize, CV_32F);
+	m_invMapY.create(m_origSize, CV_32F);
+
+	for( int j = 0; j < m_origSize.height; ++j )
+	{
+		float* ptRowX = m_invMapX.ptr<float>(j);
+		float* ptRowY = m_invMapY.ptr<float>(j);
+		for( int i = 0; i < m_origSize.width; ++i )
+		{
+			Point2f pt = applyHomography( Point2f( static_cast<float>(i), static_cast<float>(j) ), m_H );
+			ptRowX[i] = pt.x;
+			ptRowY[i] = pt.y;			
+		}
+	}	
 
 }
