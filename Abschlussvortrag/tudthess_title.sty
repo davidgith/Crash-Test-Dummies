@@ -107,11 +107,11 @@
     \gdef\TUD@thesis@thesistype{Seminar }
     \gdef\TUD@thesis@thesisstate{}
     \gdef\TUD@thesis@titletype{}}{%
- \ifthenelse{\equal{#1}{prosem}}{%
+ \ifthenelse{\equal{#1}{projsem}}{%
     \TUD@thesis@phdfalse%
     \TUD@thesis@acceptedfalse%
     \TUD@thesis@setgender@neuter%
-    \gdef\TUD@thesis@thesistype{Proseminar }
+    \gdef\TUD@thesis@thesistype{Projektseminar }
     \gdef\TUD@thesis@thesisstate{}
     \gdef\TUD@thesis@titletype{}}{%
   \PackageError{\@currname}{Wrong option 'type=<thesis type>` !}\@ehc}}}}}}}}}
@@ -371,7 +371,7 @@
 		\vskip5ex
 		  Darmstadt, den #1
 		\vskip6ex
-		\tudrule[0.5\textwidth]\\
+		\tudrule[0.776\textwidth]\\
 		  {\normalsize(#2)}
 	}
   \endgroup
