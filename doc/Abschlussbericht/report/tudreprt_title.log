@@ -1,0 +1,63 @@
+This is pdfTeX, Version 3.1415926-1.40.10 (MiKTeX 2.8) (preloaded format=pdflatex 2010.8.19)  19 AUG 2010 13:13
+entering extended mode
+**C:/Dokumente*und*Einstellungen/spatzina/Desktop/Thesis_FG_ES/report/tudreprt_
+title.sty
+
+("C:/Dokumente und Einstellungen/spatzina/Desktop/Thesis_FG_ES/report/tudreprt_
+title.sty"
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, dumylang, nohyphenation, ge
+rman, ngerman, german-x-2009-06-19, ngerman-x-2009-06-19, french, loaded.
+
+LaTeX Warning: You have requested package `',
+               but the package provides `report/tudreprt_title'.
+
+Package: report/tudreprt_title 2009/09/18 1.11 Clemens von Loewenich's and Joe 
+Werner's TUD-Design package
+("C:\Programme\MiKTeX 2.8\tex\latex\xkeyval\xkeyval.sty"
+Package: xkeyval 2008/08/13 v2.6a package option processing (HA)
+
+("C:\Programme\MiKTeX 2.8\tex\generic\xkeyval\xkeyval.tex"
+\XKV@toks=\toks14
+\XKV@tempa@toks=\toks15
+\XKV@depth=\count79
+File: xkeyval.tex 2008/08/13 v2.6a key=value parser (HA)
+
+("C:\Programme\MiKTeX 2.8\tex\generic\xkeyval\keyval.tex"))
+
+! Package xkeyval Error: xkeyval loaded before \documentclass.
+
+See the xkeyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.62 ...yval loaded before \protect\documentclass}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+)
+
+! LaTeX Error: File `colours/tudcolours.sty' not found.
+
+Type X to quit or <RETURN> to proceed,
+or enter new name. (Default extension: sty)
+
+Enter file name: 
+! Emergency stop.
+<read *> 
+         
+l.13 \RequirePackage
+                    {report/tudreprt_fonts}
+*** (cannot \read from terminal in nonstop modes)
+
+ 
+Here is how much of TeX's memory you used:
+ 224 strings out of 495269
+ 3285 string characters out of 3180433
+ 48740 words of memory out of 3000000
+ 3526 multiletter control sequences out of 15000+200000
+ 3640 words of font info for 14 fonts, out of 3000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 20i,0n,17p,260b,22s stack positions out of 5000i,500n,10000p,200000b,50000s
+!  ==> Fatal error occurred, no output PDF file produced!

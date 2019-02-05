@@ -1,0 +1,8 @@
+\babel@toc {ngerman}{}
+\contentsline {section}{\numberline {1}Introduction}{1}
+\contentsline {section}{\numberline {2}Generelle Informationen}{3}
+\contentsline {section}{\numberline {3}Verwendung der Klasse}{3}
+\contentsline {subsection}{\numberline {3.1}Klassenoptionen}{3}
+\contentsline {paragraph}{Neue Optionen}{3}
+\contentsline {subsection}{\numberline {3.2}Befehle}{3}
+\contentsline {section}{\numberline {A}Erster Anhang}{5}
