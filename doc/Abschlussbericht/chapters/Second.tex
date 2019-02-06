@@ -1,77 +1,171 @@
-\section{Generelle Informationen}
-    Die Klasse basiert auf der \textaccent{tudreport}-Klasse von C. v. Loewenich und
-    J. Werner. Alle "Anderungen dort wirken sich direkt auf die
-    \textaccent{tudthesis}-Klasse aus. Genauer: die \textaccent{tudthesis}-Klasse definiert nur einige
-    neue Befehle und legt die Formatierung der ersten zwei Seiten (Titelseite
-    und R"uckseite des Titleblattes) fest. \textbf{Alle Vordefinierten Texte sind, wie verbindlich vorgeschrieben, in der hessischen Amtssprache
-    gehalten\footnote{Deutschland hat (noch) keine Amtssprache.}.}
 
-  \section{Verwendung der Klasse}
-    Die Klasse wird verwendet, indem in der Dokumentenpr"aambel
-    \textaccent{\textbackslash documentclass\{tudthesis\}}
-    eingetragen wird.
+\section{Projektorganisation}
+    F\"ur einen reibungslosen Ablauf haben wir zu Beginn geplant, wie wir unsere Kommunikation gestalten wollen und konnten mit Hilfe unten aufgf\"uhrter Tools eine erfolgsversprechende Roadmap erzielen.
+    
+    Die Seminarorganisation schrieb ein regelm\"a\ss{}iges Treffen mit dem Seminarleiter vor um Hilfestellungen und Tipps zu erm\"oglichen. Vom Fachgebiet Fahrzeugtechnik wurde alle zwei Wochen eine Fragerunde zu regelungstechnischen Problemen angeboten. Dieses Treffen diente auch als Austausch mit den anderen Gruppen.
+    
+    In unsere Kleingruppe entschieden wir uns dazu, einmal w\"ochentlich zusammen am Auto zu arbeiten um gegenseitiges Helfen zu erm\"oglichen und immer wieder den Stand abzukl\"aren sowie den n\"achsten kurzen Abschnitt zu planen.
+    
+    Den Rest der Woche wurde selbstst\"andig an den neu zugeteilten Aufgaben weitergearbeitet.
+    Bei akuten Fragen und Problemen fand ebenso eine st\"andige Kommunikation über WhatsApp statt.
+    
+    \subparagraph{Trello}
+    Damit wir die Aufgaben pr\"azise und strukturiert festhalten konnten haben wir uns f\"ur das Organisations-Tool Trello entschieden. Hiermit konnten wir durch Anlegen von Listen unsere Punkte in \glqq ToDo\grqq, \glqq Meeting\grqq, \glqq Gemacht\grqq{} und \glqq Aufgaben f\"ur die Zukunft\grqq{} aufteilen.
+    
+    \subparagraph{Github}
+    F\"ur die Synchronisierung des Programmcodes haben wir das Versionsverwaltungsprogramm GitHub genutzt. Dadurch konnten wir komfortabel den Programmiercode des Fahrzeugs austauschen sowie bei Fehlern auf alte Code-Zust\"ande zur\"uckgreifen.
+    
 
-  \subsection{Klassenoptionen}
-    Die Klasse unterst"utzt alle Klassenoptionen der tudreport-Klasse.
-    \paragraph{Neue Optionen}
-    \begin{itemize}
-      \item \textbf{type=<dr|drfinal|diplom|msc|pp|bsc|sta>}\\
-        Hiermit wird die Art der Arbeit angegeben. Dies legt verschiedene
-        Formatierungen fest.\\
-        \begin{tabular}{ll}
-        \textaccent{dr} &f"ur eingereichte Dissertationen\\
-        \textaccent{drfinal} &f"ur genehmigte Dissertationen\\
-        \textaccent{diplom} &f"ur Diplomarbeiten\\
-        \textaccent{msc} &f"ur Master-Theses\\
-        \textaccent{pp} &f"ur Project-Proposals\\
-        \textaccent{bsc} &f"ur Bachelor-Theses\\
-        \textaccent{sta} &f"ur Studienarbeiten
-        \end{tabular}
-      \item \textbf{dr=<rernat|ing|phil>}\\
-        Hiermit wird die Art des Doktorgrads angegeben.\\
-        \begin{tabular}{ll}
-        \textaccent{rernat} &f"ur Dr. rer. nat.\\
-        \textaccent{ing} &f"ur Dr.-Ing.\\
-        \textaccent{phil} &f"ur Dr. phil.
-        \end{tabular}\\
-        F"ur den Fall, dass der gew"unschte Titel nicht vorhanden ist, gibt
-        es den Befehl \textbf{\textbackslash drtext\{\#1\}}, wobei \#1 z.B.
-        \glqq Zur Erlangung des Grades eines Doktors der
-        Technischen Wissenschaften (Dr.\ rer.\ tech.)\grqq\ ist.
-    \end{itemize}
+\section{Testcases}
+	\begin{table}[h]
+		\renewcommand{\arraystretch}{1.5}
+		\begin{tabular}{|p{0.7\textwidth}|p{0.245\textwidth}|}
+			\hline
+			Testfall& Bemerkung\\
+			\hline
+			Das Fahrzeug f\"ahrt rechts und links herum autonom ohne die Fahrbahnbegrenzung zu ber\"uhren.& \\
+			\hline
+			Das Fahrzeug f\"ahrt auf einer Fahrspur autonom ohne die Spur zu verlassen. & \\
+			\hline
+			Das Fahrzeug f\"ahrt eine Runde unter 30s.& \\
+			\hline
+			Das Fahrzeug kommt von der Fahrbahn ab und muss daraufhin anhalten.& \\
+			\hline
+			Das Fahrzeug startet mittig auf der Fahrbahn im {45} Winkel zur Fahrbahnbegrenzung & \\
+			\hline
+			Das Fahrzeug startet mittig auf der Fahrbahn im {60} Winkel zur Fahrbahnbegrenzung& \\
+			\hline
+			Bei einem Stoppschild h\"alt das Fahrzeug auf der H\"ohe das Schildes f\"ur 2s an und f\"ahrt danach weiter.& \\
+			\hline
+			Bei einem Geschwindigkeitsschild f\"ahrt das Fahrzeug ab dem Schild mit verringerter Geschwindigkeit weiter.& \\
+			\hline
+			& \\
+			\hline
+			Schilderkennung und autonomes Fahren muss gleichzeitig ohne wahrnehmbare Beeintr\"achtigung funktionieren.& \\
+			\hline
+			
+		\end{tabular}
+	\end{table}
+\clearpage
+  
+\section{Regelans{\"a}tze}
+  
+\subsection{1.Ansatz}
+  
+\clearpage
+\subsection{Modellprädiktiver Regelungansatz}
+Ein zweiter experimenteller Ansatz, der im Rahmen des Projektseminars verfolgt wurde, ist die sogenannte lineare modellprädiktive Regelung. Bei dieser wird anhand eines linearen, diskretisierten Fahrzeugmodells über ein quadratisches Optimierungsproblem eine Lösung für die optimalen Lenkwinkel berechnet. Diese sind optimal in dem Sinne, dass eine Linearkombination der mittleren quadratischen Abweichungen des prädiktierten Systemzustands und Stellgröße zu einer vorgegebenen Solltrajektorie über einen endlichen Zeithorizont hinaus minimiert wird.
 
-  \subsection{Befehle}
-    \begin{itemize}\itemsep-0.5\parsep
-      \item \textbf{\textbackslash thesistitle\{\#1\}\{\#2\}}\\
-        \#1: Titel der Arbeit in der Erstsprache (z.B. Deutsch)\\
-        \#2: Titel der Arbeit in der zweiten Sprache (z.B. Englisch)
-      \item \textbf{\textbackslash makethesistitle}\\
-        Erzeugt die korrekte Titelseite
-      \item \textbf{\textbackslash author\{\#1\}}\\
-        \#1: Name des Autors
-      \item \textbf{\textbackslash birthplace\{\#1\}}\\
-        \#1: Geburtsort des Autors (bei Dr.-Arbeit verbindlich)
-      \item \textbf{\textbackslash date\{\#1\}}\\
-        Standard ist der aktuelle Monat und das aktuelle Jahr (z.B. \getmydate)\\
-        \#1: individuelles Datum
-      \item \textbf{\textbackslash referee\{\#1\}\{\#2\}[\#3]}\\
-        Namen der Gutachter, (3. Gutachter optional)
-      \item \textbf{\textbackslash department\{\#1\}}\\
-        Fachbereich an dem die Arbeit durchgef"uhrt wurde. Standard ist
-        \glqq Fachbereich Physik\grqq.
-      \item \textbf{\textbackslash group\{\#1\}}\\
-        Arbeitsgruppe / Institut an dem die Arbeit durchgef"uhrt wurde
-      \item \textbf{\textbackslash dateofexam\{\#1\}\{\#2\}}\\
-        \#1: Tag der Einreichung der Arbeit\\
-        \#2: Tag der Pr"ufung / Tag des Abschlusses\\
-        \textaccentcolor{Wird nur bei \textaccent{type=drfinal} verwendet.
-        Ansonsten wird ein leeres Feld erzeugt, in das bei Abgabe der 
-        Arbeit ein Stempel gesetzt wird.}
-      \item \textbf{\textbackslash tuprints\{\#1\}\{\#2\}}\\
-        \#1: \textaccent{<URN-ID>} aus \textaccent{urn:nbn:de:tuda-tuprints-<URN-ID>}\\
-        \#2: \textaccent{<tuprints-ID>} aus \textaccent{http://tuprints.ulb.tu-darmstadt.de/<tuprints-ID>}\\
-        Entspricht der Empfehlung auf der tuprints FAQ-Seite: \textaccent{http://tuprints.ulb.tu-darmstadt.de/faq.html\#urlreservation}
-      \item \textbf{\textbackslash affidavit[\#1]\{\#2\}}\\
-        \#1: Datum der Eigenst"andigkeitserkl"arung (optional)\\
-        \#2: Signatur unter der Unterschrift
-    \end{itemize}
+Ein großer Vorteil dieses Verfahrens ist, dass es automatisch Stellgrößenbeschränkungen beachtet und es somit nicht zu Prädiktionsfehlern durch unbeschränkte Stellgrößen kommt. Durch die Methode erhält man zugleich den gesamten Stellgrößenverlauf für den eingestellten Zeithorizont, sodass es außerdem möglich ist, über längere Zeit ohne Neuberechnung an einer Solltrajektorie entlang zu fahren, vorausgesetzt das linearisierte Modell ist für die gegebene Zustandstrajektorie ausreichend genau. 
+
+Zunächst bringen wir das Problem in die Form, die für die lineare modellprädiktive Regelung benötigt wird. Dabei orientieren wir uns an \cite{hovd2004brief} sowie an Vorarbeiten von Herrn Eric Lenz am FG RTM. Wir gehen aus vom Querführungsmodell in Gleichung \ref{eq:quer} von Herrn Eric Lenz am FG RTM, welches bereits das Ackermannmodell auf eine Raumdimension reduziert:
+\begin{align}
+	\label{eq:quer}	
+	\begin{pmatrix} \dot{y} \\ \dot{\varphi_K} \end{pmatrix}
+	= 
+	\begin{pmatrix} 0 & v \\ 0 & 0 \end{pmatrix}
+	\begin{pmatrix} {y} \\ {\varphi_K} \end{pmatrix}
+	+ 
+	\begin{pmatrix} v\cdot \frac{l_H}{l} \\ \frac{v}{l} \end{pmatrix}
+	\varphi_L^*
+	= \mathbf{Ax + Bu}
+\end{align}
+Das Modell wird per Hand mit der Abtastperiode $T$ diskretisiert zu
+\begin{align}
+	\mathbf{A_d} = e^{\mathbf{A}T} = 
+	\begin{pmatrix} 1 & vT \\ 0 & 1 \end{pmatrix} \\
+	\mathbf{B_d} = \int_0^T e^{\mathbf{A}\tau} \mathbf{B} d\tau = 
+	\begin{pmatrix} \frac{vTl_h}{l} + \frac{v^2T^2}{2l} \\ \frac{vT}{l} \end{pmatrix} \\	
+	\begin{pmatrix} y(k+1) \\ \varphi_K(k+1) \end{pmatrix}
+	= 
+	\begin{pmatrix} 1 & vT \\ 0 & 1 \end{pmatrix} 
+	\begin{pmatrix} y(k) \\ \varphi_K(k) \end{pmatrix}
+	+ 
+	\begin{pmatrix} \frac{vTl_h}{l} + \frac{v^2T^2}{2l} \\ \frac{vT}{l} \end{pmatrix} 
+	\varphi_L^*(k)
+	\label{eq:diskret}	
+\end{align}
+Es sei nun eine Trajektorie nach den Gleichungen \ref{eq:traj1}, \ref{eq:traj2} gegeben, deren Erzeugung wir an späterer Stelle erläutern.
+\begin{align}	
+	\label{eq:traj1}
+	x_{ref} &= 
+	\begin{pmatrix} x_{ref,1} & x_{ref,2} & \hdots & x_{ref,n-1} & x_{ref,n} \end{pmatrix}^T \\ 
+	\label{eq:traj2}
+	u_{ref} &= 
+	\begin{pmatrix} u_{ref,0} & u_{ref,1} & \hdots & u_{ref,n-2} & u_{ref,n-1} \end{pmatrix}^T 
+\end{align}
+Dann definieren wir
+\begin{align}
+	\hat{Q} &= 1000 \cdot diag(1,0,\cdots,1,0) ;\quad
+	\hat{P} = \mathbf{I}_{n,n} ;\quad
+	-U_{min} = U_{max} = 21^o \nonumber\\
+	x_0 &= 
+	\begin{pmatrix} y(k) \\ 0 \end{pmatrix} ;\quad
+	A = 
+	\begin{pmatrix} 1 & vT \\ 0 & 1 \end{pmatrix} ;\quad
+	B = 
+	\begin{pmatrix} \frac{vTl_h}{l} + \frac{v^2T^2}{2l} \\ \frac{vT}{l} \end{pmatrix} \nonumber\\
+	\chi_0 &= 
+	\begin{pmatrix} A \\ A^2 \\ \vdots \\ A^{n-1} \\ A^n \end{pmatrix}
+	x_0
+	+
+	\begin{pmatrix} 
+		B & 0 & \hdots & 0 & 0 \\ 
+		AB & B & \ddots & \vdots & \vdots \\ 
+		\vdots & \vdots & \ddots & 0 & 0 \\ 
+		A^{n-2}B & A^{n-3}B & \hdots & B & 0 \\ 
+		A^{n-1}B & A^{n-2}B & \hdots & AB & B
+	\end{pmatrix}
+	u_{ref} - x_{ref} 
+\end{align}
+Wir können dann das folgende quadratische Optimierungsproblem für $n$ Zeitschritte definieren \cite{hovd2004brief}, welches die quadratischen Positionsabweichungen über $n$ Zeitschritte vorwärts minimiert.
+\begin{align}
+	\min_v f(v) 
+	&= (x_0 - x_{ref,0}^TQ(x_0 - x_{ref,0})) + \chi_0^T\hat{Q}\chi_0 + 2\chi_0^T\hat{Q}\chi_v + \chi_v^T\hat{Q}\chi_v + v^T\hat{P}v \\
+	&= 0.5v^T\tilde{H}v + c^Tv
+\end{align}
+mit den Stellgrößen-Nebenbedingungen
+\begin{align}
+	\mathbf{I}_{n,n}v &\geq \begin{pmatrix} U_{min} \\ \vdots \\ U_{min} \end{pmatrix} - u_{ref} \\
+	-\mathbf{I}_{n,n}v &\geq -\begin{pmatrix} U_{max} \\ \vdots \\ U_{max} \end{pmatrix} + u_{ref}
+\end{align}
+Da wir keine Zustandsgrößenbeschränkung vorsehen, benötigen wir die restlichen Nebenbedingungen aus \cite{hovd2004brief} nicht. Dieses Optimierungsproblem wird für die gegebene Trajektorie on-line auf dem Fahrzeug gelöst, und der folgende optimale Stellgrößenverlauf wird abgespielt:
+\begin{align}
+	\varphi_{L,i} = \arctan(\varphi_{L,i}^*) = \arctan(u_i) = \arctan(v_i + u_{ref,i})
+\end{align} 
+Die Konvergenz, Optimalität und numerische Stabilität der Lösung des Optimierungsproblems der linearen modellprädiktiven Regelung ist hierbei durch die Verwendung von Methoden aus der quadratischen Programmierung, z.B. hier \cite{goldfarb1983numerically}, sichergestellt.
+
+Wir haben hier die Gewichtungsmatrizen $\hat{Q}, \hat{P}$ so gesetzt, dass näherungsweise lediglich die Positionsabweichung zur Solltrajektorie minimiert werden soll. Dies erlaubt es uns dann, als Solltrajektorie den Sollstellgrößenverlauf zu ignorieren und eine beliebige Sollwinkeltrajektorie vorzugeben, da lediglich nach der Position optimiert wird:
+\begin{align}	
+u_{ref} &= 
+\begin{pmatrix} 0 & 0 & \hdots & 0 & 0 \end{pmatrix}^T 
+\end{align}
+
+Als nächstes wird die Beschaffung der Solltrajektorie erläutert. Dazu bedienen wir uns der Kamera, dessen Farbdaten zunächst mithilfe einer inversen Perspektiventransformation (IPM) auf ein Birdeye-View gebracht werden.
+% TODO Bild
+
+Das Bild wird in horizontale Streifen einer vordefinierten Breite unterteilt. Anschließend werden die Streifen nach den Fahrbahnbegrenzungsfarben gefiltert und Spaltenhistogramme gebildet. Die Histogrammmaxima am nächsten zur Mitte des Bildes mit einem vordefinierten Mindestabstand werden selektiert. In diesem Fall also bis zu zwei Seitenstreifenpunkte und bis zu ein Mittellinienpunkt. Schließlich werden diese Punkte verwendet, um sinnvolle Wegpunkte zu definieren.
+
+Wegpunkte werden priorisiert zwischen einen Mittellinienpunkt und den Seitenstreifenpunkt der entsprechenden Fahrbahnseite gelegt. Falls das nicht möglich ist, z.B. weil einer der Punkte nicht existiert, legen wir ihn $\frac{1}{4}$ oder $\frac{3}{4}$ zwischen die Seitenstreifenpunkte je nach Fahrbahnseite. Falls auch das nicht möglich ist, können zusätzliche Punkte aus den bereits existierenden inferiert werden, falls mindestens ein Seitenstreifenpunkt existiert.
+% TODO Bild
+
+Mithilfe dieser Wegpunkte kann man nun eine Trajektorie $x_{ref}$ erzeugen. Die Trajektorie muss nicht vom Fahrzeug einhaltbar sein, sondern lediglich dem gewünschten Fahrverlauf entsprechen.
+% TODO Bild
+
+Ein Problem lässt sich hier jedoch feststellen: Die Trajektorien sind hiermit nicht stationär und sehr variant. Der Grund hierfür ist hauptsächlich die anfällige Extrapolation durch Polynome außerhalb der Stützpunkte. Zusätzlich kommt jedoch hinzu, dass die Regressionsmethode nicht rotationsinvariant ist, denn eine Rotation der Wegpunkte führt zu einer völlig anderen Trajektorie, da das Polynom an den Bildachsen ausgerichtet ist. Dies führt dazu, dass die Regelung versagt.
+% TODO Bild
+
+Eine andere einfache Lösung ist es, nicht zu interpolieren, sondern eine direkte lineare Trajektorie zum nächstliegenden Wegpunkt zu setzen. Dadurch wird die Trajektorie deutlich robuster und die Regelung funktioniert wie erwartet. Dasselbe Problem hat man jedoch im begrenzten Maße auch für die direkte lineare Trajektorie. Selbst wenn man auf Extrapolation verzichtet und ausreichend Mittelung verwendet, ist der unterste Bildpunkt aufgrund der auftretenden Rotation des gegenüber der Roboterposition orthogonal ausgerichteten Bildes geringfügig variant. Zusätzlich kann es durch die Diskretisierung bei zu großen Zeitschritten zu Überschwingen trotz Einhaltung der diskreten Zustandssollwerte kommen.
+% TODO Bild
+
+Mit dieser Bildtrajektorie und den Bildtransformationsparametern lassen sich dann diskrete Trajektoriensollwerte $x_{ref,i}$ erzeugen, indem das kinematische Querführungsmodell angenommen wird: Für jeden Trajektorienzeitschritt wird eine konstante Vorwärtsbewegung abhängig von der Geschwindigkeit ausgeführt, um den nächsten Positionssollwert zu ermitteln.
+
+Das größte Problem sind die Nichtlinearitäten. Dieser Ansatz erlaubt noch weitere Verbesserungen, um besseres Regelverhalten zu erreichen und insbesondere hohe Geschwindigkeiten ausreichend genau zu regeln. Darauf wird in diesem Projektseminar aber aufgrund der abweichenden Zielsetzung und Komplexität verzichtet.
+
+Es bietet sich zukünftig an, das Fahrzeugmodell durch ein nichtlineares Modell zu ersetzen. Damit landet man bei der nichtlinearen modelprädiktiven Regelung (NMPC), z.B. \cite{allgower2012nonlinear}, bei der aufgrund der nichtlinearen Nebenbedingungen die Konvergenz zum Optimum zwar zunächst nicht formal sichergestellt ist, aber praktisch gesehen klappt. 
+  
+\section{Schildererkennung}
+  
+\section{Auswertung}
+  
+\section{Konklusion}

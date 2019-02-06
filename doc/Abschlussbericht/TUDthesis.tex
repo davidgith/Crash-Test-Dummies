@@ -8,17 +8,14 @@ twoside
 ]{tudthesis}
 
 \usepackage[ngerman]{babel}
-%\usepackage[english]{babel}
-
 \usepackage[latin1]{inputenc}
-%\usepackage[applemac]{inputenc}
-
-% linebreak for urls in bitex
 \usepackage{url}
-\urlstyle{rm}
-
-%listings
+\usepackage{amsmath}
+\usepackage{graphicx}
 \usepackage{listings}
+\usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
+\usepackage{chngcntr}
+\urlstyle{rm}
 
 \newcommand{\getmydate}{%
 \iflanguage{ngerman}{%
@@ -38,62 +35,74 @@ twoside
   \fi\ \number\year%
 }
 }
-% changed counter for section wise counting
-\usepackage{chngcntr}
+
+\lstset{language=C++,
+	belowcaptionskip=1\baselineskip,
+	breaklines=true,
+	frame=L,
+	xleftmargin=\parindent,
+	showstringspaces=false,
+	basicstyle=\footnotesize\ttfamily,
+	keywordstyle=\bfseries\color{green!40!black},
+	commentstyle=\itshape\color{purple!40!black},
+	identifierstyle=\color{blue},
+	stringstyle=\color{orange},
+}
+
 \counterwithin{figure}{section} 
 \counterwithin{table}{section} 
 
- 
 \setinstitutionlogo[height]{logo/ESlogo.png}
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
 
 \begin{document}
 	\counterwithin{lstlisting}{section}
-  \thesistitle{Die fabelhaften Benner-Boys präsentieren stolz das TUD-\linebreak[1]Corporate-Design für {\LaTeX}!}%
-    {The Fabulous Benner Boys present lordly the {\LaTeX} TUD corporate design!}
-  \author{Johnnie Walker}
-  %do not add your student id!
-  %\studentidx{1145456}
-	\thesisnumber{ES-B-0060}
-  \referee{Clemens v. Loewenich}{Johannes Werner}
+	\thesistitle{Abschlussbericht Projektseminar Echtzeitsysteme}
+	{Gruppe Crash Test Dummies}
+	\author{Kai Cui, Feiyu Chang, Regis Fayard, Lars Semmler, David Botschek}
 	
-  \iflanguage{english}{
+	\referee{Stefan Tomaszek}{Stefan Tomaszek}
+	
+	\iflanguage{english}{
 		\department{	\mbox{Department of Electrical Engineering}\\ and Information Technology (FB18)\\\\Adjunct Member Department of\\ Computer Science (FB20)\\\\Prof. Dr. rer. nat. A. Schürr\\\ Merckstraße 25\\64283 Darmstadt\\\\www.es.tu-darmstadt.de}
 		\group{Real-Time Systems Lab}
 	}{
 		\department{Elektrotechnik und \\Informationstechnik (FB18)\\\\Zweitmitglied Informatik (FB20)\\\\Prof. Dr. rer. nat. A. Schürr\\\ Merckstraße 25\\64283 Darmstadt\\\\www.es.tu-darmstadt.de}
 		\group{Fachgebiet Echtzeitsysteme}
 	}
-  
-  \dateofsubmit{\today}
-  \makethesistitle
-  \affidavit{J. Walker}
 	
-	\cleardoublepage
-	\begin {abstract}
-	...
-	\end{abstract} 
+	\dateofsubmit{\today}
+	\makethesistitle
+	\affidavit{Kai Cui, Feiyu Chang, Regis Fayard, Lars Semmler, David Botschek}
+	
+%	\cleardoublepage
+%	\begin {abstract}
+%	...
+%	\end{abstract} 
 	
 	\cleardoublepage
 	\pagenumbering{roman}
 	\addtocontents{Anhang}{}
 	\tableofcontents
-	\cleardoublepage
-	\listoffigures
-	\cleardoublepage
-	\listoftables
-	\cleardoublepage
+	\clearpage
+%	\listoffigures
+%	\clearpage
+%	\listoftables
+%	\clearpage
 	
 	\pagenumbering{arabic}
 	\input{chapters/Introduction}
 	\cleardoublepage
 	\input{chapters/Second}
-	\cleardoublepage
-  
+	\clearpage
+	
 	\bibliographystyle{alphadin}
 	\bibliography{literature}
 	
 	\begin{appendix}
-	\section{Erster Anhang}
+		\section{Erster Anhang}
 	\end{appendix}
 
 \end{document}
