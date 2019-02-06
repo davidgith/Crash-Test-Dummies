@@ -9,7 +9,6 @@
 \contentsline {section}{\numberline {4}Regelans{\"a}tze}{5}% 
 \contentsline {subsection}{\numberline {4.1}1.Ansatz}{5}% 
 \contentsline {subsection}{\numberline {4.2}Modellpr\"adiktiver Regelungansatz}{6}% 
-\contentsline {section}{\numberline {5}Schildererkennung}{9}% 
-\contentsline {section}{\numberline {6}Auswertung}{9}% 
-\contentsline {section}{\numberline {7}Konklusion}{9}% 
-\contentsline {section}{\numberline {A}Erster Anhang}{10}% 
+\contentsline {section}{\numberline {5}Schildererkennung}{10}% 
+\contentsline {section}{\numberline {6}Auswertung}{10}% 
+\contentsline {section}{\numberline {7}Konklusion}{10}% 

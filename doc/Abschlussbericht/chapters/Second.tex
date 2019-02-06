@@ -96,7 +96,7 @@ Es sei nun eine Trajektorie nach den Gleichungen \ref{eq:traj1}, \ref{eq:traj2} 
 \end{align}
 Dann definieren wir
 \begin{align}
-	\hat{Q} &= 1000 \cdot diag(1,0,\cdots,1,0) ;\quad
+	\hat{Q} &= 100 \cdot diag(1,0,\cdots,1,0) ;\quad
 	\hat{P} = \mathbf{I}_{n,n} ;\quad
 	-U_{min} = U_{max} = 21^o \nonumber\\
 	x_0 &= 
@@ -121,8 +121,8 @@ Dann definieren wir
 Wir können dann das folgende quadratische Optimierungsproblem für $n$ Zeitschritte definieren \cite{hovd2004brief}, welches die quadratischen Positionsabweichungen über $n$ Zeitschritte vorwärts minimiert.
 \begin{align}
 	\min_v f(v) 
-	&= (x_0 - x_{ref,0}^TQ(x_0 - x_{ref,0})) + \chi_0^T\hat{Q}\chi_0 + 2\chi_0^T\hat{Q}\chi_v + \chi_v^T\hat{Q}\chi_v + v^T\hat{P}v \\
-	&= 0.5v^T\tilde{H}v + c^Tv
+	&= \min_v 0.5v^T\tilde{H}v + c^Tv \\
+	&= \min_v (x_0 - x_{ref,0})^TQ(x_0 - x_{ref,0}) + \chi_0^T\hat{Q}\chi_0 + 2\chi_0^T\hat{Q}\chi_v + \chi_v^T\hat{Q}\chi_v + v^T\hat{P}v 
 \end{align}
 mit den Stellgrößen-Nebenbedingungen
 \begin{align}
@@ -135,34 +135,51 @@ Da wir keine Zustandsgrößenbeschränkung vorsehen, benötigen wir die restlichen N
 \end{align} 
 Die Konvergenz, Optimalität und numerische Stabilität der Lösung des Optimierungsproblems der linearen modellprädiktiven Regelung ist hierbei durch die Verwendung von Methoden aus der quadratischen Programmierung, z.B. hier \cite{goldfarb1983numerically}, sichergestellt.
 
-Wir haben hier die Gewichtungsmatrizen $\hat{Q}, \hat{P}$ so gesetzt, dass näherungsweise lediglich die Positionsabweichung zur Solltrajektorie minimiert werden soll. Dies erlaubt es uns dann, als Solltrajektorie den Sollstellgrößenverlauf zu ignorieren und eine beliebige Sollwinkeltrajektorie vorzugeben, da lediglich nach der Position optimiert wird:
+Wir haben hier die Gewichtungsmatrizen $\hat{Q}, \hat{P}$ so gesetzt, dass näherungsweise lediglich die Positionsabweichung zur Solltrajektorie minimiert werden soll. Dies erlaubt es uns daher, als Solltrajektorie den Sollstellgrößenverlauf zu ignorieren und eine beliebige Sollwinkeltrajektorie vorzugeben, da Inkonsistenzen mit dem Sollzustandsverlauf kaum ins Gewicht fallen:
 \begin{align}	
 u_{ref} &= 
 \begin{pmatrix} 0 & 0 & \hdots & 0 & 0 \end{pmatrix}^T 
 \end{align}
+Als nächstes wird die Beschaffung der Sollzustandstrajektorie erläutert. Dazu bedienen wir uns der Kamera, dessen Farbdaten zunächst mithilfe einer inversen Perspektiventransformation (IPM) auf ein Birdeye-View gebracht werden. Beispielhaft ist ein bearbeitetes, transformiertes Bild in Abbildung \ref{fig:quadratic} zu sehen.
 
-Als nächstes wird die Beschaffung der Solltrajektorie erläutert. Dazu bedienen wir uns der Kamera, dessen Farbdaten zunächst mithilfe einer inversen Perspektiventransformation (IPM) auf ein Birdeye-View gebracht werden.
-% TODO Bild
+Das Bild wird in horizontale Streifen einer vordefinierten Breite unterteilt. Anschließend werden die Streifen nach den Fahrbahnbegrenzungsfarben gefiltert und Spaltenhistogramme gebildet. Die Histogrammmaxima am nächsten zur Mitte des Bildes mit einem vordefinierten Mindestabstand werden selektiert. In diesem Fall also bis zu zwei Seitenstreifenpunkte und bis zu ein Mittellinienpunkt. Diese sind in Abbildung \ref{fig:quadraticorig} als schwarze Kreise eingezeichnet.
 
-Das Bild wird in horizontale Streifen einer vordefinierten Breite unterteilt. Anschließend werden die Streifen nach den Fahrbahnbegrenzungsfarben gefiltert und Spaltenhistogramme gebildet. Die Histogrammmaxima am nächsten zur Mitte des Bildes mit einem vordefinierten Mindestabstand werden selektiert. In diesem Fall also bis zu zwei Seitenstreifenpunkte und bis zu ein Mittellinienpunkt. Schließlich werden diese Punkte verwendet, um sinnvolle Wegpunkte zu definieren.
+Anschließend werden diese Punkte verwendet, um sinnvolle Wegpunkte zu definieren. Diese sind in der Abbildung \ref{fig:quadraticorig} als grüne Kreise eingezeichnet. Wegpunkte werden priorisiert zwischen einen Mittellinienpunkt und den Seitenstreifenpunkt der entsprechenden Fahrbahnseite gelegt. Falls das nicht möglich ist, z.B. weil einer der Punkte nicht existiert, legen wir ihn $\frac{1}{4}$ oder $\frac{3}{4}$ zwischen die Seitenstreifenpunkte je nach Fahrbahnseite. Falls auch das nicht möglich ist, können zusätzliche Punkte aus den bereits existierenden inferiert werden, falls mindestens ein Seitenstreifenpunkt existiert.
 
-Wegpunkte werden priorisiert zwischen einen Mittellinienpunkt und den Seitenstreifenpunkt der entsprechenden Fahrbahnseite gelegt. Falls das nicht möglich ist, z.B. weil einer der Punkte nicht existiert, legen wir ihn $\frac{1}{4}$ oder $\frac{3}{4}$ zwischen die Seitenstreifenpunkte je nach Fahrbahnseite. Falls auch das nicht möglich ist, können zusätzliche Punkte aus den bereits existierenden inferiert werden, falls mindestens ein Seitenstreifenpunkt existiert.
-% TODO Bild
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{pics/windowedorig.png}
+	\caption{Bearbeitetes, rücktransformiertes Bild mit quadratischer Trajektorie. Sichtbar sind Wegpunkte (grüne Kreise), die Solltrajektorie (blaue Linie), die prädiktierte Trajektorie (rote Punkte) und Lanepunkte (schwarze Kreise)}
+	\label{fig:quadraticorig}
+\end{figure}
 
-Mithilfe dieser Wegpunkte kann man nun eine Trajektorie $x_{ref}$ erzeugen. Die Trajektorie muss nicht vom Fahrzeug einhaltbar sein, sondern lediglich dem gewünschten Fahrverlauf entsprechen.
-% TODO Bild
+Mithilfe dieser Wegpunkte kann man nun eine Trajektorie $x_{ref}$ erzeugen.In Abbildung \ref{fig:quadraticorig} ist die blaue Linie eine quadratische Trajektorie, die an die grünen Wegpunkte gefittet wird. Die Trajektorie scheint zunächst gut an die Fahrbahn angepasst zu sein. Man erkennt, dass die Solltrajektorie nicht einhaltbar ist, da die Querabweichung sich aus dem Unterschied zwischen polynomiell extrapolierter Solltrajektorie und Roboterposition zusammensetzt und nicht bei null beginnt. Dies ist kein Problem, da lediglich der quadratische Fehler über die nächsten Zeitschritte minimiert wird. 
 
-Ein Problem lässt sich hier jedoch feststellen: Die Trajektorien sind hiermit nicht stationär und sehr variant. Der Grund hierfür ist hauptsächlich die anfällige Extrapolation durch Polynome außerhalb der Stützpunkte. Zusätzlich kommt jedoch hinzu, dass die Regressionsmethode nicht rotationsinvariant ist, denn eine Rotation der Wegpunkte führt zu einer völlig anderen Trajektorie, da das Polynom an den Bildachsen ausgerichtet ist. Dies führt dazu, dass die Regelung versagt.
-% TODO Bild
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{pics/windowed.png}
+	\caption{Transformierte und um Roboterposition erweiterte Version von Abbildung \ref{fig:quadraticorig}.}
+	\label{fig:quadratic}
+\end{figure}
 
-Eine andere einfache Lösung ist es, nicht zu interpolieren, sondern eine direkte lineare Trajektorie zum nächstliegenden Wegpunkt zu setzen. Dadurch wird die Trajektorie deutlich robuster und die Regelung funktioniert wie erwartet. Dasselbe Problem hat man jedoch im begrenzten Maße auch für die direkte lineare Trajektorie. Selbst wenn man auf Extrapolation verzichtet und ausreichend Mittelung verwendet, ist der unterste Bildpunkt aufgrund der auftretenden Rotation des gegenüber der Roboterposition orthogonal ausgerichteten Bildes geringfügig variant. Zusätzlich kann es durch die Diskretisierung bei zu großen Zeitschritten zu Überschwingen trotz Einhaltung der diskreten Zustandssollwerte kommen.
-% TODO Bild
+Ein Problem lässt sich in Abbildung \ref{fig:quadratic} jedoch feststellen: Die Trajektorien sind aufgrund der polynomiellen Extrapolation nicht stationär und sehr variant. Zusätzlich kommt hinzu, dass die Regressionsmethode nicht rotationsinvariant ist, denn eine Rotation der Wegpunkte führt aufgrund der vertikalen Polynomausrichtung zu einer völlig anderen Trajektorie. Diese Umstände führen dazu, dass die Regelung versagt.
+
+Eine andere einfache Lösung ist es, nicht zu interpolieren, sondern wie in Abbildung \ref{fig:direct} zu sehen eine direkte lineare Trajektorie zum nächstliegenden Wegpunkt zu setzen. Dadurch wird die Trajektorie deutlich robuster und die Regelung funktioniert wie erwartet. Dasselbe Problem hat man jedoch im begrenzten Maße auch für die direkte lineare Trajektorie. Selbst wenn man auf Extrapolation verzichtet und ausreichend Mittelung verwendet, ist der unterste Bildpunkt aufgrund der auftretenden Rotation des gegenüber der Roboterposition orthogonal ausgerichteten Bildes geringfügig variant. Zusätzlich kann es durch die Diskretisierung bei zu großen Zeitschritten zu Überschwingen trotz Einhaltung der diskreten Zustandssollwerte kommen.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{pics/windoweddirect.png}
+	\caption{Bearbeitetes, untransformiertes Bild mit quadratischer Trajektorie. Sichtbar sind Wegpunkte (grüne Kreise), die Solltrajektorie (blaue Linie), die prädiktierte Trajektorie (rote Punkte), Lanepunkte (schwarze Kreise) und die Roboterposition relativ zum Bild (Anfangspunkt der prädiktierten Trajektorie, großer blauer Kreis)}
+	\label{fig:direct}
+\end{figure}
 
 Mit dieser Bildtrajektorie und den Bildtransformationsparametern lassen sich dann diskrete Trajektoriensollwerte $x_{ref,i}$ erzeugen, indem das kinematische Querführungsmodell angenommen wird: Für jeden Trajektorienzeitschritt wird eine konstante Vorwärtsbewegung abhängig von der Geschwindigkeit ausgeführt, um den nächsten Positionssollwert zu ermitteln.
 
-Das größte Problem sind die Nichtlinearitäten. Dieser Ansatz erlaubt noch weitere Verbesserungen, um besseres Regelverhalten zu erreichen und insbesondere hohe Geschwindigkeiten ausreichend genau zu regeln. Darauf wird in diesem Projektseminar aber aufgrund der abweichenden Zielsetzung und Komplexität verzichtet.
+Das größte Problem sind die Nichtlinearitäten. Dieser Ansatz erlaubt noch weitere Verbesserungen, um besseres Regelverhalten zu erreichen und insbesondere hohe Geschwindigkeiten ausreichend genau zu regeln. Darauf wird in diesem Projektseminar aber aufgrund der abweichenden Zielsetzung verzichtet.
 
 Es bietet sich zukünftig an, das Fahrzeugmodell durch ein nichtlineares Modell zu ersetzen. Damit landet man bei der nichtlinearen modelprädiktiven Regelung (NMPC), z.B. \cite{allgower2012nonlinear}, bei der aufgrund der nichtlinearen Nebenbedingungen die Konvergenz zum Optimum zwar zunächst nicht formal sichergestellt ist, aber praktisch gesehen klappt. 
+
+Schließlich könnte man auch die Trajektoriengenerierung überarbeiten. Eine naheliegende Wahl, um auch mit Bildraten von unter 1 Hz auszukommen, ist die Verwendung der direkten Trajektorie bis zum ersten Wegpunkt und darauffolgende Verwendung der quadratischen Trajektorie. Da die quadratische Trajektorie in diesem Fall nicht mehr extrapoliert, bietet diese eine hervorragende Trajektorienform für eine Regelung mit wenigen Bildern. 
   
 \section{Schildererkennung}
   
