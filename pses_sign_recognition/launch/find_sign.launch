@@ -7,9 +7,9 @@
 	
 	<node name="find_object_3d" pkg="find_object_2d" type="find_object_2d" output="screen">
 		<param name="gui" value="false" type="bool"/>
-		<param name="settings_path" value="/home/pses-02/catkin_ws/src/pses_sign_recognition/data/find-sign-settings.ini" type="str"/>
+		<param name="settings_path" value="~/catkin_ws/src/pses_sign_recognition/data/find-sign-settings.ini" type="str"/>
 		<param name="subscribe_depth" value="true" type="bool"/>
-		<param name="objects_path" value="/home/pses-02/catkin_ws/src/pses_sign_recognition/data/objs" type="str"/>
+		<param name="objects_path" value="~/catkin_ws/src/pses_sign_recognition/data/objs" type="str"/>
 		<param name="object_prefix" value="Vehrkehrsschild" type="str"/>
 		
 		<remap from="rgb/image_rect_color" to="/kinect2/$(arg resolution)/image_color_rect"/>

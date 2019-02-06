@@ -26,7 +26,7 @@ SET(INCLUDE_DIRS
 # Make sure the compiler can find include files from our library.
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 
-INCLUDE_DIRECTORIES(/include/find_object/ObjWidget)
+#INCLUDE_DIRECTORIES(/include/find_object/ObjWidget)
 
 find_package(OpenCV REQUIRED)
 # find_package(xfeatures2d REQUIRED) 
@@ -162,7 +162,9 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
- add_executable(sign_recognition src/sign_recognition_node.cpp)
+add_executable(sign_recognition src/sign_recognition_node.cpp)
+# add_executable(obj_detection src/SURF_Homography.cpp)
+add_executable(obj_detection src/SURF_FLANN_matching_homography_Demo.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -181,6 +183,11 @@ include_directories(
    ${OpenCV_LIBS}
  )
 
+ target_link_libraries(obj_detection
+   ${catkin_LIBRARIES}
+   ${QT_LIBRARIES}
+   ${OpenCV_LIBS}
+ )
 #############
 ## Install ##
 #############
