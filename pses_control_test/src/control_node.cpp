@@ -35,6 +35,7 @@ using namespace Eigen;
 #define WINDOW_SIZE 10
 #define PEAK_MIN_DISTANCE 100
 #define MIN_LANE_POINT_PAIRS 3
+#define LANE_WIDTH_PIXELS 240
 
 // Model Predictive Control Parameters
 static double MPC_WEIGHT_U = 0.01f;
@@ -65,7 +66,7 @@ static int DETECTION_END_OFFSET_Y = 100;
 
 // Drive Configurations
 static bool INTERPOLATE_WITH_CURRENT_POSITION = false;
-static bool LEFT_LANE = false;
+static int DRIVING_LANE = false;
 static double TARGET_VELOCITY = 0.2f;
 
 // Extra Configurations
@@ -89,7 +90,7 @@ void callback(pses_control_test::ParamsConfig &config, uint32_t level)
 
   DETECTION_END_OFFSET_Y = config.detection_end_offset;
 
-  LEFT_LANE = config.ctrl_left_lane;
+  DRIVING_LANE = config.ctrl_lane;
   TARGET_VELOCITY = config.ctrl_velocity;
 
   DIRECT_TRAJECTORY = config.direct_trajectory;
@@ -192,6 +193,70 @@ int findBestHistogramPeakX(cv::Mat& histogram) {
   return curMaxIndex;      
 }
 
+int getWaypointXFromRightLanePoint(const Point& lanePoint) {
+	if (DRIVING_LANE == 0) {
+		return lanePoint.x - 3*LANE_WIDTH_PIXELS/4;
+	} else if (DRIVING_LANE == 1) {
+		return lanePoint.x - 2*LANE_WIDTH_PIXELS/4;
+	} else if (DRIVING_LANE == 2) {
+		return lanePoint.x - LANE_WIDTH_PIXELS/4;
+	} else {
+		return 0;
+	}
+}
+
+int getWaypointXFromLeftLanePoint(const Point& lanePoint) {
+	if (DRIVING_LANE == 0) {
+		return lanePoint.x + LANE_WIDTH_PIXELS/4;
+	} else if (DRIVING_LANE == 1) {
+		return lanePoint.x + 2*LANE_WIDTH_PIXELS/4;
+	} else if (DRIVING_LANE == 2) {
+		return lanePoint.x + 3*LANE_WIDTH_PIXELS/4;
+	} else {
+		return 0;
+	}
+	return DRIVING_LANE ? lanePoint.x + 60 : lanePoint.x + 180;
+}
+
+int getWaypointXFromMiddleLanePoint(const Point& lanePoint) {
+	if (DRIVING_LANE == 0) {
+		return lanePoint.x - LANE_WIDTH_PIXELS/4;
+	} else if (DRIVING_LANE == 1) {
+		return lanePoint.x;
+	} else if (DRIVING_LANE == 2) {
+		return lanePoint.x + LANE_WIDTH_PIXELS/4;
+	} else {
+		return 0;
+	}
+}
+
+int getWaypointXFromOuterLanePoints(const Point& leftLanePoint,
+		const Point& rightLanePoint) {
+	if (DRIVING_LANE == 0) {
+		return (leftLanePoint.x * 3 + rightLanePoint.x * 1) / 4;
+	} else if (DRIVING_LANE == 1) {
+		return (leftLanePoint.x * 2 + rightLanePoint.x * 2) / 4;
+	} else if (DRIVING_LANE == 2) {
+		return (leftLanePoint.x * 1 + rightLanePoint.x * 3) / 4;
+	} else {
+		return 0;
+	}
+}
+
+Point getWaypointXFromLanePoints(const Point& leftLanePoint,
+		const Point& middleLanePoint, const Point& rightLanePoint) {
+	// If the middle point and the point on the driving side exists, place inbetween
+	if (DRIVING_LANE == 0 && middleLanePoint.x != -1 && leftLanePoint.x != -1) {
+		return Point((middleLanePoint.x + leftLanePoint.x) / 2, middleLanePoint.y);
+	} else if (DRIVING_LANE == 2 && middleLanePoint.x != -1 && rightLanePoint.x != -1) {
+		return Point((middleLanePoint.x + rightLanePoint.x) / 2, middleLanePoint.y);
+	} else if (middleLanePoint.x == -1) {
+		return Point(getWaypointXFromOuterLanePoints(leftLanePoint, rightLanePoint), middleLanePoint.y);
+	} else {
+		return Point(getWaypointXFromMiddleLanePoint(middleLanePoint), middleLanePoint.y);
+	}
+}
+
 // Callback on new kinect image
 void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* u_mutex, std::queue<double>* u_queue)
 {
@@ -288,7 +353,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
     }
     ROS_INFO("Sliding window search done! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
-    // Fill-in pink lane for the picture
+    // Fill-in pink lane
     if (FILL_PINK_LANE) {
       Point lastPink = Point(-1, -1);
       for (int i = detectedLanePoints.size() - 1; i >= 0; i--) {
@@ -386,29 +451,11 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
           rightLanePoint = std::get<2>(usefulPoints.at(i));
         }
 
-        // If the middle point and the point on the driving side exists, place inbetween
-        if (LEFT_LANE && middleLanePoint.x != -1 && leftLanePoint.x != -1) {
-          Point wayPoint((middleLanePoint.x + leftLanePoint.x) / 2, middleLanePoint.y);
-          usefulWaypoints.push_back(wayPoint);
-        }
-        else if (!LEFT_LANE && middleLanePoint.x != -1 && rightLanePoint.x != -1) {
-          Point wayPoint((middleLanePoint.x + rightLanePoint.x) / 2, middleLanePoint.y);
-          usefulWaypoints.push_back(wayPoint);
-        }
-        // Otherwise, if the middle point does not exist, place in-between lane points
-        else if (middleLanePoint.x == -1) {
-          Point wayPoint(LEFT_LANE ? (leftLanePoint.x * 3 + rightLanePoint.x) / 4 : 
-            (leftLanePoint.x + rightLanePoint.x * 3) / 4, middleLanePoint.y);
-          usefulWaypoints.push_back(wayPoint);
-        }
-        // Otherwise, the middle point must exist by construction
-        else {
-          Point wayPoint(LEFT_LANE ? middleLanePoint.x - 60 : middleLanePoint.x + 60, middleLanePoint.y);
-          usefulWaypoints.push_back(wayPoint);
-        }
+		Point wayPoint = getWaypointXFromLanePoints(leftLanePoint, middleLanePoint, rightLanePoint);
+        usefulWaypoints.push_back(wayPoint);
       }
 
-      // Optional waypoint post-processing: Infer more waypoints from left/right points
+      // Waypoint post-processing: Infer more waypoints from left/right points
       int leftmostIndex = 0;
       int rightmostIndex = 0;
       int usefulIndex = 0;
@@ -441,13 +488,13 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
           // Treat it as the right lane point if it is right of the average x of the useful waypoints
           if (rightmostPoints.at(rightmostIndex).x > avgWaypointX + 40) {
             Point lanePoint = rightmostPoints.at(rightmostIndex);
-            Point wayPoint(std::max(0, LEFT_LANE ? lanePoint.x - 180 : lanePoint.x - 60), lanePoint.y);
+			Point wayPoint(std::max(0, getWaypointXFromRightLanePoint(lanePoint)), lanePoint.y);
             wayPoints.push_back(wayPoint);
           } 
           // Otherwise it is the left lane point
           else if (rightmostPoints.at(rightmostIndex).x < avgWaypointX - 40) {
             Point lanePoint = rightmostPoints.at(rightmostIndex);
-            Point wayPoint(std::min(width, LEFT_LANE ? lanePoint.x + 60: lanePoint.x + 180), lanePoint.y);
+            Point wayPoint(std::min(width, getWaypointXFromLeftLanePoint(lanePoint)), lanePoint.y);
             wayPoints.push_back(wayPoint);
           }
         }
@@ -458,7 +505,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
       // Left turn fallback -> drive left from rightmost points
       for (int i = 0; i < rightmostPoints.size(); i++) {
         Point lanePoint = rightmostPoints.at(i);
-        Point wayPoint(std::max(0, LEFT_LANE ? lanePoint.x - 180 : lanePoint.x - 60), lanePoint.y);
+        Point wayPoint(std::max(0, getWaypointXFromRightLanePoint(lanePoint)), lanePoint.y);
         wayPoints.push_back(wayPoint);
       }
     } 
@@ -466,7 +513,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
       // Right turn fallback -> drive right from leftmost points
       for (int i = 0; i < leftmostPoints.size(); i++) {
         Point lanePoint = leftmostPoints.at(i);
-        Point wayPoint(std::min(width, LEFT_LANE ? lanePoint.x + 60: lanePoint.x + 180), lanePoint.y);
+		Point wayPoint(std::min(width, getWaypointXFromLeftLanePoint(lanePoint)), lanePoint.y);
         wayPoints.push_back(wayPoint);
       }
     }
@@ -500,7 +547,6 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
 
     } else {
       // Quadratic polynomial:
-      //Optional: add current robot position to fitting waypoints
       if (INTERPOLATE_WITH_CURRENT_POSITION) {
         xs.push_back(ROBOT_POSITION_PIXEL_X);
         ys.push_back(height + ROBOT_OFFSET_PIXEL_Y);
@@ -605,7 +651,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
     int compensation_steps = round(double(clock() - begin) / CLOCKS_PER_SEC / MPC_DT);
     if (MPC_DEADTIME_COMPENSATION) {
       for (int i = 0; i < compensation_steps; i++) {
-        x0 = A_d % x0 + B_d * prev_u_queue.front();
+        x0 = A_d * x0 + B_d * prev_u_queue.front();
         prev_u_queue.pop();
       }
     }
@@ -618,16 +664,16 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
       A_dash[2*i][1] = _tmpMat[0][1];
       A_dash[2*i+1][0] = _tmpMat[1][0];
       A_dash[2*i+1][1] = _tmpMat[1][1];
-      _tmpMat = _tmpMat % A_d;
+      _tmpMat = _tmpMat * A_d;
     }
 
-    quadprogpp::Matrix<double> chi0 = A_dash % x0 - x_ref;
+    quadprogpp::Matrix<double> chi0 = A_dash * x0 - x_ref;
 
     quadprogpp::Matrix<double> G, CE, CI;
     quadprogpp::Vector<double> g0, ce0, ci0, x;
 
-    G = transpose(B_dash) % Q_dash % B_dash + P_dash;
-    quadprogpp::Matrix<double> g0Mat = transpose(chi0) % Q_dash % B_dash;
+    G = transpose(B_dash) * Q_dash * B_dash + P_dash;
+    quadprogpp::Matrix<double> g0Mat = transpose(chi0) * Q_dash * B_dash;
     g0 = g0Mat.extractRow(0);
 
     // inequality constraints on input (10, 11) 
@@ -698,7 +744,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, IPM* ipm, std::mutex* 
       // Draw predicted MPC trajectory
       quadprogpp::Matrix<double> predicted_state = x0;
       for (int i = 0; i < MPC_STEPS; i++) {
-        predicted_state = A_d % predicted_state + B_d * u[i];
+        predicted_state = A_d * predicted_state + B_d * u[i];
         predicted_y -= TARGET_VELOCITY * MPC_DT / METER_PER_PIXEL_Y;
         double predicted_x = predicted_state[0][0] / METER_PER_PIXEL_X + ROBOT_POSITION_PIXEL_X;
         cv::circle(transformedFullImage, Point(round(predicted_x), round(predicted_y)), 2, cv::Scalar(0,0,255), -1, 8, 0);
