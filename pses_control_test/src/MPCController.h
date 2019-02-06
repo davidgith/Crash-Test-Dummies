@@ -8,42 +8,30 @@
 #ifndef PSES_CONTROL_TEST_SRC_MPCCONTROLLER_H_
 #define PSES_CONTROL_TEST_SRC_MPCCONTROLLER_H_
 
-#include <ros/ros.h>
-#include <sensor_msgs/Range.h>
-#include <std_msgs/Int16.h>
-#include <image_transport/image_transport.h>
-#include <cv_bridge/cv_bridge.h>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <ctime>
-#include <iostream>
-#include <stdio.h>
-#include <algorithm>
-#include <eigen3/Eigen/Dense>
-#include <tuple>
-#include <queue>
+#include <bits/stdint-uintn.h>
+#include <opencv2/core/types.hpp>
+#include <sensor_msgs/Image.h>
 #include <mutex>
-
-#include "QuadProg++.hh"
-#include "IPM.h"
-
-#include <dynamic_reconfigure/server.h>
+#include <queue>
+#include <tuple>
+#include <vector>
 #include <pses_control_test/ParamsConfig.h>
 
+#include "IPM.h"
+#include "QuadProg++.hh"
+
 using namespace cv;
-using namespace std;
-using namespace Eigen;
 
 class MPCController {
 public:
 	MPCController();
 	virtual ~MPCController();
+
 	bool hasNewInput(float timeSinceLastInput);
 	int getNextSteeringControl();
 	int getNextMotorControl();
-	void callback(pses_control_test::ParamsConfig &config, uint32_t level);
-	void imageCallback(const sensor_msgs::ImageConstPtr& msg);
+	void reconfigureParameters(pses_control_test::ParamsConfig &config, uint32_t level);
+	void processInput(const sensor_msgs::ImageConstPtr& msg);
 
 private:
 	IPM* ipm;
@@ -52,37 +40,49 @@ private:
 	double timeLastMPCCalc = 0;
 
 	// Model Predictive Control Parameters
-	double MPC_WEIGHT_U = 0.01f;
-	double MPC_WEIGHT_Y = 10.0f;
+	double mpcWeightInput = 0.01f;
+	double mpcWeightY = 10.0f;
 
 	// Optimizations
-	bool DEBUG_OUTPUT = true;
+	bool showDebugOutputs = true;
 
 	// Model Predictive Control Configurations
-	bool MPC_DEADTIME_COMPENSATION = false;
-	double MPC_DT = 0.1f;
-	int MPC_STEPS = 20;
-	double MPC_RECALC_INTERVAL = 1;
-	int DETECTION_END_OFFSET_Y = 100;
+	bool mpcUseDeadtimeCompensation = false;
+	double mpcTimestep = 0.1f;
+	int mpcNumberTimesteps = 20;
+	double mpcRecalcInterval = 1;
+	int detectionEndOffsetY = 100;
 
 	// Drive Configurations
 	bool INTERPOLATE_WITH_CURRENT_POSITION = false;
-	int DRIVING_LANE = false;
-	double TARGET_VELOCITY = 0.2f;
+	int drivingLane = false;
+	double targetVelocity = 0.2f;
 
 	// Extra Configurations
-	bool DIRECT_TRAJECTORY = true;
-	bool FILL_PINK_LANE = false;
-	int MOTOR_CTRL = 0;
+	bool useDirectTrajectory = true;
+	bool fillPinkLane = false;
+	int targetMotorCtrl = 0;
 
-
-	Point getWaypointXFromLanePoints(const Point& leftLanePoint,
-			const Point& middleLanePoint, const Point& rightLanePoint);
-	int getWaypointXFromOuterLanePoints(const Point& leftLanePoint,
-			const Point& rightLanePoint);
-	int getWaypointXFromMiddleLanePoint(const Point& lanePoint);
-	int getWaypointXFromLeftLanePoint(const Point& lanePoint);
-	int getWaypointXFromRightLanePoint(const Point& lanePoint) ;
+	cv::Point getWaypointXFromLanePoints(const cv::Point& leftLanePoint, const cv::Point& middleLanePoint,
+			const cv::Point& rightLanePoint);
+	int getWaypointXFromOuterLanePoints(const cv::Point& leftLanePoint, const cv::Point& rightLanePoint);
+	int getWaypointXFromMiddleLanePoint(const cv::Point& lanePoint);
+	int getWaypointXFromLeftLanePoint(const cv::Point& lanePoint);
+	int getWaypointXFromRightLanePoint(const cv::Point& lanePoint);
+	void processAndTransformImage(const sensor_msgs::ImageConstPtr& msg, cv::Mat& transformedImage);
+	void findLanePoints(const cv::Mat& transformedImage, const cv::Mat& ThreshImageGreen, const cv::Mat& ThreshImagePink,
+			std::vector<std::tuple<cv::Point, cv::Point, cv::Point> >& detectedLanePoints);
+	void fillPinkLine(const cv::Mat& transformedImage,
+			std::vector<std::tuple<cv::Point, cv::Point, cv::Point> >& detectedLanePoints);
+	void sortLanePoints(std::vector<std::tuple<Point, Point, Point> > detectedLanePoints,
+			std::vector<std::tuple<Point, Point, Point> >& usefulPoints, std::vector<Point>& rightmostPoints,
+			std::vector<Point>& leftmostPoints);
+	void generateWaypoints(const cv::Mat& transformedImage, std::vector<Point> rightmostPoints, std::vector<Point> leftmostPoints,
+			std::vector<std::tuple<Point, Point, Point> > usefulPointTuples, std::vector<Point>& wayPoints);
+	void fitTrajectoryToWaypoints(const cv::Mat& transformedImage, std::vector<Point>& wayPoints,
+			std::vector<double>& trajectory_coeffs);
+	void solveMPCProblem(const cv::Mat& transformedImage, const std::vector<double>& trajectory_coeffs, clock_t begin,
+			std::queue<double> prev_u_queue, const cv::Mat& transformedFullImage, quadprogpp::Vector<double>& optimal_u);
 };
 
 #endif /* PSES_CONTROL_TEST_SRC_MPCCONTROLLER_H_ */

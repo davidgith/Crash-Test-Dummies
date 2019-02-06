@@ -1,26 +1,14 @@
-#include <ros/ros.h>
-#include <sensor_msgs/Range.h>
+#include <dynamic_reconfigure/server.h>
+#include <opencv2/highgui.hpp>
+#include <pses_control_test/ParamsConfig.h>
+#include <ros/init.h>
+#include <ros/node_handle.h>
+#include <ros/publisher.h>
+#include <ros/rate.h>
+#include <sensor_msgs/Image.h>
 #include <std_msgs/Int16.h>
-#include <image_transport/image_transport.h>
-#include <cv_bridge/cv_bridge.h>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <ctime>
-#include <iostream>
-#include <stdio.h>
-#include <algorithm>
-#include <eigen3/Eigen/Dense>
-#include <tuple>
-#include <queue>
-#include <mutex>
 
 #include "MPCController.h"
-#include "QuadProg++.hh"
-#include "IPM.h"
-
-#include <dynamic_reconfigure/server.h>
-#include <pses_control_test/ParamsConfig.h>
 
 int main(int argc, char** argv)
 {
@@ -34,12 +22,12 @@ int main(int argc, char** argv)
   // Dynamic Reconfiguration
   dynamic_reconfigure::Server<pses_control_test::ParamsConfig> server;
   dynamic_reconfigure::Server<pses_control_test::ParamsConfig>::CallbackType f;
-  f = boost::bind(&MPCController::callback, &controller, _1, _2);
+  f = boost::bind(&MPCController::reconfigureParameters, &controller, _1, _2);
   server.setCallback(f);
 
   // generate subscriber for sensor messages
   ros::Subscriber imageSub = nh.subscribe<sensor_msgs::Image>(
-      "kinect2/qhd/image_color", 1, boost::bind(&MPCController::imageCallback, &controller, _1));
+      "kinect2/qhd/image_color", 1, boost::bind(&MPCController::processInput, &controller, _1));
 
   // generate control message publisher
   std_msgs::Int16 motor, steering;
