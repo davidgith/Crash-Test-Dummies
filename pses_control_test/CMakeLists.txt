@@ -145,6 +145,8 @@ add_executable(pses_control_test
   src/control_node.cpp 
   src/IPM.cpp 
   src/IPM.h
+  src/MPCController.cpp
+  src/MPCController.h
   src/Array.cc
   src/Array.hh
   src/QuadProg++.cc
