@@ -1412,18 +1412,18 @@ inline Matrix<T>& Matrix<T>::operator-=(const T& a)
   return *this;
 }
 
-template <typename T>
-Matrix<T> operator*(const Matrix<T>& lhs, const Matrix<T>& rhs)
-{
-  if (lhs.ncols() != rhs.ncols() || lhs.nrows() != rhs.nrows())
-    throw std::logic_error("Operator*: matrices have different sizes");
-  Matrix<T> tmp(lhs.nrows(), lhs.ncols());
-  for (unsigned int i = 0; i < lhs.nrows(); i++)
-    for (unsigned int j = 0; j < lhs.ncols(); j++)
-      tmp[i][j] = lhs[i][j] * rhs[i][j];
-	
-  return tmp;
-}
+//template <typename T>
+//Matrix<T> operator*(const Matrix<T>& lhs, const Matrix<T>& rhs)
+//{
+//  if (lhs.ncols() != rhs.ncols() || lhs.nrows() != rhs.nrows())
+//    throw std::logic_error("Operator*: matrices have different sizes");
+//  Matrix<T> tmp(lhs.nrows(), lhs.ncols());
+//  for (unsigned int i = 0; i < lhs.nrows(); i++)
+//    for (unsigned int j = 0; j < lhs.ncols(); j++)
+//      tmp[i][j] = lhs[i][j] * rhs[i][j];
+//
+//  return tmp;
+//}
 
 template <typename T>
 Matrix<T> operator*(const Matrix<T>& lhs, const T& a)
@@ -1462,10 +1462,10 @@ Matrix<T> transpose(const Matrix<T>& m)
 
 // custom matrix multiplication
 template <typename T>
-Matrix<T> operator%(const Matrix<T>& lhs, const Matrix<T>& rhs)
+Matrix<T> operator*(const Matrix<T>& lhs, const Matrix<T>& rhs)
 {
   if (lhs.ncols() != rhs.nrows())
-    throw std::logic_error("Operator%: matrices have wrong dimensions");
+    throw std::logic_error("Operator*: matrices have wrong dimensions");
   Matrix<T> tmp;
   tmp.resize(0, lhs.nrows(), rhs.ncols());
   for (unsigned int rowLHS = 0; rowLHS < lhs.nrows(); rowLHS++)
