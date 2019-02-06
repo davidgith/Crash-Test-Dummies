@@ -145,8 +145,11 @@ add_executable(pses_control_test
   src/control_node.cpp 
   src/IPM.cpp 
   src/IPM.h
+  src/MPCController.cpp
+  src/MPCController.h
   src/Array.cc
   src/Array.hh
+  src/PolyUtils.h
   src/QuadProg++.cc
   src/QuadProg++.hh)
 # make sure configure headers are built before any node using them
