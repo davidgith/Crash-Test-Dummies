@@ -26,22 +26,22 @@ const char* keys =
 
 void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[])
 {
-  static int imagecounter = 0; 
-  imagecounter++;
-  cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image;
-  cv::Mat imageGrey;
-  cv::cvtColor(image, imageGrey, CV_BGR2GRAY);
-  
-  if(imagecounter == 1)
-    {
-      //cv::imshow("view", imageGrey);
-      imagecounter = 0;
-    } 
+    static int imagecounter = 0; 
+    imagecounter++;
+    cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image;
+    cv::Mat imageGrey;
+    cv::cvtColor(image, imageGrey, CV_BGR2GRAY);
+    
+    if(imagecounter == 1)
+        {
+        //cv::imshow("view", imageGrey);
+        imagecounter = 0;
+        } 
 
-  ROS_INFO("image callback");
-  cv::waitKey(10);
+    //ROS_INFO("image callback");
+    cv::waitKey(10);
 
-  CommandLineParser parser( argc, argv, keys );
+    CommandLineParser parser( argc, argv, keys );
     Mat img_object = imread( parser.get<String>("input1"), IMREAD_GRAYSCALE );
     //Mat img_scene = imread( parser.get<String>("input2"), IMREAD_GRAYSCALE );
     Mat img_scene = imageGrey;
@@ -105,6 +105,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
         obj_corners[2] = Point2f( (float)img_object.cols, (float)img_object.rows );
         obj_corners[3] = Point2f( 0, (float)img_object.rows );
         std::vector<Point2f> scene_corners(4);
+
+        ROS_INFO("Corner 0: %f Corner 1: %f Corner 2: Corner 3:", (float)img_object.cols, (float)img_object.rows );
 
     
 
