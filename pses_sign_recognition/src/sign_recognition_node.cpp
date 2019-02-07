@@ -389,9 +389,9 @@ int main(int argc, char * argv[])
 		else ROS_INFO("Object=false");
 
 	if(nh.hasParam("gui")){
-		ROS_INFO("gui=true");
+		ROS_INFO("gui parameter found");
 		}
-		else ROS_INFO("gui=false");
+		else ROS_INFO("gui parameter not found");
 	
 
 
