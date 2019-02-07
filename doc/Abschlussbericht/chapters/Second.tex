@@ -1,0 +1,188 @@
+
+\section{Projektorganisation}
+    F\"ur einen reibungslosen Ablauf haben wir zu Beginn geplant, wie wir unsere Kommunikation gestalten wollen und konnten mit Hilfe unten aufgf\"uhrter Tools eine erfolgsversprechende Roadmap erzielen.
+    
+    Die Seminarorganisation schrieb ein regelm\"a\ss{}iges Treffen mit dem Seminarleiter vor um Hilfestellungen und Tipps zu erm\"oglichen. Vom Fachgebiet Fahrzeugtechnik wurde alle zwei Wochen eine Fragerunde zu regelungstechnischen Problemen angeboten. Dieses Treffen diente auch als Austausch mit den anderen Gruppen.
+    
+    In unsere Kleingruppe entschieden wir uns dazu, einmal w\"ochentlich zusammen am Auto zu arbeiten um gegenseitiges Helfen zu erm\"oglichen und immer wieder den Stand abzukl\"aren sowie den n\"achsten kurzen Abschnitt zu planen.
+    
+    Den Rest der Woche wurde selbstst\"andig an den neu zugeteilten Aufgaben weitergearbeitet.
+    Bei akuten Fragen und Problemen fand ebenso eine st\"andige Kommunikation über WhatsApp statt.
+    
+    \subparagraph{Trello}
+    Damit wir die Aufgaben pr\"azise und strukturiert festhalten konnten haben wir uns f\"ur das Organisations-Tool Trello entschieden. Hiermit konnten wir durch Anlegen von Listen unsere Punkte in \glqq ToDo\grqq, \glqq Meeting\grqq, \glqq Gemacht\grqq{} und \glqq Aufgaben f\"ur die Zukunft\grqq{} aufteilen.
+    
+    \subparagraph{Github}
+    F\"ur die Synchronisierung des Programmcodes haben wir das Versionsverwaltungsprogramm GitHub genutzt. Dadurch konnten wir komfortabel den Programmiercode des Fahrzeugs austauschen sowie bei Fehlern auf alte Code-Zust\"ande zur\"uckgreifen.
+    
+
+\section{Testcases}
+	\begin{table}[h]
+		\renewcommand{\arraystretch}{1.5}
+		\begin{tabular}{|p{0.7\textwidth}|p{0.245\textwidth}|}
+			\hline
+			Testfall& Bemerkung\\
+			\hline
+			Das Fahrzeug f\"ahrt rechts und links herum autonom ohne die Fahrbahnbegrenzung zu ber\"uhren.& \\
+			\hline
+			Das Fahrzeug f\"ahrt auf einer Fahrspur autonom ohne die Spur zu verlassen. & \\
+			\hline
+			Das Fahrzeug f\"ahrt eine Runde unter 30s.& \\
+			\hline
+			Das Fahrzeug kommt von der Fahrbahn ab und muss daraufhin anhalten.& \\
+			\hline
+			Das Fahrzeug startet mittig auf der Fahrbahn im {45} Winkel zur Fahrbahnbegrenzung & \\
+			\hline
+			Das Fahrzeug startet mittig auf der Fahrbahn im {60} Winkel zur Fahrbahnbegrenzung& \\
+			\hline
+			Bei einem Stoppschild h\"alt das Fahrzeug auf der H\"ohe das Schildes f\"ur 2s an und f\"ahrt danach weiter.& \\
+			\hline
+			Bei einem Geschwindigkeitsschild f\"ahrt das Fahrzeug ab dem Schild mit verringerter Geschwindigkeit weiter.& \\
+			\hline
+			& \\
+			\hline
+			Schilderkennung und autonomes Fahren muss gleichzeitig ohne wahrnehmbare Beeintr\"achtigung funktionieren.& \\
+			\hline
+			
+		\end{tabular}
+	\end{table}
+\clearpage
+  
+\section{Regelans{\"a}tze}
+  
+\subsection{1.Ansatz}
+  
+\clearpage
+\subsection{Modellprädiktiver Regelungansatz}
+Ein zweiter experimenteller Ansatz, der im Rahmen des Projektseminars verfolgt wurde, ist die sogenannte lineare modellprädiktive Regelung. Bei dieser wird anhand eines linearen, diskretisierten Fahrzeugmodells über ein quadratisches Optimierungsproblem eine Lösung für die optimalen Lenkwinkel berechnet. Diese sind optimal in dem Sinne, dass eine Linearkombination der mittleren quadratischen Abweichungen des prädiktierten Systemzustands und Stellgröße zu einer vorgegebenen Solltrajektorie über einen endlichen Zeithorizont hinaus minimiert wird.
+
+Ein großer Vorteil dieses Verfahrens ist, dass es automatisch Stellgrößenbeschränkungen beachtet und es somit nicht zu Prädiktionsfehlern durch unbeschränkte Stellgrößen kommt. Durch die Methode erhält man zugleich den gesamten Stellgrößenverlauf für den eingestellten Zeithorizont, sodass es außerdem möglich ist, über längere Zeit ohne Neuberechnung an einer Solltrajektorie entlang zu fahren, vorausgesetzt das linearisierte Modell ist für die gegebene Zustandstrajektorie ausreichend genau. 
+
+Zunächst bringen wir das Problem in die Form, die für die lineare modellprädiktive Regelung benötigt wird. Dabei orientieren wir uns an \cite{hovd2004brief} sowie an Vorarbeiten von Herrn Eric Lenz am FG RTM. Wir gehen aus vom Querführungsmodell in Gleichung \ref{eq:quer} von Herrn Eric Lenz am FG RTM, welches bereits das Ackermannmodell auf eine Raumdimension reduziert:
+\begin{align}
+	\label{eq:quer}	
+	\begin{pmatrix} \dot{y} \\ \dot{\varphi_K} \end{pmatrix}
+	= 
+	\begin{pmatrix} 0 & v \\ 0 & 0 \end{pmatrix}
+	\begin{pmatrix} {y} \\ {\varphi_K} \end{pmatrix}
+	+ 
+	\begin{pmatrix} v\cdot \frac{l_H}{l} \\ \frac{v}{l} \end{pmatrix}
+	\varphi_L^*
+	= \mathbf{Ax + Bu}
+\end{align}
+Das Modell wird per Hand mit der Abtastperiode $T$ diskretisiert zu
+\begin{align}
+	\mathbf{A_d} = e^{\mathbf{A}T} = 
+	\begin{pmatrix} 1 & vT \\ 0 & 1 \end{pmatrix} \\
+	\mathbf{B_d} = \int_0^T e^{\mathbf{A}\tau} \mathbf{B} d\tau = 
+	\begin{pmatrix} \frac{vTl_h}{l} + \frac{v^2T^2}{2l} \\ \frac{vT}{l} \end{pmatrix} \\	
+	\begin{pmatrix} y(k+1) \\ \varphi_K(k+1) \end{pmatrix}
+	= 
+	\begin{pmatrix} 1 & vT \\ 0 & 1 \end{pmatrix} 
+	\begin{pmatrix} y(k) \\ \varphi_K(k) \end{pmatrix}
+	+ 
+	\begin{pmatrix} \frac{vTl_h}{l} + \frac{v^2T^2}{2l} \\ \frac{vT}{l} \end{pmatrix} 
+	\varphi_L^*(k)
+	\label{eq:diskret}	
+\end{align}
+Es sei nun eine Trajektorie nach den Gleichungen \ref{eq:traj1}, \ref{eq:traj2} gegeben, deren Erzeugung wir an späterer Stelle erläutern.
+\begin{align}	
+	\label{eq:traj1}
+	x_{ref} &= 
+	\begin{pmatrix} x_{ref,1} & x_{ref,2} & \hdots & x_{ref,n-1} & x_{ref,n} \end{pmatrix}^T \\ 
+	\label{eq:traj2}
+	u_{ref} &= 
+	\begin{pmatrix} u_{ref,0} & u_{ref,1} & \hdots & u_{ref,n-2} & u_{ref,n-1} \end{pmatrix}^T 
+\end{align}
+Dann definieren wir
+\begin{align}
+	\hat{Q} &= 100 \cdot diag(1,0,\cdots,1,0) ;\quad
+	\hat{P} = \mathbf{I}_{n,n} ;\quad
+	-U_{min} = U_{max} = 21^o \nonumber\\
+	x_0 &= 
+	\begin{pmatrix} y(k) \\ 0 \end{pmatrix} ;\quad
+	A = 
+	\begin{pmatrix} 1 & vT \\ 0 & 1 \end{pmatrix} ;\quad
+	B = 
+	\begin{pmatrix} \frac{vTl_h}{l} + \frac{v^2T^2}{2l} \\ \frac{vT}{l} \end{pmatrix} \nonumber\\
+	\chi_0 &= 
+	\begin{pmatrix} A \\ A^2 \\ \vdots \\ A^{n-1} \\ A^n \end{pmatrix}
+	x_0
+	+
+	\begin{pmatrix} 
+		B & 0 & \hdots & 0 & 0 \\ 
+		AB & B & \ddots & \vdots & \vdots \\ 
+		\vdots & \vdots & \ddots & 0 & 0 \\ 
+		A^{n-2}B & A^{n-3}B & \hdots & B & 0 \\ 
+		A^{n-1}B & A^{n-2}B & \hdots & AB & B
+	\end{pmatrix}
+	u_{ref} - x_{ref} 
+\end{align}
+Wir können dann das folgende quadratische Optimierungsproblem für $n$ Zeitschritte definieren \cite{hovd2004brief}, welches die quadratischen Positionsabweichungen über $n$ Zeitschritte vorwärts minimiert.
+\begin{align}
+	\min_v f(v) 
+	&= \min_v 0.5v^T\tilde{H}v + c^Tv \\
+	&= \min_v (x_0 - x_{ref,0})^TQ(x_0 - x_{ref,0}) + \chi_0^T\hat{Q}\chi_0 + 2\chi_0^T\hat{Q}\chi_v + \chi_v^T\hat{Q}\chi_v + v^T\hat{P}v 
+\end{align}
+mit den Stellgrößen-Nebenbedingungen
+\begin{align}
+	\mathbf{I}_{n,n}v &\geq \begin{pmatrix} U_{min} \\ \vdots \\ U_{min} \end{pmatrix} - u_{ref} \\
+	-\mathbf{I}_{n,n}v &\geq -\begin{pmatrix} U_{max} \\ \vdots \\ U_{max} \end{pmatrix} + u_{ref}
+\end{align}
+Da wir keine Zustandsgrößenbeschränkung vorsehen, benötigen wir die restlichen Nebenbedingungen aus \cite{hovd2004brief} nicht. Dieses Optimierungsproblem wird für die gegebene Trajektorie on-line auf dem Fahrzeug gelöst, und der folgende optimale Stellgrößenverlauf wird abgespielt:
+\begin{align}
+	\varphi_{L,i} = \arctan(\varphi_{L,i}^*) = \arctan(u_i) = \arctan(v_i + u_{ref,i})
+\end{align} 
+Die Konvergenz, Optimalität und numerische Stabilität der Lösung des Optimierungsproblems der linearen modellprädiktiven Regelung ist hierbei durch die Verwendung von Methoden aus der quadratischen Programmierung, z.B. hier \cite{goldfarb1983numerically}, sichergestellt.
+
+Wir haben hier die Gewichtungsmatrizen $\hat{Q}, \hat{P}$ so gesetzt, dass näherungsweise lediglich die Positionsabweichung zur Solltrajektorie minimiert werden soll. Dies erlaubt es uns daher, als Solltrajektorie den Sollstellgrößenverlauf zu ignorieren und eine beliebige Sollwinkeltrajektorie vorzugeben, da Inkonsistenzen mit dem Sollzustandsverlauf kaum ins Gewicht fallen:
+\begin{align}	
+u_{ref} &= 
+\begin{pmatrix} 0 & 0 & \hdots & 0 & 0 \end{pmatrix}^T 
+\end{align}
+Als nächstes wird die Beschaffung der Sollzustandstrajektorie erläutert. Dazu bedienen wir uns der Kamera, dessen Farbdaten zunächst mithilfe einer inversen Perspektiventransformation (IPM) auf ein Birdeye-View gebracht werden. Beispielhaft ist ein bearbeitetes, transformiertes Bild in Abbildung \ref{fig:quadratic} zu sehen.
+
+Das Bild wird in horizontale Streifen einer vordefinierten Breite unterteilt. Anschließend werden die Streifen nach den Fahrbahnbegrenzungsfarben gefiltert und Spaltenhistogramme gebildet. Die Histogrammmaxima am nächsten zur Mitte des Bildes mit einem vordefinierten Mindestabstand werden selektiert. In diesem Fall also bis zu zwei Seitenstreifenpunkte und bis zu ein Mittellinienpunkt. Diese sind in Abbildung \ref{fig:quadraticorig} als schwarze Kreise eingezeichnet.
+
+Anschließend werden diese Punkte verwendet, um sinnvolle Wegpunkte zu definieren. Diese sind in der Abbildung \ref{fig:quadraticorig} als grüne Kreise eingezeichnet. Wegpunkte werden priorisiert zwischen einen Mittellinienpunkt und den Seitenstreifenpunkt der entsprechenden Fahrbahnseite gelegt. Falls das nicht möglich ist, z.B. weil einer der Punkte nicht existiert, legen wir ihn $\frac{1}{4}$ oder $\frac{3}{4}$ zwischen die Seitenstreifenpunkte je nach Fahrbahnseite. Falls auch das nicht möglich ist, können zusätzliche Punkte aus den bereits existierenden inferiert werden, falls mindestens ein Seitenstreifenpunkt existiert.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{pics/windowedorig.png}
+	\caption{Bearbeitetes, rücktransformiertes Bild mit quadratischer Trajektorie. Sichtbar sind Wegpunkte (grüne Kreise), die Solltrajektorie (blaue Linie), die prädiktierte Trajektorie (rote Punkte) und Lanepunkte (schwarze Kreise)}
+	\label{fig:quadraticorig}
+\end{figure}
+
+Mithilfe dieser Wegpunkte kann man nun eine Trajektorie $x_{ref}$ erzeugen.In Abbildung \ref{fig:quadraticorig} ist die blaue Linie eine quadratische Trajektorie, die an die grünen Wegpunkte gefittet wird. Die Trajektorie scheint zunächst gut an die Fahrbahn angepasst zu sein. Man erkennt, dass die Solltrajektorie nicht einhaltbar ist, da die Querabweichung sich aus dem Unterschied zwischen polynomiell extrapolierter Solltrajektorie und Roboterposition zusammensetzt und nicht bei null beginnt. Dies ist kein Problem, da lediglich der quadratische Fehler über die nächsten Zeitschritte minimiert wird. 
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{pics/windowed.png}
+	\caption{Transformierte und um Roboterposition erweiterte Version von Abbildung \ref{fig:quadraticorig}.}
+	\label{fig:quadratic}
+\end{figure}
+
+Ein Problem lässt sich in Abbildung \ref{fig:quadratic} jedoch feststellen: Die Trajektorien sind aufgrund der polynomiellen Extrapolation nicht stationär und sehr variant. Zusätzlich kommt hinzu, dass die Regressionsmethode nicht rotationsinvariant ist, denn eine Rotation der Wegpunkte führt aufgrund der vertikalen Polynomausrichtung zu einer völlig anderen Trajektorie. Diese Umstände führen dazu, dass die Regelung versagt.
+
+Eine andere einfache Lösung ist es, nicht zu interpolieren, sondern wie in Abbildung \ref{fig:direct} zu sehen eine direkte lineare Trajektorie zum nächstliegenden Wegpunkt zu setzen. Dadurch wird die Trajektorie deutlich robuster und die Regelung funktioniert wie erwartet. Dasselbe Problem hat man jedoch im begrenzten Maße auch für die direkte lineare Trajektorie. Selbst wenn man auf Extrapolation verzichtet und ausreichend Mittelung verwendet, ist der unterste Bildpunkt aufgrund der auftretenden Rotation des gegenüber der Roboterposition orthogonal ausgerichteten Bildes geringfügig variant. Zusätzlich kann es durch die Diskretisierung bei zu großen Zeitschritten zu Überschwingen trotz Einhaltung der diskreten Zustandssollwerte kommen.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{pics/windoweddirect.png}
+	\caption{Bearbeitetes, untransformiertes Bild mit quadratischer Trajektorie. Sichtbar sind Wegpunkte (grüne Kreise), die Solltrajektorie (blaue Linie), die prädiktierte Trajektorie (rote Punkte), Lanepunkte (schwarze Kreise) und die Roboterposition relativ zum Bild (Anfangspunkt der prädiktierten Trajektorie, großer blauer Kreis)}
+	\label{fig:direct}
+\end{figure}
+
+Mit dieser Bildtrajektorie und den Bildtransformationsparametern lassen sich dann diskrete Trajektoriensollwerte $x_{ref,i}$ erzeugen, indem das kinematische Querführungsmodell angenommen wird: Für jeden Trajektorienzeitschritt wird eine konstante Vorwärtsbewegung abhängig von der Geschwindigkeit ausgeführt, um den nächsten Positionssollwert zu ermitteln.
+
+Das größte Problem sind die Nichtlinearitäten. Dieser Ansatz erlaubt noch weitere Verbesserungen, um besseres Regelverhalten zu erreichen und insbesondere hohe Geschwindigkeiten ausreichend genau zu regeln. Darauf wird in diesem Projektseminar aber aufgrund der abweichenden Zielsetzung verzichtet.
+
+Es bietet sich zukünftig an, das Fahrzeugmodell durch ein nichtlineares Modell zu ersetzen. Damit landet man bei der nichtlinearen modelprädiktiven Regelung (NMPC), z.B. \cite{allgower2012nonlinear}, bei der aufgrund der nichtlinearen Nebenbedingungen die Konvergenz zum Optimum zwar zunächst nicht formal sichergestellt ist, aber praktisch gesehen klappt. 
+
+Schließlich könnte man auch die Trajektoriengenerierung überarbeiten. Eine naheliegende Wahl, um auch mit Bildraten von unter 1 Hz auszukommen, ist die Verwendung der direkten Trajektorie bis zum ersten Wegpunkt und darauffolgende Verwendung der quadratischen Trajektorie. Da die quadratische Trajektorie in diesem Fall nicht mehr extrapoliert, bietet diese eine hervorragende Trajektorienform für eine Regelung mit wenigen Bildern. 
+  
+\section{Schildererkennung}
+  
+\section{Auswertung}
+  
+\section{Konklusion}

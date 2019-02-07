@@ -81,7 +81,7 @@ void showUsage()
 }
 
 // gets called whenever a new message is availible in the input puffer
-void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[])
+void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[], std::string objectsPath)
 {
   static int imagecounter = 0; 
   imagecounter++;
@@ -102,11 +102,13 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
   QTime time;
 
 	time.start();
-  // File input = new File("digital_image_processing.jpg");
-	//Load as grayscale
-	cv::Mat objectImg = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
-	cv::Mat sceneImg = cv::imread(argv[2], cv::IMREAD_GRAYSCALE);
-  //cv::Mat sceneImg = cv::imread(image, cv::IMREAD_GRAYSCALE);
+	
+	//cv::Mat objectImg = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
+//	cv::Mat sceneImg = cv::imread(argv[2], cv::IMREAD_GRAYSCALE);
+  //Load as grayscale
+  cv::Mat objectImg = cv::imread(objectsPath, cv::IMREAD_GRAYSCALE);
+  cv::Mat sceneImg = imageGrey;
+  cv::imshow("view2", objectImg);
 
 	if(!objectImg.empty() && !sceneImg.empty())
 	{
@@ -215,6 +217,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
 			dists.convertTo(temp, CV_32F);
 			dists = temp;
 		}
+
+		cv::imshow("view3", results);
 
 
 		////////////////////////////
@@ -372,10 +376,36 @@ int main(int argc, char * argv[])
 {
   // init this node
   ros::init(argc, argv, "sign_recognition_node");
-  // get ros node handle
-  ros::NodeHandle nh;
 
-  ROS_INFO("Hello world!");
+	bool gui = true;
+	std::string objectsPath;
+	std::string sessionPath;
+
+	// get ros node handle
+  	ros::NodeHandle nh;
+	if(nh.hasParam("objectsPath")){
+		ROS_INFO("Object=true");
+		}
+		else ROS_INFO("Object=false");
+
+	if(nh.hasParam("gui")){
+		ROS_INFO("gui=true");
+		}
+		else ROS_INFO("gui=false");
+	
+
+
+	nh.param("gui", gui, gui);
+	nh.getParam("sign_recognition_node/objects_path", objectsPath);
+	nh.param("session_path", sessionPath, sessionPath);
+
+	ROS_INFO("gui=%d", (int)gui);
+	ROS_INFO("objects_path=%s", objectsPath.c_str());
+	ROS_INFO("session_path=%s", sessionPath.c_str());
+
+  
+
+  	ROS_INFO("Hello world!");
 
 //   // Loop starts here:
 //   // loop rate value is set in Hz
@@ -389,6 +419,7 @@ int main(int argc, char * argv[])
 //   }
 if(argc<3)
 	{
+		objectsPath = "/home/pses/catkin_ws/src/pses_sign_recognition/data/objs/6.png";
 	
 	}
   
@@ -397,11 +428,14 @@ if(argc<3)
 	QApplication app(argc, argv);
   
   ros::Subscriber imageSub = nh.subscribe<sensor_msgs::Image>(
-      "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, argc, argv));
+      "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, argc, argv, objectsPath));
 
 
   cv::namedWindow("view");
+  cv::namedWindow("view2");
+  cv::namedWindow("view3");
   cv::startWindowThread();
+  
   //change the exposure
   cv::VideoCapture cap;
   cap.set(cv::CAP_PROP_EXPOSURE,10);
