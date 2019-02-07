@@ -11,7 +11,7 @@
 #define stopSign 99999999
 
 static int control_deviation = 0;
-static pses_control_2::TutorialsConfig newconfig;
+pses_control_2::TutorialsConfig newconfig;
 
 void callback(pses_control_2::TutorialsConfig &config) 
 {
@@ -83,8 +83,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
     inRange(HSVImage2,cv::Scalar(135,S_min,V_min),cv::Scalar(175,S_max,V_max),ThreshImage2);
     medianBlur(ThreshImage, FiltedImage, 7);
     medianBlur(ThreshImage2, FiltedImage2, 7);
-    cv::imshow("view", image);
-    cv::imshow("view2", FiltedImage);
+    // cv::imshow("view", image);
+    // cv::imshow("view2", FiltedImage);
     // if(imagecounter == 30)
     // {
     //   cv::imshow("view", FiltedImage);
@@ -230,7 +230,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
       int lastValidSearch = 0;
       for(int y = 19; y >= 0; y--)
       {
-        for(int search = 0; search < 30; search++)
+        for(int search = 0; search < 33; search++)
         {
           int startPonit = standarLineRight[y];
           int toLeft = startPonit - search;
@@ -248,7 +248,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
             break;
           }
           //if not find, use last valid search
-          if(search == 29)
+          if(search == 32)
           {
             noVision++;
             devi.distance = devi.distance + lastValidSearch;
@@ -345,8 +345,8 @@ int main(int argc, char** argv)
   ros::Publisher steeringCtrl =
       nh.advertise<std_msgs::Int16>("/uc_bridge/set_steering_level_msg", 1);
 
-  cv::namedWindow("view");
-  cv::namedWindow("view2");
+  // cv::namedWindow("view");
+  // cv::namedWindow("view2");
   cv::startWindowThread();
   //change the exposure
   cv::VideoCapture cap;
@@ -360,10 +360,11 @@ int main(int argc, char** argv)
   int lastValidDeviation;
   //lastside can be replaced later by a flag, which can be set because of other event
   int lastside = newconfig.turn;
-  int laneChangeCnt = 50;
+  int laneChangeCnt = 30;
   while (ros::ok())
   {
     steering.data = control_deviation;
+    motor.data = 300;
 
     if(steering.data >= 900)
     {
@@ -374,22 +375,22 @@ int main(int argc, char** argv)
       steering.data = -900;
     }
 
-    // if(lastside !=  newconfig.turn)
-    // {
-    //   steering.data = 900 * newconfig.turn;
-    //   if(laneChangeCnt < 20)
-    //   {
-    //     steering.data = 900 * newconfig.turn * (-1);
-    //   }
-    //   motor.data = 400;
-    //   laneChangeCnt--;
-    //   //finish lane change and reset the procedure
-    //   if(laneChangeCnt == 0)
-    //   {
-    //     lastside = newconfig.turn;
-    //     laneChangeCnt = 200;
-    //   }
-    // }
+    if(lastside !=  newconfig.turn)
+    {
+      steering.data = 900 * newconfig.turn;
+      if(laneChangeCnt < 10)
+      {
+        steering.data = 900 * newconfig.turn * (-1);
+      }
+      motor.data = 300;
+      laneChangeCnt--;
+      //finish lane change and reset the procedure
+      if(laneChangeCnt == 0)
+      {
+        lastside = newconfig.turn;
+        laneChangeCnt = 30;
+      }
+    }
 
     // //stop the car because no vision
     if((control_deviation == stopSign) && (lastside == newconfig.turn))
@@ -404,6 +405,7 @@ int main(int argc, char** argv)
     // publish command messages on their topics
     ROS_INFO("steering %d     motor %d", steering.data, motor.data);
     steeringCtrl.publish(steering);
+    motorCtrl.publish(motor);
     // side note: setting steering and motor even though nothing might have
     // changed is actually stupid but for this demo it doesn't matter too much.
 
