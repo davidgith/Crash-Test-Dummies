@@ -19,7 +19,8 @@ using std::cout;
 using std::endl;
 
 bool gui;
-std::string schild = "/home/pses/catkin_ws/src/pses_sign_recognition/data/objs/6.png";
+std::string schild; //= "/home/pses/catkin_ws/src/pses_sign_recognition/data/objs/6.png";
+
 
 // Berechnet die Fläche eines Vierecks wenn man ihr 4 Punkte giebt
 float areaQuadrangle(std::vector<Point2f> corners){
@@ -39,25 +40,20 @@ const char* keys =
         "{ input2 | ../data/box_in_scene.png | Path to input image 2. }";
 
 
-void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[])
+void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[], Mat schilder[])
 {
-    static int imagecounter = 0; 
-    imagecounter++;
+    //Loading kinect image
     cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image;
     cv::Mat imageGrey;
     cv::cvtColor(image, imageGrey, CV_BGR2GRAY);
-    
-    if(imagecounter == 1)
-        {
-        //cv::imshow("view", imageGrey);
-        imagecounter = 0;
-        } 
 
     //ROS_INFO("image callback");
     cv::waitKey(10);
 
     CommandLineParser parser( argc, argv, keys );
-    Mat img_object = imread( parser.get<String>("input1"), IMREAD_GRAYSCALE );
+    Mat img_object = schilder[0];
+//    Mat img_object = imread( schild, IMREAD_GRAYSCALE );
+    //Mat img_object = imread( parser.get<String>("input1"), IMREAD_GRAYSCALE );
     //Mat img_scene = imread( parser.get<String>("input2"), IMREAD_GRAYSCALE );
     Mat img_scene = imageGrey;
 
@@ -65,18 +61,26 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
     {
         cout << "Could not open or find the image!\n" << endl;
         parser.printMessage();
-    //    return -1;
     }
 
     //-- Step 1: Detect the keypoints using SURF Detector, compute the descriptors
     int minHessian = 400;
     Ptr<SURF> detector = SURF::create( minHessian );
-    std::vector<KeyPoint> keypoints_object, keypoints_scene;
-    Mat descriptors_object, descriptors_scene;
-    detector->detectAndCompute( img_object, noArray(), keypoints_object, descriptors_object );
+     
+    std::vector<KeyPoint> keypoints_scene;
+    
+    Mat descriptors_scene;
+    
     detector->detectAndCompute( img_scene, noArray(), keypoints_scene, descriptors_scene );
 
-    //cv::imshow("descriptors_object", descriptors_object);
+    for( int i = 0; i < 2; i++){
+        //ROS_INFO("i=%i", i);
+        Mat img_object = schilder[i];
+        std::vector<KeyPoint> keypoints_object;
+        Mat descriptors_object;
+        detector->detectAndCompute( img_object, noArray(), keypoints_object, descriptors_object );
+
+        //cv::imshow("descriptors_object", descriptors_object);
     //cv::imshow("descriptors_scene", descriptors_scene);
 
     //-- Step 2: Matching descriptor vectors with a FLANN based matcher
@@ -137,11 +141,12 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
         perspectiveTransform( obj_corners, scene_corners, H);
 
 
-        ROS_INFO("Object found! position:(%i,%i);(%i,%i);(%i,%i);(%i,%i) area:%i #keypoints=%i",(int)scene_corners[0].x , (int)scene_corners[0].y ,
-                                                                                                (int)scene_corners[1].x , (int)scene_corners[1].y ,
-                                                                                                (int)scene_corners[2].x , (int)scene_corners[2].y ,
-                                                                                                (int)scene_corners[3].x , (int)scene_corners[3].y ,
-                                                                                                (int)areaQuadrangle(scene_corners), (int)good_matches.size());
+        ROS_INFO("Object %i found! position:(%i,%i);(%i,%i);(%i,%i);(%i,%i) area:%i #keypoints=%i",i,
+                    (int)scene_corners[0].x , (int)scene_corners[0].y ,
+                    (int)scene_corners[1].x , (int)scene_corners[1].y ,
+                    (int)scene_corners[2].x , (int)scene_corners[2].y ,
+                    (int)scene_corners[3].x , (int)scene_corners[3].y ,
+                    (int)areaQuadrangle(scene_corners), (int)good_matches.size());
         
         // draw circles around the 4 corners
         cv::circle( img_matches, scene_corners[0] + Point2f((float)img_object.cols), 5, Scalar(255, 0, 0), 2 );
@@ -160,15 +165,23 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
         line( img_matches, scene_corners[2] + Point2f((float)img_object.cols, 0),
             scene_corners[3] + Point2f((float)img_object.cols, 0), Scalar( 0, 255, 0), 4 );
         line( img_matches, scene_corners[3] + Point2f((float)img_object.cols, 0),
-            scene_corners[0] + Point2f((float)img_object.cols, 0), Scalar( 0, 255, 0), 4 );
-            
+            scene_corners[0] + Point2f((float)img_object.cols, 0), Scalar( 0, 255, 0), 4 );       
        
     }
     
-    //-- Show detected matches
-    imshow("Good Matches & Object detection", img_matches );
+    if (gui){
+        //-- Show detected matches
 
+        if(i==0)
+            imshow("Schildererkennung Schild0", img_matches );
+        if(i==1)
+            imshow("Schildererkennung Schild1", img_matches );
+        }
 
+    }
+
+    
+    
   //  waitKey();
 
 }
@@ -180,54 +193,78 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
 int main( int argc, char* argv[] )
 {
     // init this node
-    ros::init(argc, argv, "SURF_FLANN_matching_homography_Demo");
+    ros::init(argc, argv, "sign_detection_node");
 
     // get ros node handle
   	ros::NodeHandle nh;
+    
+    std::string schild2;
 
-      
 
     ROS_INFO("Node starting ...");
 
     // How to use parameter: http://enesbot.me/understanding-the-parameter-server-in-ros.html
 
-    if(nh.hasParam("SURF_FLANN_matching_homography_Demo/gui")){
+    if(nh.hasParam("sign_detection_node/gui")){
 		ROS_INFO("gui parameter found");
 		}
 		else ROS_INFO("gui parameter not found");
 
-    nh.param("SURF_FLANN_matching_homography_Demo/gui", gui, true);
+    nh.param("sign_detection_node/gui", gui, true);
 
     ROS_INFO("gui=%d", gui);
 
 
 
-    if(nh.hasParam("SURF_FLANN_matching_homography_Demo/schild")){
+    if(nh.hasParam("sign_detection_node/schild")){
 		ROS_INFO("schild parameter found");
 		}
 		else ROS_INFO("schild parameter not found");
 
-    nh.param("SURF_FLANN_matching_homography_Demo/schild", schild, schild);
+    nh.param("sign_detection_node/schild", schild, schild);
+    
+    
+    if(nh.hasParam("sign_detection_node/schild2")){
+		ROS_INFO("schild2 parameter found");
+		}
+		else ROS_INFO("schild2 parameter not found");
 
-    ROS_INFO_STREAM(schild);
+    nh.param("sign_detection_node/schild2", schild2, schild2);
 
 
+
+    //ROS_INFO_STREAM(schild);
+
+    // ToDo Anstatt einen array lieber ein vector benutzten
+    Mat schilder[4];
+    schilder[0] = imread( schild, IMREAD_GRAYSCALE );
+    schilder[1] = imread( schild2, IMREAD_GRAYSCALE );
+    cv::imshow("Schild", schilder[0]);
+    cv::imshow("Schild2", schilder[1]);
 
 
     ros::Subscriber imageSub = nh.subscribe<sensor_msgs::Image>(
-      "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, argc, argv));
+      "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, argc, argv, schilder));
 
 
-    ros::Rate loop_rate(25);
+    ros::Rate loop_rate(10);
+
+
+
+    ROS_INFO("Before loop");
   
     while (ros::ok())
     {
+    
+    //ROS_INFO("LOOOOOOOOOOOOOOOOOOOOOOP");
 
     // clear input/output buffers
     ros::spinOnce();
     // this is needed to ensure a const. loop rate
     loop_rate.sleep();
     }
+
+    ROS_INFO("After loop");
     
     return 1;
     ros::spin();

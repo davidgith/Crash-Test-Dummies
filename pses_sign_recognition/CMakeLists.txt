@@ -164,7 +164,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(sign_recognition src/sign_recognition_node.cpp)
 # add_executable(obj_detection src/SURF_Homography.cpp)
-add_executable(obj_detection src/SURF_FLANN_matching_homography_Demo.cpp)
+add_executable(obj_detection src/sign_detection_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

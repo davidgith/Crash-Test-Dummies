@@ -10,6 +10,11 @@ ROS-Package find_object_2d must be installed.
 
 ToDO
 
+## Using SURF_FLANN Matching
+
+Example how to use
+`rosrun pses_sign_recognition obj_detection _schild:=7.png _gui:=true`
+
 ## Getting Started
 
 Launch the communication:
