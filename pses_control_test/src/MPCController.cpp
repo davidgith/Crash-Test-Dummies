@@ -105,7 +105,7 @@ int MPCController::getNextSteeringControl() {
 
 int MPCController::getNextMotorControl() {
 	if (!u_queue.empty() && u_queue.front() != STOP_SIGNAL) {
-		return targetMotorCtrl;
+		return targetVelocity != 0 ? 100 + 444 * targetVelocity : 0;
 	}
 
 	return 0;
@@ -128,8 +128,8 @@ void MPCController::reconfigureParameters(pses_control_test::ParamsConfig &confi
   targetVelocity = config.ctrl_velocity;
 
   useDirectTrajectory = config.direct_trajectory;
+  directTrajectoryDiscount = config.direct_trajectory_discount;
   fillPinkLane = config.fill_pink_lane;
-  targetMotorCtrl = config.motor_ctrl;
 }
 
 // Detect left or right turn
@@ -474,7 +474,7 @@ void MPCController::fitTrajectoryToWaypoints(const cv::Mat& transformedImage, st
 		// Linear polynomial from robot position to waypoint
 		xs.push_back(ROBOT_POSITION_PIXEL_X);
 		ys.push_back(transformedImage.rows + ROBOT_OFFSET_PIXEL_Y);
-		xs.push_back(wayPoints.at(0).x);
+		xs.push_back((1 - directTrajectoryDiscount) * wayPoints.at(0).x + directTrajectoryDiscount * ROBOT_POSITION_PIXEL_X);
 		ys.push_back(wayPoints.at(0).y);
 		polyfit(ys, xs, trajectory_coeffs, 1);
 	} else {

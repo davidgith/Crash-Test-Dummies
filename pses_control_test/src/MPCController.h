@@ -60,6 +60,7 @@ private:
 
 	// Extra Configurations
 	bool useDirectTrajectory = true;
+	double directTrajectoryDiscount = 0;
 	bool fillPinkLane = false;
 	int targetMotorCtrl = 0;
 
