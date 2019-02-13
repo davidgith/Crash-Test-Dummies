@@ -1,55 +1,4 @@
-
-\section{Projektorganisation}
-    F\"ur einen reibungslosen Ablauf haben wir zu Beginn geplant, wie wir unsere Kommunikation gestalten wollen und konnten mit Hilfe unten aufgf\"uhrter Tools eine erfolgsversprechende Roadmap erzielen.
-    
-    Die Seminarorganisation schrieb ein regelm\"a\ss{}iges Treffen mit dem Seminarleiter vor um Hilfestellungen und Tipps zu erm\"oglichen. Vom Fachgebiet Fahrzeugtechnik wurde alle zwei Wochen eine Fragerunde zu regelungstechnischen Problemen angeboten. Dieses Treffen diente auch als Austausch mit den anderen Gruppen.
-    
-    In unsere Kleingruppe entschieden wir uns dazu, einmal w\"ochentlich zusammen am Auto zu arbeiten um gegenseitiges Helfen zu erm\"oglichen und immer wieder den Stand abzukl\"aren sowie den n\"achsten kurzen Abschnitt zu planen.
-    
-    Den Rest der Woche wurde selbstst\"andig an den neu zugeteilten Aufgaben weitergearbeitet.
-    Bei akuten Fragen und Problemen fand ebenso eine st\"andige Kommunikation über WhatsApp statt.
-    
-    \subparagraph{Trello}
-    Damit wir die Aufgaben pr\"azise und strukturiert festhalten konnten haben wir uns f\"ur das Organisations-Tool Trello entschieden. Hiermit konnten wir durch Anlegen von Listen unsere Punkte in \glqq ToDo\grqq, \glqq Meeting\grqq, \glqq Gemacht\grqq{} und \glqq Aufgaben f\"ur die Zukunft\grqq{} aufteilen.
-    
-    \subparagraph{Github}
-    F\"ur die Synchronisierung des Programmcodes haben wir das Versionsverwaltungsprogramm GitHub genutzt. Dadurch konnten wir komfortabel den Programmiercode des Fahrzeugs austauschen sowie bei Fehlern auf alte Code-Zust\"ande zur\"uckgreifen.
-    \clearpage
-    
-
-\section{Testcases}
-	\begin{table}[h]
-		\renewcommand{\arraystretch}{1.5}
-		\begin{tabular}{|p{0.7\textwidth}|p{0.245\textwidth}|}
-			\hline
-			Testfall& Bemerkung\\
-			\hline
-			Das Fahrzeug f\"ahrt rechts und links herum autonom ohne die Fahrbahnbegrenzung zu ber\"uhren.& \\
-			\hline
-			Das Fahrzeug f\"ahrt auf einer Fahrspur autonom ohne die Spur zu verlassen. & \\
-			\hline
-			Das Fahrzeug f\"ahrt eine Runde unter 30s.& \\
-			\hline
-			Das Fahrzeug kommt von der Fahrbahn ab und muss daraufhin anhalten.& \\
-			\hline
-			Das Fahrzeug startet mittig auf der Fahrbahn im {45} Winkel zur Fahrbahnbegrenzung & \\
-			\hline
-			Das Fahrzeug startet mittig auf der Fahrbahn im {60} Winkel zur Fahrbahnbegrenzung& \\
-			\hline
-			Bei einem Stoppschild h\"alt das Fahrzeug auf der H\"ohe das Schildes f\"ur 2s an und f\"ahrt danach weiter.& \\
-			\hline
-			Bei einem Geschwindigkeitsschild f\"ahrt das Fahrzeug ab dem Schild mit verringerter Geschwindigkeit weiter.& \\
-			\hline
-			& \\
-			\hline
-			Schilderkennung und autonomes Fahren muss gleichzeitig ohne wahrnehmbare Beeintr\"achtigung funktionieren.& \\
-			\hline
-			
-		\end{tabular}
-	\end{table}
-\clearpage
-  
-\section{Regelans{\"a}tze}
+\section{Regelans{ä}tze}
   
 \subsection{1.Ansatz}
   
@@ -181,21 +130,3 @@ Das größte Problem sind die Nichtlinearitäten. Dieser Ansatz erlaubt noch weiter
 Es bietet sich zukünftig an, das Fahrzeugmodell durch ein nichtlineares Modell zu ersetzen. Damit landet man bei der nichtlinearen modelprädiktiven Regelung (NMPC), z.B. \cite{allgower2012nonlinear}, bei der aufgrund der nichtlinearen Nebenbedingungen die Konvergenz zum Optimum zwar zunächst nicht formal sichergestellt ist, aber praktisch gesehen klappt. 
 
 Schließlich könnte man auch die Trajektoriengenerierung überarbeiten. Eine naheliegende Wahl, um auch mit Bildraten von unter 1 Hz auszukommen, ist die Verwendung der direkten Trajektorie bis zum ersten Wegpunkt und darauffolgende Verwendung der quadratischen Trajektorie. Da die quadratische Trajektorie in diesem Fall nicht mehr extrapoliert, bietet diese eine hervorragende Trajektorienform für eine Regelung mit wenigen Bildern. 
-  
-\section{Schildererkennung}
-  
-\section{Auswertung}
-  
-\section{Konklusion}
-
-Das "Projektseminar Echtzeitsysteme\grqq{} stellte sich als eine sehr vielfältige und facettenreiche Veranstaltung heraus, bei der das eigentliche Ziel, eine Fahrzeugsteuerung zu programmieren, nur einen Teil der Erkenntnisse darstellt.
-Durch den längeren Zeitraum von einem Semester konnten wir uns intensiv mit Ansätzen des Autonomen Fahrens beschäftigen und konnten so mit direktem Testen des Codes auf eine spannende und praxisnahe Weise Vieles lernen.
-Auch war es sehr Wissen erweiternd, den Umgang mit der Roboter-Middlerware ROS zu erlernen. Dass dieses System auch in der Industrie eingesetzt wird, zeigt wie wichtig und aktuell diese Kompetenzen in der Arbeitswelt sind.
-Ebenso ermöglichte das Seminar einen guten Einblick in die verschiedenen Herausforderungen der Projektorganisation. Dadurch lernten wir, die einzelnen Schritte möglichst effizient aufzuteilen und wurden erfahrener in der Verwendung verschiedener Tools, die uns sehr unterstützten.
-
-Wir konnten auf eine sehr umfangreiche und freundliche Projektbetreuung zurückgreifen, sodass wir für die verschiedenen Probleme immer einen Ansprechpartner hatten.
-Sehr hervorzuheben ist auch die freie Gestaltung der Aufgaben. Der genaue Zeitplan war uns überlassen, die Zusatzaufgabe durften wir uns selbst überlegen.
-
-Dennoch kamen wir auch mit unseren vergleichsweise primitiven Berechnungen an die Leistungsgrenzen der Recheneinheit. Hier wäre es schön, wenn eine schnellere Version verbaut würde bzw. eine dezidierte Grafikeinheit zum Einsatz kommen würde, damit Bilder besser verarbeitet werden könnten, da diese Disziplin im Fokus stand.
-Auch kam es immer wieder zum Absturz des Betriebssystems des Fahrzeugs, was zu unerwünschten Unterbrechungen unserer Arbeit führte.
-
