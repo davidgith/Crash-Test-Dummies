@@ -20,6 +20,7 @@ using std::endl;
 
 bool gui;
 std::string schild; //= "/home/pses/catkin_ws/src/pses_sign_recognition/data/objs/6.png";
+ros::Publisher stopPublisher;
 
 
 // Berechnet die Fläche eines Vierecks wenn man ihr 4 Punkte giebt
@@ -147,6 +148,12 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
                     (int)scene_corners[2].x , (int)scene_corners[2].y ,
                     (int)scene_corners[3].x , (int)scene_corners[3].y ,
                     (int)areaQuadrangle(scene_corners), (int)good_matches.size());
+
+        std_msgs::Int16 distance;
+        distance.data = (int)areaQuadrangle(scene_corners);
+        if (i == 0) {
+            stopPublisher.publish(distance);
+        }
         
         // draw circles around the 4 corners
         cv::circle( img_matches, scene_corners[0] + Point2f((float)img_object.cols), 5, Scalar(255, 0, 0), 2 );
@@ -197,6 +204,9 @@ int main( int argc, char* argv[] )
 
     // get ros node handle
   	ros::NodeHandle nh;
+
+    stopPublisher =
+    nh.advertise<std_msgs::Int16>("/sign_detection_node/StopSign", 1);
     
     std::string schild2;
 
