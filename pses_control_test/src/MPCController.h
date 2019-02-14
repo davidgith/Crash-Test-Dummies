@@ -1,9 +1,8 @@
-/*
- * MPCController.h
+/**
+ * @file "MPCController.h"
+ * @brief MPCController class header files, containing the main controller.
  *
- *  Created on: Feb 6, 2019
- *      Author: pses
- */
+*/
 
 #ifndef PSES_CONTROL_TEST_SRC_MPCCONTROLLER_H_
 #define PSES_CONTROL_TEST_SRC_MPCCONTROLLER_H_

@@ -1,9 +1,8 @@
-/*
- * MPCController.cpp
+/**
+ * @file "MPCController.cpp"
+ * @brief MPCController class implementation files, containing the main controller.
  *
- *  Created on: Feb 6, 2019
- *      Author: pses
- */
+*/
 
 #include "MPCController.h"
 
