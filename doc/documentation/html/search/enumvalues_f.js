@@ -1,0 +1,22 @@
+var searchData=
+[
+  ['palegoldenrod',['PALEGOLDENROD',['../namespacecv__bridge_1_1rgb__colors.html#aa6343a2cb9080c11afefb714570c63cca6a139444bc1795b694e15419080eeda8',1,'cv_bridge::rgb_colors']]],
+  ['palegreen',['PALEGREEN',['../namespacecv__bridge_1_1rgb__colors.html#aa6343a2cb9080c11afefb714570c63cca83bf26ca2ab247123f70fd8c35bb5415',1,'cv_bridge::rgb_colors']]],
+  ['palevioletred',['PALEVIOLETRED',['../namespacecv__bridge_1_1rgb__colors.html#aa6343a2cb9080c11afefb714570c63cca9f2018f6fc13c2947b85501993e59919',1,'cv_bridge::rgb_colors']]],
+  ['papayawhip',['PAPAYAWHIP',['../namespacecv__bridge_1_1rgb__colors.html#aa6343a2cb9080c11afefb714570c63cca2b0305ccbaeaddd015741cf42d5303c2',1,'cv_bridge::rgb_colors']]],
+  ['parity_5feven',['parity_even',['../namespaceserial.html#a8f45d26bf7c9a06659e75b5004a50481abe15d241d407528bc8a199b02301ed46',1,'serial']]],
+  ['parity_5fmark',['parity_mark',['../namespaceserial.html#a8f45d26bf7c9a06659e75b5004a50481a6d7af531414706617a23fe1926ad7ac6',1,'serial']]],
+  ['parity_5fnone',['parity_none',['../namespaceserial.html#a8f45d26bf7c9a06659e75b5004a50481a31cbb2b3cf0870d1a089d66295918416',1,'serial']]],
+  ['parity_5fodd',['parity_odd',['../namespaceserial.html#a8f45d26bf7c9a06659e75b5004a50481affd8fd58edf7c25bab458cafaebecb10',1,'serial']]],
+  ['parity_5fspace',['parity_space',['../namespaceserial.html#a8f45d26bf7c9a06659e75b5004a50481a94681358f3d53873698fdc98d6890cef',1,'serial']]],
+  ['pbm',['PBM',['../namespacecv__bridge.html#a166887feb09ea6ce14e8742384e574bfa2da0f7870b7ac7950c08ff8243c28757',1,'cv_bridge']]],
+  ['peachpuff',['PEACHPUFF',['../namespacecv__bridge_1_1rgb__colors.html#aa6343a2cb9080c11afefb714570c63ccaa0fa5e04b13e1f62a0c421c91fa4a074',1,'cv_bridge::rgb_colors']]],
+  ['peru',['PERU',['../namespacecv__bridge_1_1rgb__colors.html#aa6343a2cb9080c11afefb714570c63ccad12ad64012ccf3009e1a5e538f695a39',1,'cv_bridge::rgb_colors']]],
+  ['pgm',['PGM',['../namespacecv__bridge.html#a166887feb09ea6ce14e8742384e574bfa6aaa352f4c8b36d94f5ad248039e838a',1,'cv_bridge']]],
+  ['pink',['PINK',['../namespacecv__bridge_1_1rgb__colors.html#aa6343a2cb9080c11afefb714570c63cca04eb7cd4e3a8c035e5451ee3478601cc',1,'cv_bridge::rgb_colors']]],
+  ['plum',['PLUM',['../namespacecv__bridge_1_1rgb__colors.html#aa6343a2cb9080c11afefb714570c63ccab32e8cd4822b9910f9fb88ca644b2983',1,'cv_bridge::rgb_colors']]],
+  ['png',['PNG',['../namespacecv__bridge.html#a166887feb09ea6ce14e8742384e574bfa0a36eb1d5d593f0c0c5b298ae353ab94',1,'cv_bridge']]],
+  ['powderblue',['POWDERBLUE',['../namespacecv__bridge_1_1rgb__colors.html#aa6343a2cb9080c11afefb714570c63cca27a15b9e2133c384b0b01f887801ab6a',1,'cv_bridge::rgb_colors']]],
+  ['ppm',['PPM',['../namespacecv__bridge.html#a166887feb09ea6ce14e8742384e574bfaf9dc454f916fd886aa9157ca353aa80f',1,'cv_bridge']]],
+  ['purple',['PURPLE',['../namespacecv__bridge_1_1rgb__colors.html#aa6343a2cb9080c11afefb714570c63cca958c7dbb75759f0d4b5db06c04def8bf',1,'cv_bridge::rgb_colors']]]
+];
