@@ -55,6 +55,7 @@ using namespace Eigen;
 #define MPC_WEIGHT_PHI 0.0f
 #define U_LOWERBOUND (-3.1415f * 21 / 180)
 #define U_UPPERBOUND (3.1415f * 21 / 180)
+#define MAX_DELTA_U 0.1f
 
 // MPC Model Definitions
 #define MODEL_PARAM_L_H 0.13f
@@ -83,8 +84,13 @@ MPCController::~MPCController() {
 	delete ipm;
 }
 
-bool MPCController::hasNewInput(float timeSinceLastInput) {
-	return timeSinceLastInput > mpcTimestep;
+bool MPCController::hasNewInput(float deltaTime) {
+	currTimeSinceInput += deltaTime;
+	if (currTimeSinceInput > mpcTimestep) {
+		currTimeSinceInput -= mpcTimestep;
+		return true;
+	}
+	return false;
 }
 
 int MPCController::getNextSteeringControl() {
@@ -581,6 +587,8 @@ void MPCController::solveMPCProblem(const cv::Mat& transformedImage, const std::
 	int compensation_steps = round(double(clock() - begin) / CLOCKS_PER_SEC / mpcTimestep);
 	if (mpcUseDeadtimeCompensation) {
 		for (int i = 0; i < compensation_steps; i++) {
+			if (prev_u_queue.empty())
+				break;
 			x0 = A_d * x0 + B_d * prev_u_queue.front();
 			prev_u_queue.pop();
 		}
@@ -603,24 +611,46 @@ void MPCController::solveMPCProblem(const cv::Mat& transformedImage, const std::
 	quadprogpp::Vector<double> g0 = (transpose(chi0) * Q_dash * B_dash).extractRow(0);
 	quadprogpp::Matrix<double> CE, CI;
 	CE.resize(0, N_QUADPROG_VARS, 0);
-	CI.resize(0, N_QUADPROG_VARS * 2, N_QUADPROG_VARS);
+	CI.resize(0, N_QUADPROG_VARS * 4, N_QUADPROG_VARS);
 	quadprogpp::Vector<double> ce0, ci0, x;
 	ce0.resize(0, 0);
-	ci0.resize(0, N_QUADPROG_VARS * 2);
+	ci0.resize(0, N_QUADPROG_VARS * 4);
 
 	// inequality constraints on input (10, 11)
 	for (int i = 0; i < N_QUADPROG_VARS; i++) {
 		CI[i][i] = 1; //equation 10
 		CI[N_QUADPROG_VARS + i][i] = -1; //equation 11
 	}
-	CI = transpose(CI);
 	for (int i = 0; i < N_QUADPROG_VARS; i++) {
-		ci0[i] = -U_LOWERBOUND;
-		ci0[N_QUADPROG_VARS + i] = U_UPPERBOUND;
+		ci0[i] = U_UPPERBOUND;
+		ci0[N_QUADPROG_VARS + i] = -U_LOWERBOUND;
 	}
 
 	// other constraints (12, 13, 14, 15, 16, 17) are skipped
+	// Extra constraint: disallow too fast changing of control
+	for (int i = 0; i < N_QUADPROG_VARS - 1; i++) {
+		CI[N_QUADPROG_VARS * 2 + i][i] = 1; 
+		CI[N_QUADPROG_VARS * 3 + i][i] = -1; 
+
+		CI[N_QUADPROG_VARS * 2 + i][i + 1] = -1; 
+		CI[N_QUADPROG_VARS * 3 + i][i + 1] = 1; 
+	}
+	CI[N_QUADPROG_VARS * 3 - 1][0] = 1; 
+	CI[N_QUADPROG_VARS * 4 - 1][0] = -1; 
+	for (int i = 0; i < N_QUADPROG_VARS - 1; i++) {
+		ci0[N_QUADPROG_VARS * 2 + i] = MAX_DELTA_U;
+		ci0[N_QUADPROG_VARS * 3 + i] = MAX_DELTA_U;
+	}
+	if (!prev_u_queue.empty() && prev_u_queue.front() != STOP_SIGNAL) {
+		ci0[N_QUADPROG_VARS * 3 - 1] = -prev_u_queue.front() + MAX_DELTA_U;
+		ci0[N_QUADPROG_VARS * 4 - 1] = prev_u_queue.front() + MAX_DELTA_U;
+	} else {
+		ci0[N_QUADPROG_VARS * 3 - 1] = MAX_DELTA_U;
+		ci0[N_QUADPROG_VARS * 4 - 1] = MAX_DELTA_U;
+	}
+
 	// Solve control input via quadratic programming solver
+	CI = transpose(CI);
 	optimal_u.resize(N_QUADPROG_VARS);
 	solve_quadprog(G, g0, CE, ce0, CI, ci0, optimal_u);
 
@@ -733,6 +763,9 @@ void MPCController::processInput(const sensor_msgs::ImageConstPtr& msg)
 	ROS_INFO("Finished MPC Optimization! t = %f, optimal_u(0) = %f", double(clock() - begin) / CLOCKS_PER_SEC, optimal_u[0]);
 
 	if (showDebugOutputs) {
+		for (int i = 0; i < (N_INPUTS * mpcNumberTimesteps); i++)
+			ROS_INFO("optimal_u(%d) = %f", i, optimal_u[i]);
+
 		// Visualization of waypoints
 		for (int i = 0; i < wayPoints.size(); i++) {
 			cv::circle(transformedFullImage, wayPoints.at(i), 10, cv::Scalar(0, 255, 0), 1, 8, 0);

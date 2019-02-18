@@ -50,17 +50,13 @@ int main(int argc, char** argv)
   ros::Rate loop_rate(update_rate_hz);
   while (ros::ok())
   {
-    timeSinceApplyingLastInput += 1.0f / update_rate_hz;
-
     // Try getting new inputs from the controller
-    if (controller.hasNewInput(timeSinceApplyingLastInput)) {
+    if (controller.hasNewInput(1.0f / update_rate_hz)) {
         steering.data = controller.getNextSteeringControl();
         motor.data = controller.getNextMotorControl();
 
         steeringCtrl.publish(steering);
         motorCtrl.publish(motor);
-
-        timeSinceApplyingLastInput = 0;
     }
 
     // clear input/output buffers

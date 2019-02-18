@@ -26,7 +26,7 @@ public:
 	MPCController();
 	virtual ~MPCController();
 
-	bool hasNewInput(float timeSinceLastInput);
+	bool hasNewInput(float deltaTime);
 	int getNextSteeringControl();
 	int getNextMotorControl();
 	void reconfigureParameters(pses_control_test::ParamsConfig &config, uint32_t level);
@@ -62,6 +62,7 @@ private:
 	double directTrajectoryDiscount = 0;
 	bool fillPinkLane = false;
 	int targetMotorCtrl = 0;
+	float currTimeSinceInput = 0;
 
 	cv::Point getWaypointXFromLanePoints(const cv::Point& leftLanePoint, const cv::Point& middleLanePoint,
 			const cv::Point& rightLanePoint);
