@@ -130,3 +130,47 @@ Das größte Problem sind die Nichtlinearitäten. Dieser Ansatz erlaubt noch weiter
 Es bietet sich zukünftig an, das Fahrzeugmodell durch ein nichtlineares Modell zu ersetzen. Damit landet man bei der nichtlinearen modelprädiktiven Regelung (NMPC), z.B. \cite{allgower2012nonlinear}, bei der aufgrund der nichtlinearen Nebenbedingungen die Konvergenz zum Optimum zwar zunächst nicht formal sichergestellt ist, aber praktisch gesehen klappt. 
 
 Schließlich könnte man auch die Trajektoriengenerierung überarbeiten. Eine naheliegende Wahl, um auch mit Bildraten von unter 1 Hz auszukommen, ist die Verwendung der direkten Trajektorie bis zum ersten Wegpunkt und darauffolgende Verwendung der quadratischen Trajektorie. Da die quadratische Trajektorie in diesem Fall nicht mehr extrapoliert, bietet diese eine hervorragende Trajektorienform für eine Regelung mit wenigen Bildern. 
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}
+	\begin{axis}[ 
+	xtick={0, 200, ..., 1000},
+	ytick={0, 0.5, ..., 2},
+	ylabel near ticks,
+	xlabel near ticks,
+	xmin=0,
+	xmax=1000,
+	ymin=0,
+	ymax=2,
+	xlabel=$u_{m}$,
+	ylabel={$v(u_{m})$},
+	yticklabel={\SI[round-mode=places, round-precision=1]{\tick}{\frac{m}{s}}}
+	] 
+	\addplot [mark=none,domain=0:1000] {max(0, 0.00225 * (x - 100))}; 
+	\end{axis}
+	\end{tikzpicture}
+	\caption{Geschwindigkeitskennlinie $v(u_{m}) = max(\SI[round-mode=places, round-precision=1]{0}{\frac{mm}{s}}, \SI{2.25}{\frac{mm}{s}} * (u_{m} - 100))$}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}
+	\begin{axis}[ 
+	xtick={-1000, -600, ..., 1000},
+	ytick={-25, -15, ..., 25},
+	ylabel near ticks,
+	xlabel near ticks,
+	xmin=-1000,
+	xmax=1000,
+	ymin=-25,
+	ymax=25,
+	xlabel=$u_{l}$,
+	ylabel={$\varphi(u_{l})$},
+	yticklabel={\SI[round-mode=places, round-precision=1]{\tick}{^o}}
+	] 
+	\addplot [mark=none,domain=-1000:1000] {21 * x / 1000}; 
+	\end{axis}
+	\end{tikzpicture}
+	\caption{Lenkwinkelkennlinie $\varphi(u_{l}) = \frac{21^o}{1000} * u_{l} ))$}
+\end{figure}
