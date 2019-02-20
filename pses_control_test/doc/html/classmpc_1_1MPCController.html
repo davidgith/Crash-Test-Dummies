@@ -59,6 +59,8 @@ Public Member Functions</h2></td></tr>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:a53e5603ea84cbbbbcb4410812b5fd992"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmpc_1_1MPCController.html#a53e5603ea84cbbbbcb4410812b5fd992">fillPinkLine</a> (const cv::Mat &amp;transformedImage, std::vector&lt; std::tuple&lt; cv::Point, cv::Point, cv::Point &gt; &gt; &amp;detectedLanePoints)</td></tr>
 <tr class="separator:a53e5603ea84cbbbbcb4410812b5fd992"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab741d5fd61baea90d5a60e78886e0466"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmpc_1_1MPCController.html#ab741d5fd61baea90d5a60e78886e0466">findBestHistogramPeakX</a> (cv::Mat &amp;histogram)</td></tr>
+<tr class="separator:ab741d5fd61baea90d5a60e78886e0466"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0dc4757187d897124c885383367f4f69"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmpc_1_1MPCController.html#a0dc4757187d897124c885383367f4f69">findLanePoints</a> (const cv::Mat &amp;transformedImage, const cv::Mat &amp;ThreshImageGreen, const cv::Mat &amp;ThreshImagePink, std::vector&lt; std::tuple&lt; cv::Point, cv::Point, cv::Point &gt; &gt; &amp;detectedLanePoints)</td></tr>
 <tr class="separator:a0dc4757187d897124c885383367f4f69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac745af052219ab6b4166858d5394441a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmpc_1_1MPCController.html#ac745af052219ab6b4166858d5394441a">fitTrajectoryToWaypoints</a> (const cv::Mat &amp;transformedImage, std::vector&lt; Point &gt; &amp;wayPoints, std::vector&lt; double &gt; &amp;trajectory_coeffs)</td></tr>
@@ -75,10 +77,8 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:a360248fdb2b90967601a5aa5c414d3ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a714bee561761595978f6c7020c365221"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmpc_1_1MPCController.html#a714bee561761595978f6c7020c365221">getWaypointXFromRightLanePoint</a> (const cv::Point &amp;lanePoint)</td></tr>
 <tr class="separator:a714bee561761595978f6c7020c365221"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc9e87ee28242ce021ccd1d7e6f2ca94"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmpc_1_1MPCController.html#afc9e87ee28242ce021ccd1d7e6f2ca94">MPCController::findBestHistogramPeakX</a> (cv::Mat &amp;histogram)</td></tr>
-<tr class="separator:afc9e87ee28242ce021ccd1d7e6f2ca94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97bc3736eb5101a99005ad355b778f81"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmpc_1_1MPCController.html#a97bc3736eb5101a99005ad355b778f81">MPCController::isLeftTurn</a> (std::vector&lt; Point &gt; &amp;leftmostPoints, std::vector&lt; Point &gt; &amp;rightmostPoints)</td></tr>
-<tr class="separator:a97bc3736eb5101a99005ad355b778f81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4e6b717d4d1f5ae55944dcc0952a653"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmpc_1_1MPCController.html#ab4e6b717d4d1f5ae55944dcc0952a653">isLeftTurn</a> (std::vector&lt; Point &gt; &amp;leftmostPoints, std::vector&lt; Point &gt; &amp;rightmostPoints)</td></tr>
+<tr class="separator:ab4e6b717d4d1f5ae55944dcc0952a653"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a22b23d1e9106143d6f0c3339b62599bf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmpc_1_1MPCController.html#a22b23d1e9106143d6f0c3339b62599bf">processAndTransformImage</a> (const sensor_msgs::ImageConstPtr &amp;msg, cv::Mat &amp;transformedImage)</td></tr>
 <tr class="separator:a22b23d1e9106143d6f0c3339b62599bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e3e019e0ba96257ffd3ef9844115edd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmpc_1_1MPCController.html#a7e3e019e0ba96257ffd3ef9844115edd">solveMPCProblem</a> (const cv::Mat &amp;transformedImage, const std::vector&lt; double &gt; &amp;trajectory_coeffs, clock_t begin, std::queue&lt; double &gt; prev_u_queue, const cv::Mat &amp;transformedFullImage, <a class="el" href="classquadprogpp_1_1Vector.html">quadprogpp::Vector</a>&lt; double &gt; &amp;optimal_u)</td></tr>
@@ -219,8 +219,50 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Fills in the pink line in the given image </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">transformedImage</td><td>raw image </td></tr>
+    <tr><td class="paramname">detectedLanePoints</td><td>found lane points </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00289">289</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ab741d5fd61baea90d5a60e78886e0466"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab741d5fd61baea90d5a60e78886e0466">&#9670;&nbsp;</a></span>findBestHistogramPeakX()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int mpc::MPCController::findBestHistogramPeakX </td>
+          <td>(</td>
+          <td class="paramtype">cv::Mat &amp;&#160;</td>
+          <td class="paramname"><em>histogram</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Finds the column maximum of the histogram closest to the center </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">histogram</td><td>a thresholded image </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>x-coordinate of found maximum </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00175">175</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
 </div>
 </div>
@@ -269,6 +311,15 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Finds lane points in the given image. If none exists, its x-coordinate is set to -1. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">transformedImage</td><td>bird-view image </td></tr>
+    <tr><td class="paramname">ThreshImageGreen</td><td>green-thresholded bird-view image </td></tr>
+    <tr><td class="paramname">ThreshImagePink</td><td>pink-thresholded bird-view image </td></tr>
+    <tr><td class="paramname">detectedLanePoints</td><td>output vector of triples of detected lanepoints </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00248">248</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -313,6 +364,14 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Fits a trajectory to the waypoints as configured. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">transformedImage</td><td>debug image </td></tr>
+    <tr><td class="paramname">wayPoints</td><td>waypoints </td></tr>
+    <tr><td class="paramname">trajectory_coeffs</td><td>output polynomial coefficients </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00449">449</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -369,6 +428,16 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Generates waypoints from the given presorted lane points </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">transformedImage</td><td>debug image </td></tr>
+    <tr><td class="paramname">rightmostPoints</td><td>the rightmost points </td></tr>
+    <tr><td class="paramname">leftmostPoints</td><td>the leftmost points </td></tr>
+    <tr><td class="paramname">usefulPoints</td><td>triples with middle point or both outer points </td></tr>
+    <tr><td class="paramname">wayPoints</td><td>the vector of outputted waypoints </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00357">357</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -388,6 +457,7 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Returns the next motor control level. </p><dl class="section return"><dt>Returns</dt><dd>the next motor control level. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00114">114</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -407,6 +477,7 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Returns the next steering control level. </p><dl class="section return"><dt>Returns</dt><dd>the next steering control level. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00100">100</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -451,6 +522,15 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Infers waypoint x from the given triple of lane points </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">leftLanePoint</td><td>left lane point </td></tr>
+    <tr><td class="paramname">middleLanePoint</td><td>middle lane point </td></tr>
+    <tr><td class="paramname">rightLanePoint</td><td>right lane point </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>waypoint inferred from the given points </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00211">211</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -479,6 +559,13 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Infers waypoint x from left lane point only </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lanePoint</td><td>left lane point </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>x coordinate of inferred waypoint </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00198">198</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -507,6 +594,13 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Infers waypoint x from middle lane point only </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lanePoint</td><td>middle lane point </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>x coordinate of inferred waypoint </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00202">202</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -545,6 +639,14 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Infers waypoint x from outer lane points only </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">leftLanePoint</td><td>left lane point </td></tr>
+    <tr><td class="paramname">rightLanePoint</td><td>right lane point </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>x coordinate of inferred waypoint </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00206">206</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -573,13 +675,20 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Infers waypoint x from right lane point only </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lanePoint</td><td>right lane point </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>x coordinate of inferred waypoint </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00194">194</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
 </div>
 </div>
-<a id="afc9e87ee28242ce021ccd1d7e6f2ca94"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afc9e87ee28242ce021ccd1d7e6f2ca94">&#9670;&nbsp;</a></span>MPCController::findBestHistogramPeakX()</h2>
+<a id="ab4e6b717d4d1f5ae55944dcc0952a653"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4e6b717d4d1f5ae55944dcc0952a653">&#9670;&nbsp;</a></span>isLeftTurn()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -588,33 +697,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int mpc::MPCController::MPCController::findBestHistogramPeakX </td>
-          <td>(</td>
-          <td class="paramtype">cv::Mat &amp;&#160;</td>
-          <td class="paramname"><em>histogram</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a97bc3736eb5101a99005ad355b778f81"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a97bc3736eb5101a99005ad355b778f81">&#9670;&nbsp;</a></span>MPCController::isLeftTurn()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool mpc::MPCController::MPCController::isLeftTurn </td>
+          <td class="memname">bool mpc::MPCController::isLeftTurn </td>
           <td>(</td>
           <td class="paramtype">std::vector&lt; Point &gt; &amp;&#160;</td>
           <td class="paramname"><em>leftmostPoints</em>, </td>
@@ -637,6 +720,16 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Detects leftward or rightward lane </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">leftmostPoints</td><td>leftmost points </td></tr>
+    <tr><td class="paramname">rightmostPoints</td><td>rightmost points </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if leftward lane is detected </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00151">151</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
 </div>
 </div>
@@ -673,6 +766,13 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Preprocesses and IPM-transforms the given image </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">msg</td><td>raw image msg </td></tr>
+    <tr><td class="paramname">transformedImage</td><td>IPM-transformed image </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00225">225</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -693,6 +793,12 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>The given image message is processed to calculate the next optimal control steps. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">msg</td><td>front image message </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00680">680</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -713,6 +819,12 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Call when a lane change sign has been detected. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">msg</td><td>distance to sign </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00664">664</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -733,6 +845,12 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Call when a speed limit sign has been detected. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">msg</td><td>distance to sign </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00672">672</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -753,6 +871,12 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Call when a stop sign has been detected. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">msg</td><td>distance to sign </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00656">656</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -783,6 +907,13 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Called on dynamic reconfiguration parameter updates. Overwrites the current configuration with the given configuration. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">config</td><td>new configuration </td></tr>
+    <tr><td class="paramname">level</td><td>not used </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00129">129</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -845,6 +976,17 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Solves the quadratic program as configured. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">transformedImage</td><td>debug image </td></tr>
+    <tr><td class="paramname">trajectory_coeffs</td><td>polynomial coefficients </td></tr>
+    <tr><td class="paramname">begin</td><td>time since callback start </td></tr>
+    <tr><td class="paramname">prev_u_queue</td><td>leftover control inputs from previous iteration </td></tr>
+    <tr><td class="paramname">transformedFullImage</td><td>debug image </td></tr>
+    <tr><td class="paramname">optimal_u</td><td>output vector of optimal control values </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00476">476</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -895,6 +1037,15 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Sorts the lane point triples into vectors </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">detectedLanePoints</td><td>lane point triples </td></tr>
+    <tr><td class="paramname">usefulPoints</td><td>triples with middle point or both outer points </td></tr>
+    <tr><td class="paramname">rightmostPoints</td><td>the rightmost points </td></tr>
+    <tr><td class="paramname">leftmostPoints</td><td>the leftmost points </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00322">322</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
@@ -941,7 +1092,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00072">72</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00108">108</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -965,7 +1116,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00058">58</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00094">94</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -989,7 +1140,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00067">67</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00103">103</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1013,7 +1164,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00071">71</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00107">107</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1037,7 +1188,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00068">68</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00104">104</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1061,7 +1212,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00061">61</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00097">97</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1085,7 +1236,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00041">41</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00077">77</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1109,7 +1260,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00074">74</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00110">110</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1133,7 +1284,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00075">75</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00111">111</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1157,7 +1308,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00073">73</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00109">109</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1181,7 +1332,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00056">56</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00092">92</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1205,7 +1356,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00057">57</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00093">93</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1229,7 +1380,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00055">55</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00091">91</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1253,7 +1404,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00054">54</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00090">90</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1277,7 +1428,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00047">47</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00083">83</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1301,7 +1452,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00048">48</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00084">84</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1325,7 +1476,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00051">51</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00087">87</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1349,7 +1500,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00062">62</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00098">98</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1373,7 +1524,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00063">63</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00099">99</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1397,7 +1548,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00044">44</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00080">80</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1421,7 +1572,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00042">42</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00078">78</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1445,7 +1596,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00043">43</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00079">79</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1469,7 +1620,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00066">66</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MPCController_8h_source.html#l00102">102</a> of file <a class="el" href="MPCController_8h_source.html">MPCController.h</a>.</p>
 
 </div>
 </div>
@@ -1483,7 +1634,7 @@ Private Attributes</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/pses_control_test">pses_control_test</a><br />
 Author(s): </br />
-<small>autogenerated on Wed Feb 20 2019 22:35:54</small>
+<small>autogenerated on Wed Feb 20 2019 22:59:43</small>
 </div>
 </body>
 </html>
