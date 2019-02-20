@@ -84,7 +84,10 @@ MPCController::~MPCController() {
 	delete ipm;
 }
 
-bool MPCController::hasNewInput(float deltaTime) {
+bool MPCController::update(float deltaTime) {
+	// Update driving lane target
+	drivingLane = drivingLane + min(deltaTime/2, 0.2f) * (targetDrivingLane - drivingLane);
+
 	currTimeSinceInput += deltaTime;
 	if (currTimeSinceInput > mpcTimestep) {
 		currTimeSinceInput -= mpcTimestep;
@@ -94,7 +97,6 @@ bool MPCController::hasNewInput(float deltaTime) {
 }
 
 int MPCController::getNextSteeringControl() {
-	// exclusive access to control queue while setting control inputs
 	std::lock_guard<std::mutex> lck (u_mutex);
 
 	if (!u_queue.empty()) {
@@ -109,6 +111,13 @@ int MPCController::getNextSteeringControl() {
 }
 
 int MPCController::getNextMotorControl() {
+	// If we are stopping right now, wait until the stopping time has passed
+	double currTime = ros::Time::now().toSec();
+	if (currTime < lastStopTime + 3) {
+		return 0;
+	}
+
+	// Continue driving if next control steps exist
 	if (!u_queue.empty() && u_queue.front() != STOP_SIGNAL) {
 		return targetVelocity != 0 ? 100 + 444 * targetVelocity : 0;
 	}
@@ -129,7 +138,7 @@ void MPCController::reconfigureParameters(pses_control_test::ParamsConfig &confi
 
   detectionEndOffsetY = config.detection_end_offset;
 
-  drivingLane = config.ctrl_lane;
+  targetDrivingLane = config.ctrl_lane;
   targetVelocity = config.ctrl_velocity;
 
   useDirectTrajectory = config.direct_trajectory;
@@ -182,62 +191,29 @@ int findBestHistogramPeakX(cv::Mat& histogram) {
 }
 
 int MPCController::getWaypointXFromRightLanePoint(const Point& lanePoint) {
-	if (drivingLane == 0) {
-		return lanePoint.x - 3*LANE_WIDTH_PIXELS/4;
-	} else if (drivingLane == 1) {
-		return lanePoint.x - 2*LANE_WIDTH_PIXELS/4;
-	} else if (drivingLane == 2) {
-		return lanePoint.x - LANE_WIDTH_PIXELS/4;
-	} else {
-		return 0;
-	}
+	return lanePoint.x - round((3 - drivingLane) * LANE_WIDTH_PIXELS/4);
 }
 
 int MPCController::getWaypointXFromLeftLanePoint(const Point& lanePoint) {
-	if (drivingLane == 0) {
-		return lanePoint.x + LANE_WIDTH_PIXELS/4;
-	} else if (drivingLane == 1) {
-		return lanePoint.x + 2*LANE_WIDTH_PIXELS/4;
-	} else if (drivingLane == 2) {
-		return lanePoint.x + 3*LANE_WIDTH_PIXELS/4;
-	} else {
-		return 0;
-	}
-	return drivingLane ? lanePoint.x + 60 : lanePoint.x + 180;
+	return lanePoint.x + round((1 + drivingLane) * LANE_WIDTH_PIXELS/4);
 }
 
 int MPCController::getWaypointXFromMiddleLanePoint(const Point& lanePoint) {
-	if (drivingLane == 0) {
-		return lanePoint.x - LANE_WIDTH_PIXELS/4;
-	} else if (drivingLane == 1) {
-		return lanePoint.x;
-	} else if (drivingLane == 2) {
-		return lanePoint.x + LANE_WIDTH_PIXELS/4;
-	} else {
-		return 0;
-	}
+	return lanePoint.x + round((-1 + drivingLane) * LANE_WIDTH_PIXELS/4);
 }
 
 int MPCController::getWaypointXFromOuterLanePoints(const Point& leftLanePoint,
 		const Point& rightLanePoint) {
-	if (drivingLane == 0) {
-		return (leftLanePoint.x * 3 + rightLanePoint.x * 1) / 4;
-	} else if (drivingLane == 1) {
-		return (leftLanePoint.x * 2 + rightLanePoint.x * 2) / 4;
-	} else if (drivingLane == 2) {
-		return (leftLanePoint.x * 1 + rightLanePoint.x * 3) / 4;
-	} else {
-		return 0;
-	}
+	return round((leftLanePoint.x * (3 - drivingLane) + rightLanePoint.x * (1 + drivingLane)) / 4);
 }
 
 Point MPCController::getWaypointXFromLanePoints(const Point& leftLanePoint,
 		const Point& middleLanePoint, const Point& rightLanePoint) {
 	// If the middle point and the point on the driving side exists, place inbetween
-	if (drivingLane == 0 && middleLanePoint.x != -1 && leftLanePoint.x != -1) {
-		return Point((middleLanePoint.x + leftLanePoint.x) / 2, middleLanePoint.y);
-	} else if (drivingLane == 2 && middleLanePoint.x != -1 && rightLanePoint.x != -1) {
-		return Point((middleLanePoint.x + rightLanePoint.x) / 2, middleLanePoint.y);
+	if (drivingLane < 1 && middleLanePoint.x != -1 && leftLanePoint.x != -1) {
+		return Point(round(middleLanePoint.x * (0.5f + drivingLane/2) + leftLanePoint.x * (0.5f - drivingLane/2)), middleLanePoint.y);
+	} else if (drivingLane >= 1 && middleLanePoint.x != -1 && rightLanePoint.x != -1) {
+		return Point(round(middleLanePoint.x * (1.5f - drivingLane/2) + rightLanePoint.x * (-0.5f + drivingLane/2)), middleLanePoint.y);
 	} else if (middleLanePoint.x == -1) {
 		return Point(getWaypointXFromOuterLanePoints(leftLanePoint, rightLanePoint), middleLanePoint.y);
 	} else {
@@ -627,7 +603,7 @@ void MPCController::solveMPCProblem(const cv::Mat& transformedImage, const std::
 	}
 
 	// other constraints (12, 13, 14, 15, 16, 17) are skipped
-	// Extra constraint: disallow too fast changing of control
+	// Custom constraint: disallow too fast changing of control
 	for (int i = 0; i < N_QUADPROG_VARS - 1; i++) {
 		CI[N_QUADPROG_VARS * 2 + i][i] = 1; 
 		CI[N_QUADPROG_VARS * 3 + i][i] = -1; 
@@ -676,7 +652,31 @@ void MPCController::solveMPCProblem(const cv::Mat& transformedImage, const std::
 	}
 }
 
-void MPCController::processInput(const sensor_msgs::ImageConstPtr& msg)
+void MPCController::processStopSign(const std_msgs::Int16ConstPtr& msg) {
+	double currTime = ros::Time::now().toSec();
+	if (currTime > lastStopTime + 10) {
+		double lastStopTime = currTime;
+		targetVelocity = 0;
+	}
+}
+
+void MPCController::processLaneSign(const std_msgs::Int16ConstPtr& msg) {
+	double currTime = ros::Time::now().toSec();
+	if (currTime > lastLaneTime + 10) {
+		double lastLaneTime = currTime;
+		targetDrivingLane = 2 - targetDrivingLane;
+	}
+}
+
+void MPCController::processSpeedSign(const std_msgs::Int16ConstPtr& msg) {
+	double currTime = ros::Time::now().toSec();
+	if (currTime > lastSpeedTime + 10) {
+		double lastSpeedTime = currTime;
+		targetVelocity = 0.3f;
+	}
+}
+
+void MPCController::processImage(const sensor_msgs::ImageConstPtr& msg)
 {
 	cv::Mat transformedImage;
 	cv::Mat ThreshImageGreen, ThreshImagePink;

@@ -10,6 +10,7 @@
 #include <bits/stdint-uintn.h>
 #include <opencv2/core/types.hpp>
 #include <sensor_msgs/Image.h>
+#include <std_msgs/Int16.h>
 #include <mutex>
 #include <queue>
 #include <tuple>
@@ -26,11 +27,14 @@ public:
 	MPCController();
 	virtual ~MPCController();
 
-	bool hasNewInput(float deltaTime);
+	bool update(float deltaTime);
 	int getNextSteeringControl();
 	int getNextMotorControl();
 	void reconfigureParameters(pses_control_test::ParamsConfig &config, uint32_t level);
-	void processInput(const sensor_msgs::ImageConstPtr& msg);
+	void processImage(const sensor_msgs::ImageConstPtr& msg);
+	void processStopSign(const std_msgs::Int16ConstPtr& msg);
+	void processLaneSign(const std_msgs::Int16ConstPtr& msg);
+	void processSpeedSign(const std_msgs::Int16ConstPtr& msg);
 
 private:
 	IPM* ipm;
@@ -54,15 +58,20 @@ private:
 
 	// Drive Configurations
 	bool INTERPOLATE_WITH_CURRENT_POSITION = false;
-	int drivingLane = false;
+	int targetDrivingLane = 2;
 	double targetVelocity = 0.2f;
 
 	// Extra Configurations
 	bool useDirectTrajectory = true;
 	double directTrajectoryDiscount = 0;
 	bool fillPinkLane = false;
-	int targetMotorCtrl = 0;
-	float currTimeSinceInput = 0;
+
+	// Current transient values
+	double drivingLane = 2;
+	double currTimeSinceInput = 0;
+	double lastStopTime = 0;
+	double lastLaneTime = 0;
+	double lastSpeedTime = 0;
 
 	cv::Point getWaypointXFromLanePoints(const cv::Point& leftLanePoint, const cv::Point& middleLanePoint,
 			const cv::Point& rightLanePoint);

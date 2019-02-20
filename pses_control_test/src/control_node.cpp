@@ -27,7 +27,9 @@ int main(int argc, char** argv)
 
   // generate subscriber for sensor messages
   ros::Subscriber imageSub = nh.subscribe<sensor_msgs::Image>(
-      "kinect2/qhd/image_color", 1, boost::bind(&MPCController::processInput, &controller, _1));
+      "kinect2/qhd/image_color", 1, boost::bind(&MPCController::processImage, &controller, _1));
+  ros::Subscriber stopSignSub = nh.subscribe<std_msgs::Int16>(
+      "/sign_detection_node/StopSign", 1, boost::bind(&MPCController::processStopSign, &controller, _1));
 
   // generate control message publisher
   std_msgs::Int16 motor, steering;
@@ -51,7 +53,7 @@ int main(int argc, char** argv)
   while (ros::ok())
   {
     // Try getting new inputs from the controller
-    if (controller.hasNewInput(1.0f / update_rate_hz)) {
+    if (controller.update(1.0f / update_rate_hz)) {
         steering.data = controller.getNextSteeringControl();
         motor.data = controller.getNextMotorControl();
 
