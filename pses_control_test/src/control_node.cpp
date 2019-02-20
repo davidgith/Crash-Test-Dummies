@@ -10,6 +10,8 @@
 
 #include "MPCController.h"
 
+using namespace mpc;
+
 int main(int argc, char** argv)
 {
   // Init this node

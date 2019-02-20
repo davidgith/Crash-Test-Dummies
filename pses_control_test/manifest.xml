@@ -1,0 +1,10 @@
+<package>
+  <description brief="The pses_control_test package used for driving the PSES robot car">The pses_control_test package used for driving the PSES robot car</description>
+  <author>Kai Cui, Feiyu Chang, Regis Fayard, Lars Semmler, David Botschek</author>
+  <license>GPLv3</license>
+  <review status="unreviewed" notes=""></review>
+  <url>https://github.com/davidgith/Crash-Test-Dummies</url>
+
+</package>
+
+
