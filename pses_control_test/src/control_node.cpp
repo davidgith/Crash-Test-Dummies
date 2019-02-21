@@ -32,6 +32,10 @@ int main(int argc, char** argv)
       "kinect2/qhd/image_color", 1, boost::bind(&MPCController::processImage, &controller, _1));
   ros::Subscriber stopSignSub = nh.subscribe<std_msgs::Int16>(
       "/sign_detection_node/StopSign", 1, boost::bind(&MPCController::processStopSign, &controller, _1));
+  ros::Subscriber laneSignSub = nh.subscribe<std_msgs::Int16>(
+      "/sign_detection_node/LaneSign", 1, boost::bind(&MPCController::processLaneSign, &controller, _1));
+  ros::Subscriber speedSignSub = nh.subscribe<std_msgs::Int16>(
+      "/sign_detection_node/SpeedSign", 1, boost::bind(&MPCController::processSpeedSign, &controller, _1));
 
   // generate control message publisher
   std_msgs::Int16 motor, steering;

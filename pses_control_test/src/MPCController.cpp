@@ -656,25 +656,27 @@ namespace mpc {
 	void MPCController::processStopSign(const std_msgs::Int16ConstPtr& msg) {
 		double currTime = ros::Time::now().toSec();
 		if (currTime > lastStopTime + 10) {
-			double lastStopTime = currTime;
-			targetVelocity = 0;
+			lastStopTime = currTime;
 		}
+		ROS_INFO("Found stop sign: currTime: %f, lastStopTime: %f", currTime, lastStopTime);
 	}
 
 	void MPCController::processLaneSign(const std_msgs::Int16ConstPtr& msg) {
 		double currTime = ros::Time::now().toSec();
 		if (currTime > lastLaneTime + 10) {
-			double lastLaneTime = currTime;
+			lastLaneTime = currTime;
 			targetDrivingLane = 2 - targetDrivingLane;
 		}
+		ROS_INFO("Found lane sign: currTime: %f, lastTime: %f", currTime, lastLaneTime);
 	}
 
 	void MPCController::processSpeedSign(const std_msgs::Int16ConstPtr& msg) {
 		double currTime = ros::Time::now().toSec();
 		if (currTime > lastSpeedTime + 10) {
-			double lastSpeedTime = currTime;
+			lastSpeedTime = currTime;
 			targetVelocity = 0.3f;
 		}
+		ROS_INFO("Found speed sign: currTime: %f, lastTime: %f", currTime, lastSpeedTime);
 	}
 
 	void MPCController::processImage(const sensor_msgs::ImageConstPtr& msg)
