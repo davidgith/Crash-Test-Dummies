@@ -37,15 +37,20 @@ float areaQuadrangle(std::vector<Point2f> corners){
 }
 
 
-const char* keys =
-        "{ help h |                          | Print help message. }"
-        "{ input1 | ../data/box.png          | Path to input image 1. }"
-        "{ input2 | ../data/box_in_scene.png | Path to input image 2. }";
+// Gibt an ob ein Schild gefunden wurde (reduziert die false positive rate)
+bool signFound(float area, std::vector<Point2f> corners){
+    if(area <= 20 || area >= 290000)
+        return false;
+    if( corners[1].x - corners[0].x < 10 || corners[2].x - corners[3].x < 10 ||
+        corners[2].y - corners[1].y < 10 || corners[3].y - corners[0].y < 10 )
+        return false;
+    else return true;
+}
 
 
-void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[], Mat schilder[])
+void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[], std::vector<Mat> schilder, std::vector<int> detect_thresh)
 {
-    //Loading kinect image
+    //Loading kinect image (Resolution: 960x540)
     cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image;
     cv::Mat imageGrey;
     cv::cvtColor(image, imageGrey, CV_BGR2GRAY);
@@ -53,18 +58,11 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
     //ROS_INFO("image callback");
     cv::waitKey(10);
 
-    CommandLineParser parser( argc, argv, keys );
-    Mat img_object = schilder[0];
-//    Mat img_object = imread( schild, IMREAD_GRAYSCALE );
-    //Mat img_object = imread( parser.get<String>("input1"), IMREAD_GRAYSCALE );
-    //Mat img_scene = imread( parser.get<String>("input2"), IMREAD_GRAYSCALE );
+    
     Mat img_scene = imageGrey;
-
-    if ( img_object.empty() || img_scene.empty() )
-    {
-        cout << "Could not open or find the image!\n" << endl;
-        parser.printMessage();
-    }
+    if ( img_scene.empty() )
+        ROS_ERROR("Could not find kinect image");
+ 
 
     //-- Step 1: Detect the keypoints using SURF Detector, compute the descriptors
     int minHessian = 400;
@@ -76,127 +74,132 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
     
     detector->detectAndCompute( img_scene, noArray(), keypoints_scene, descriptors_scene );
 
-    for( int i = 0; i < 2; i++){
+    // For each sign, check if it is found in the scene.
+    // i=0 -> stop sign     i=1 -> Change lane sign     i=2 -> Speed limit sign
+    for( int i = 0; i < detect_thresh.size(); i++){
         //ROS_INFO("i=%i", i);
+        if(schilder[i].empty()){
+            continue;
+        }
         Mat img_object = schilder[i];
         std::vector<KeyPoint> keypoints_object;
         Mat descriptors_object;
         detector->detectAndCompute( img_object, noArray(), keypoints_object, descriptors_object );
 
-        //cv::imshow("descriptors_object", descriptors_object);
-    //cv::imshow("descriptors_scene", descriptors_scene);
 
-    //-- Step 2: Matching descriptor vectors with a FLANN based matcher
-    // Since SURF is a floating-point descriptor NORM_L2 is used
-    Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create(DescriptorMatcher::FLANNBASED);
-    std::vector< std::vector<DMatch> > knn_matches;
-    matcher->knnMatch( descriptors_object, descriptors_scene, knn_matches, 2 );
+        //-- Step 2: Matching descriptor vectors with a FLANN based matcher
+        // Since SURF is a floating-point descriptor NORM_L2 is used
+        Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create(DescriptorMatcher::FLANNBASED);
+        std::vector< std::vector<DMatch> > knn_matches;
+        matcher->knnMatch( descriptors_object, descriptors_scene, knn_matches, 2 );
 
-    //-- Filter matches using the Lowe's ratio test
-    const float ratio_thresh = 0.75f;
-    std::vector<DMatch> good_matches;
-    for (size_t i = 0; i < knn_matches.size(); i++)
-    {
-        if (knn_matches[i][0].distance < ratio_thresh * knn_matches[i][1].distance)
+        //-- Filter matches using the Lowe's ratio test
+        const float ratio_thresh = 0.75f;
+        std::vector<DMatch> good_matches;
+        for (size_t i = 0; i < knn_matches.size(); i++)
         {
-            good_matches.push_back(knn_matches[i][0]);
+            if (knn_matches[i][0].distance < ratio_thresh * knn_matches[i][1].distance)
+            {
+                good_matches.push_back(knn_matches[i][0]);
+            }
         }
-    }
 
-    //ROS_INFO("knn_matches.size=%i good_matches.size=%i", (int)knn_matches.size(), (int)good_matches.size());
+        //ROS_INFO("knn_matches.size=%i good_matches.size=%i", (int)knn_matches.size(), (int)good_matches.size());
 
-    //-- Draw matches
-    Mat img_matches;
-    drawMatches( img_object, keypoints_object, img_scene, keypoints_scene, good_matches, img_matches, Scalar::all(-1),
-                 Scalar::all(-1), std::vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
+        //-- Draw matches
+        Mat img_matches;
+        drawMatches( img_object, keypoints_object, img_scene, keypoints_scene, good_matches, img_matches, Scalar::all(-1),
+                    Scalar::all(-1), std::vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
 
-    //-- Localize the object
-    std::vector<Point2f> obj;
-    std::vector<Point2f> scene;
+        //-- Localize the object
+        std::vector<Point2f> obj;
+        std::vector<Point2f> scene;
 
-    for( size_t i = 0; i < good_matches.size(); i++ )
-    {
-        //-- Get the keypoints from the good matches
-        obj.push_back( keypoints_object[ good_matches[i].queryIdx ].pt );
-        scene.push_back( keypoints_scene[ good_matches[i].trainIdx ].pt );
-    }
+        for( size_t i = 0; i < good_matches.size(); i++ )
+        {
+            //-- Get the keypoints from the good matches
+            obj.push_back( keypoints_object[ good_matches[i].queryIdx ].pt );
+            scene.push_back( keypoints_scene[ good_matches[i].trainIdx ].pt );
+        }
 
-    Mat H;
+        Mat H;
 
-    //Only continue if there are more then 20 keypoints found
-    if((int)good_matches.size() > 20){
-            H = findHomography( obj, scene, RANSAC );
+        // Continue only if enough key point matches have been found.
+        // Threshold values are defined individually for each sign in detect_thresh
+        if((int)good_matches.size() > detect_thresh[i]){
+                H = findHomography( obj, scene, RANSAC );
+                
+            } 
+
+        if (! H.empty()){
+
+            //-- Get the corners from the image_1 ( the object to be "detected" )
+            std::vector<Point2f> obj_corners(4);
+            obj_corners[0] = Point2f(0, 0);
+            obj_corners[1] = Point2f( (float)img_object.cols, 0 );
+            obj_corners[2] = Point2f( (float)img_object.cols, (float)img_object.rows );
+            obj_corners[3] = Point2f( 0, (float)img_object.rows );
+            std::vector<Point2f> scene_corners(4);
             
-        } 
 
-    if (! H.empty()){
+            perspectiveTransform( obj_corners, scene_corners, H);            
+            
+            float sign_area = areaQuadrangle(scene_corners);
 
-        //-- Get the corners from the image_1 ( the object to be "detected" )
-        std::vector<Point2f> obj_corners(4);
-        obj_corners[0] = Point2f(0, 0);
-        obj_corners[1] = Point2f( (float)img_object.cols, 0 );
-        obj_corners[2] = Point2f( (float)img_object.cols, (float)img_object.rows );
-        obj_corners[3] = Point2f( 0, (float)img_object.rows );
-        std::vector<Point2f> scene_corners(4);
-        
-        
+            if(signFound(sign_area, scene_corners)){
 
-        perspectiveTransform( obj_corners, scene_corners, H);
+                ROS_INFO("Object %i found! position:(%i,%i);(%i,%i);(%i,%i);(%i,%i) area:%i #keypoints=%i",i,
+                        (int)scene_corners[0].x , (int)scene_corners[0].y ,
+                        (int)scene_corners[1].x , (int)scene_corners[1].y ,
+                        (int)scene_corners[2].x , (int)scene_corners[2].y ,
+                        (int)scene_corners[3].x , (int)scene_corners[3].y ,
+                        (int)sign_area, (int)good_matches.size());
+
+                // ToDo Caltulate sign distance with area size
+                std_msgs::Int16 distance;
+                distance.data = (int)areaQuadrangle(scene_corners);
+                if (i == 0) {
+                    stopPublisher.publish(distance);
+                } else if (i == 1) {
+                    lanePublisher.publish(distance);
+                } else if (i == 2) {
+                    speedPublisher.publish(distance);
+                }
 
 
-        ROS_INFO("Object %i found! position:(%i,%i);(%i,%i);(%i,%i);(%i,%i) area:%i #keypoints=%i",i,
-                    (int)scene_corners[0].x , (int)scene_corners[0].y ,
-                    (int)scene_corners[1].x , (int)scene_corners[1].y ,
-                    (int)scene_corners[2].x , (int)scene_corners[2].y ,
-                    (int)scene_corners[3].x , (int)scene_corners[3].y ,
-                    (int)areaQuadrangle(scene_corners), (int)good_matches.size());
+                if(gui){
 
-        std_msgs::Int16 distance;
-        distance.data = (int)areaQuadrangle(scene_corners);
-        if (i == 0) {
-            stopPublisher.publish(distance);
-        } else if (i == 1) {
-            lanePublisher.publish(distance);
-        } else if (i == 2) {
-            speedPublisher.publish(distance);
+                // draw circles around the 4 corners
+                cv::circle( img_matches, scene_corners[0] + Point2f((float)img_object.cols), 5, Scalar(255, 0, 0), 2 );
+                cv::circle( img_matches, scene_corners[1] + Point2f((float)img_object.cols), 5, Scalar(255, 0, 0), 2 );
+                cv::circle( img_matches, scene_corners[2] + Point2f((float)img_object.cols), 5, Scalar(255, 0, 0), 2 );
+                cv::circle( img_matches, scene_corners[3] + Point2f((float)img_object.cols), 5, Scalar(255, 0, 0), 2 );
+
+                //-- Draw lines between the corners (the mapped object in the scene - image_2 )
+                line( img_matches, scene_corners[0] + Point2f((float)img_object.cols, 0),
+                    scene_corners[1] + Point2f((float)img_object.cols, 0), Scalar(0, 255, 0), 4 );
+                line( img_matches, scene_corners[1] + Point2f((float)img_object.cols, 0),
+                    scene_corners[2] + Point2f((float)img_object.cols, 0), Scalar( 0, 255, 0), 4 );
+                line( img_matches, scene_corners[2] + Point2f((float)img_object.cols, 0),
+                    scene_corners[3] + Point2f((float)img_object.cols, 0), Scalar( 0, 255, 0), 4 );
+                line( img_matches, scene_corners[3] + Point2f((float)img_object.cols, 0),
+                    scene_corners[0] + Point2f((float)img_object.cols, 0), Scalar( 0, 255, 0), 4 );
+                }
+            } 
         }
         
-        // draw circles around the 4 corners
-        cv::circle( img_matches, scene_corners[0] + Point2f((float)img_object.cols), 5, Scalar(255, 0, 0), 2 );
-        cv::circle( img_matches, scene_corners[1] + Point2f((float)img_object.cols), 5, Scalar(255, 0, 0), 2 );
-        cv::circle( img_matches, scene_corners[2] + Point2f((float)img_object.cols), 5, Scalar(255, 0, 0), 2 );
-        cv::circle( img_matches, scene_corners[3] + Point2f((float)img_object.cols), 5, Scalar(255, 0, 0), 2 );
+        if (gui){
+            //-- Show detected matches
 
-
-        //cv::imshow("H mat", H);
-
-        //-- Draw lines between the corners (the mapped object in the scene - image_2 )
-        line( img_matches, scene_corners[0] + Point2f((float)img_object.cols, 0),
-            scene_corners[1] + Point2f((float)img_object.cols, 0), Scalar(0, 255, 0), 4 );
-        line( img_matches, scene_corners[1] + Point2f((float)img_object.cols, 0),
-            scene_corners[2] + Point2f((float)img_object.cols, 0), Scalar( 0, 255, 0), 4 );
-        line( img_matches, scene_corners[2] + Point2f((float)img_object.cols, 0),
-            scene_corners[3] + Point2f((float)img_object.cols, 0), Scalar( 0, 255, 0), 4 );
-        line( img_matches, scene_corners[3] + Point2f((float)img_object.cols, 0),
-            scene_corners[0] + Point2f((float)img_object.cols, 0), Scalar( 0, 255, 0), 4 );       
-       
+            if(i==0)
+                imshow("Schildererkennung Stop", img_matches );
+            if(i==1)
+                imshow("Schildererkennung Lane", img_matches );
+            if(i==2)
+                imshow("Schildererkennung Speed", img_matches );
+            }
     }
-    
-    if (gui){
-        //-- Show detected matches
-
-        if(i==0)
-            imshow("Schildererkennung Schild0", img_matches );
-        if(i==1)
-            imshow("Schildererkennung Schild1", img_matches );
-        }
-
-    }
-
-    
-    
   //  waitKey();
-
 }
 
 
@@ -255,28 +258,40 @@ int main( int argc, char* argv[] )
 
     //ROS_INFO_STREAM(schild);
 
-    // ToDo Anstatt einen array lieber ein vector benutzten
-    Mat schilder[4];
-    schilder[0] = imread( schild, IMREAD_GRAYSCALE );
-    schilder[1] = imread( schild2, IMREAD_GRAYSCALE );
-    cv::imshow("Schild", schilder[0]);
-    cv::imshow("Schild2", schilder[1]);
+    // Load reference road signs as greyscale 
+    // index 0 -> stop sign
+    // index 1 -> Change lane sign
+    // indey 2 -> Speed limit sign
+    std::vector<Mat> schilder(3);
+    ROS_INFO("Loading reference road signs ...");
+    schilder[0] = imread( "/home/pses/catkin_ws/src/pses_sign_recognition/data/objs/stop.png", IMREAD_GRAYSCALE);
+    schilder[1] = imread( "/home/pses/catkin_ws/src/pses_sign_recognition/data/objs/change_lane.png", IMREAD_GRAYSCALE);
+    schilder[2] = imread( "/home/pses/catkin_ws/src/pses_sign_recognition/data/objs/50.png", IMREAD_GRAYSCALE);
 
+    for(int i = 0; i < schilder.size(); i++){
+        if(schilder[i].empty())
+        ROS_WARN("Schild %i konnte nicht geladen werden", i);
+    }
 
+    // Threshold value for each sign of how many matches it counts as detected.
+    std::vector<int> detect_thresh = {20, 10, 20};
+  
+    /*
+    if(false){
+        cv::imshow("Stop Schild", schilder[0]);
+        cv::imshow("Spurwechsel Schild", schilder[1]);
+        cv::imshow("Geschwindikeitsbegrenzungsschild Schild", schilder[2]);
+    }
+    */
+
+    ROS_INFO("Waiting for kinect picture ...");
     ros::Subscriber imageSub = nh.subscribe<sensor_msgs::Image>(
-      "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, argc, argv, schilder));
-
+      "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, argc, argv, schilder, detect_thresh));
 
     ros::Rate loop_rate(10);
-
-
-
-    ROS_INFO("Before loop");
   
     while (ros::ok())
     {
-    
-    //ROS_INFO("LOOOOOOOOOOOOOOOOOOOOOOP");
 
     // clear input/output buffers
     ros::spinOnce();

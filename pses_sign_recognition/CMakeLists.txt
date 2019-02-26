@@ -163,7 +163,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(sign_recognition src/sign_recognition_node.cpp)
-# add_executable(obj_detection src/SURF_Homography.cpp)
+# add_executable(obj_detection )
 add_executable(obj_detection src/sign_detection_node.cpp)
 
 ## Rename C++ executable without prefix

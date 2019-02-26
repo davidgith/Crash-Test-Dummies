@@ -1,0 +1,13 @@
+<launch>
+	<!-- Startet die sign_detection node und übergibt automatisch die Schilder als parameter -->
+	<!-- $ roslaunch kinect2_bridge kinect2_bridge.launch publish_tf:=true -->
+
+	<!-- Which image resolution: sd, qhd, hd -->
+	
+	<node name="sign_detection" pkg="pses_sign_recognition" type="obj_detection" output="screen">
+		<param name="sign_detection_node/gui" value="false" type="bool"/>
+		<!--param name="sign_detection_node/schild" value="/home/pses/catkin_ws/src/pses_sign_recognition/data/objs/7.png" type="str"/-->
+		<!--param name="sign_detection_node/schild2" value="/home/pses/catkin_ws/src/pses_sign_recognition/data/objs/6.png" type="str"/-->
+
+	</node>
+</launch>
