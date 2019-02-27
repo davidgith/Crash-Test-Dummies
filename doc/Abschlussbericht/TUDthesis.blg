@@ -8,44 +8,53 @@ Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: literature.bib
-You've used 3 entries,
+Warning--entry type for "OpenCV" isn't style-file defined
+--line 55 of file literature.bib
+Warning--entry type for "doxygen" isn't style-file defined
+--line 67 of file literature.bib
+Warning--entry type for "quadprog" isn't style-file defined
+--line 79 of file literature.bib
+Warning--entry type for "findObject" isn't style-file defined
+--line 91 of file literature.bib
+You've used 7 entries,
             4793 wiz_defined-function locations,
-            908 strings with 6707 characters,
-and the built_in function-call counts, 1613 in all, are:
-= -- 157
-> -- 46
-< -- 39
-+ -- 47
-- -- 14
-* -- 99
-:= -- 280
-add.period$ -- 3
-call.type$ -- 3
-change.case$ -- 14
-chr.to.int$ -- 3
-cite$ -- 3
-duplicate$ -- 54
-empty$ -- 121
-format.name$ -- 28
-if$ -- 319
+            923 strings with 7017 characters,
+and the built_in function-call counts, 3252 in all, are:
+= -- 318
+> -- 78
+< -- 83
++ -- 91
+- -- 23
+* -- 178
+:= -- 555
+add.period$ -- 7
+call.type$ -- 7
+change.case$ -- 30
+chr.to.int$ -- 7
+cite$ -- 7
+duplicate$ -- 110
+empty$ -- 245
+format.name$ -- 52
+if$ -- 656
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 15
-newline$ -- 25
-num.names$ -- 9
-pop$ -- 23
+missing$ -- 39
+newline$ -- 45
+num.names$ -- 21
+pop$ -- 63
 preamble$ -- 1
-purify$ -- 20
+purify$ -- 44
 quote$ -- 0
-skip$ -- 96
+skip$ -- 191
 stack$ -- 0
-substring$ -- 85
-swap$ -- 12
-text.length$ -- 8
-text.prefix$ -- 1
+substring$ -- 171
+swap$ -- 20
+text.length$ -- 16
+text.prefix$ -- 5
 top$ -- 0
-type$ -- 26
+type$ -- 66
 warning$ -- 0
-while$ -- 15
-width$ -- 4
-write$ -- 42
+while$ -- 27
+width$ -- 9
+write$ -- 86
+(There were 4 warnings)
