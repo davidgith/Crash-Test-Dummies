@@ -65,6 +65,10 @@ using namespace Eigen;
 
 #define STOP_SIGNAL -1024
 
+#define STOP_SIGN_COUNTDOWN 2.5f
+#define STOP_TIME 3
+#define SIGN_COOLDOWN 10
+
 namespace mpc {
 	MPCController::MPCController() {
 		// Define IPM transformation
@@ -87,11 +91,18 @@ namespace mpc {
 
 	bool MPCController::update(float deltaTime) {
 		// Update driving lane target
-		drivingLane = drivingLane + min(deltaTime/2, 0.2f) * (targetDrivingLane - drivingLane);
+		drivingLane = drivingLane + laneChangeRate * (targetDrivingLane - drivingLane);
 
+		// Update time and check if new control step is triggered
+		// Assumption: deltaTime < currTImeSinceInput
 		currTimeSinceInput += deltaTime;
 		if (currTimeSinceInput > mpcTimestep) {
 			currTimeSinceInput -= mpcTimestep;
+
+			// Catch too big leftover numbers
+			if (currTimeSinceInput > mpcTimestep)
+				currTimeSinceInput = 0;
+
 			return true;
 		}
 		return false;
@@ -114,7 +125,7 @@ namespace mpc {
 	int MPCController::getNextMotorControl() {
 		// If we are stopping right now, wait until the stopping time has passed
 		double currTime = ros::Time::now().toSec();
-		if (currTime < lastStopTime + 3) {
+		if (currTime < lastStopTime + STOP_TIME + STOP_SIGN_COUNTDOWN && currTime > lastStopTime + STOP_SIGN_COUNTDOWN) {
 			return 0;
 		}
 
@@ -144,7 +155,7 @@ namespace mpc {
 
 	  useDirectTrajectory = config.direct_trajectory;
 	  directTrajectoryDiscount = config.direct_trajectory_discount;
-	  fillPinkLane = config.fill_pink_lane;
+	  laneChangeRate = config.lane_change_rate;
 	}
 
 	// Detect left or right turn
@@ -655,7 +666,7 @@ namespace mpc {
 
 	void MPCController::processStopSign(const std_msgs::Int16ConstPtr& msg) {
 		double currTime = ros::Time::now().toSec();
-		if (currTime > lastStopTime + 10) {
+		if (currTime > lastStopTime + SIGN_COOLDOWN || currTime < lastStopTime + STOP_SIGN_COUNTDOWN) {
 			lastStopTime = currTime;
 		}
 		ROS_INFO("Found stop sign: currTime: %f, lastStopTime: %f", currTime, lastStopTime);
@@ -663,7 +674,7 @@ namespace mpc {
 
 	void MPCController::processLaneSign(const std_msgs::Int16ConstPtr& msg) {
 		double currTime = ros::Time::now().toSec();
-		if (currTime > lastLaneTime + 10) {
+		if (currTime > lastLaneTime + SIGN_COOLDOWN) {
 			lastLaneTime = currTime;
 			targetDrivingLane = 2 - targetDrivingLane;
 		}
@@ -672,7 +683,7 @@ namespace mpc {
 
 	void MPCController::processSpeedSign(const std_msgs::Int16ConstPtr& msg) {
 		double currTime = ros::Time::now().toSec();
-		if (currTime > lastSpeedTime + 10) {
+		if (currTime > lastSpeedTime + SIGN_COOLDOWN) {
 			lastSpeedTime = currTime;
 			targetVelocity = 0.3f;
 		}
@@ -722,10 +733,6 @@ namespace mpc {
 		sortLanePoints(detectedLanePointTuples, usefulLanePointTuples, rightmostPoints, leftmostPoints);
 		ROS_INFO("Sorted lane points! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
 
-		// Optional: Fill-in pink lane
-		if (fillPinkLane)
-			fillPinkLine(transformedImage, detectedLanePointTuples);
-
 		// Generate waypoints from detected lane points
 		generateWaypoints(transformedImage, rightmostPoints, leftmostPoints, usefulLanePointTuples, wayPoints);
 		ROS_INFO("Generated waypoints! t = %f", double(clock() - begin) / CLOCKS_PER_SEC);
@@ -761,6 +768,9 @@ namespace mpc {
 			std::swap(u_queue, empty);
 			for (int i = 0; i < (N_INPUTS * mpcNumberTimesteps); i++)
 				u_queue.push(optimal_u[i]);
+
+			// Make next step available
+			currTimeSinceInput = mpcTimestep;
 		}
 
 		ROS_INFO("Finished MPC Optimization! t = %f, optimal_u(0) = %f", double(clock() - begin) / CLOCKS_PER_SEC, optimal_u[0]);

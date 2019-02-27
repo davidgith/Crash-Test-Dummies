@@ -101,7 +101,7 @@ namespace mpc {
 		// Extra Configurations
 		bool useDirectTrajectory = true;
 		double directTrajectoryDiscount = 0;
-		bool fillPinkLane = false;
+		double laneChangeRate = 0.1f;
 
 		// Current transient values
 		double drivingLane = 2;
