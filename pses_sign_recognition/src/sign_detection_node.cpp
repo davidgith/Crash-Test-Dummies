@@ -1,4 +1,9 @@
-//#include <stdio.h>
+/**
+ * @file "sign_detection_node.cpp"
+ * @brief Sign Detection node, to find road signs an publish them on ros topics.
+ *
+*/
+
 #include <iostream>
 #include "opencv2/core.hpp"
 #include "opencv2/calib3d.hpp"
@@ -19,13 +24,15 @@ using std::cout;
 using std::endl;
 
 bool gui;
-std::string schild; //= "/home/pses/catkin_ws/src/pses_sign_recognition/data/objs/6.png";
 ros::Publisher stopPublisher;
 ros::Publisher lanePublisher;
 ros::Publisher speedPublisher;
 
-
-// Berechnet die Fläche eines Vierecks wenn man ihr 4 Punkte giebt
+/**
+* Calculates the area of a quadrilateral if you give it a vector with 4 corner points.
+* @param corners a vector of Point2f with length 4
+* @return the area of the quadrilateral
+*/
 float areaQuadrangle(std::vector<Point2f> corners){
     float area = 0;
 
@@ -36,8 +43,13 @@ float areaQuadrangle(std::vector<Point2f> corners){
     return area;
 }
 
-
-// Gibt an ob ein Schild gefunden wurde (reduziert die false positive rate)
+/**
+* Makes a decision, based on the coordinates of the corner points, whether a sign was found or not.
+* Reduces thereby the false positive rate
+* @param area the area of the quadrilateral 
+* @param corners a vector of Point2f with length 4
+* @return true if a sign is found
+*/
 bool signFound(float area, std::vector<Point2f> corners){
     if(area <= 20 || area >= 290000)
         return false;
@@ -48,6 +60,16 @@ bool signFound(float area, std::vector<Point2f> corners){
 }
 
 
+/**
+* Called every time a new Kinect image enters.
+* Does the object recognition.
+* @param msg  
+* @param argc not used
+* @param argv[] not used
+* @param schilder Vector of mat which contains the reference signs. 
+* @param detect_thresh vector of threshold value for each sign of how many matches it counts as detected.
+* @return true if a sign is found
+*/
 void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[], std::vector<Mat> schilder, std::vector<int> detect_thresh)
 {
     //Loading kinect image (Resolution: 960x540)
@@ -213,7 +235,8 @@ int main( int argc, char* argv[] )
 
     // get ros node handle
   	ros::NodeHandle nh;
-
+    
+    // topics to publish if signs found
     stopPublisher =
         nh.advertise<std_msgs::Int16>("/sign_detection_node/StopSign", 1);
     lanePublisher =
@@ -221,7 +244,6 @@ int main( int argc, char* argv[] )
     speedPublisher =
         nh.advertise<std_msgs::Int16>("/sign_detection_node/SpeedSign", 1);
     
-    std::string schild2;
 
 
     ROS_INFO("Node starting ...");
@@ -237,29 +259,8 @@ int main( int argc, char* argv[] )
 
     ROS_INFO("gui=%d", gui);
 
-
-
-    if(nh.hasParam("sign_detection_node/schild")){
-		ROS_INFO("schild parameter found");
-		}
-		else ROS_INFO("schild parameter not found");
-
-    nh.param("sign_detection_node/schild", schild, schild);
-    
-    
-    if(nh.hasParam("sign_detection_node/schild2")){
-		ROS_INFO("schild2 parameter found");
-		}
-		else ROS_INFO("schild2 parameter not found");
-
-    nh.param("sign_detection_node/schild2", schild2, schild2);
-
-
-
-    //ROS_INFO_STREAM(schild);
-
     // Load reference road signs as greyscale 
-    // index 0 -> stop sign
+    // index 0 -> Stop sign
     // index 1 -> Change lane sign
     // indey 2 -> Speed limit sign
     std::vector<Mat> schilder(3);
