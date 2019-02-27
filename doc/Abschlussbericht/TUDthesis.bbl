@@ -12,16 +12,38 @@
 \newblock \emph{Nonlinear model predictive control}. Bd.~26.
 \newblock Birkh{\"a}user, 2012
 
+\bibitem[Gas]{quadprog}
+\textsc{Gaspero}, Luca~D.:
+\newblock \emph{quadprog++}.
+\newblock
+  \url{https://github.com/liuq/QuadProgpp/blob/master/src/QuadProg%2B%2B.hh}
+
 \bibitem[GI83]{goldfarb1983numerically}
 \textsc{Goldfarb}, Donald ; \textsc{Idnani}, Ashok:
 \newblock A numerically stable dual method for solving strictly convex
   quadratic programs.
 \newblock {In: }\emph{Mathematical programming} 27 (1983), Nr. 1, S. 1--33
 
+\bibitem[Hee]{doxygen}
+\textsc{Heesch}, Dimitri van:
+\newblock \emph{doxygen}.
+\newblock \url{http://www.doxygen.nl/}
+
 \bibitem[Hov04]{hovd2004brief}
 \textsc{Hovd}, Morten:
 \newblock A brief introduction to Model Predictive Control.
 \newblock {In: }\emph{URL= http://www. itk. ntnu.
   no/fag/TTK4135/viktig/MPCkompendium\% 20HOvd. pdf}  (2004)
+
+\bibitem[Lab]{findObject}
+\textsc{Labbe}, Mathieu:
+\newblock \emph{findObject}.
+\newblock
+  \url{https://github.com/introlab/find-object/blob/master/src/FindObject.cpp}
+
+\bibitem[Rab]{OpenCV}
+\textsc{Rabaud}, Vincent:
+\newblock \emph{OpenCV}.
+\newblock \url{http://wiki.ros.org/vision_opencv}
 
 \end{thebibliography}
