@@ -4,8 +4,8 @@
  *
 */
 
-#ifndef PSES_CONTROL_TEST_SRC_MPCCONTROLLER_H_
-#define PSES_CONTROL_TEST_SRC_MPCCONTROLLER_H_
+#ifndef PSES_CONTROL_MPC_SRC_MPCCONTROLLER_H_
+#define PSES_CONTROL_MPC_SRC_MPCCONTROLLER_H_
 
 #include <bits/stdint-uintn.h>
 #include <opencv2/core/types.hpp>
@@ -15,7 +15,7 @@
 #include <queue>
 #include <tuple>
 #include <vector>
-#include <pses_control_test/ParamsConfig.h>
+#include <pses_control_mpc/ParamsConfig.h>
 
 #include "IPM.h"
 #include "QuadProg++.hh"
@@ -47,7 +47,7 @@ namespace mpc {
 		 * @param config new configuration
 		 * @param level not used
 		 */
-		void reconfigureParameters(pses_control_test::ParamsConfig &config, uint32_t level);
+		void reconfigureParameters(pses_control_mpc::ParamsConfig &config, uint32_t level);
 
 		/**
 		 * The given image message is processed to calculate the next optimal control steps.
@@ -234,4 +234,4 @@ namespace mpc {
 	};
 }
 
-#endif /* PSES_CONTROL_TEST_SRC_MPCCONTROLLER_H_ */
+#endif /* PSES_CONTROL_MPC_SRC_MPCCONTROLLER_H_ */

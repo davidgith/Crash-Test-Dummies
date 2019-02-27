@@ -1,6 +1,6 @@
-# PSES Control Test
+# PSES Control MPC
 
-This ROS-package serves as a simple example for control by image. 
+This ROS-package serves as a simple example for MPC control by image. 
 
 ### Prerequisites
 
@@ -21,7 +21,17 @@ Launch the communication:
 
 `roslaunch pses_ucbridge uc_bridge`
 
-Run the main node of this package using rosrun
+Run kinect2_bridge:
+
+`rosrun kinect2_bridge kinect2_bridge`
+
+Run the main node of this package using rosrun:
+
+`rosrun pses_control_mpc pses_control_mpc`
+
+Reconfigure using rqt_reconfigure:
+
+`rosrun rqt_reconfigure rqt_reconfigure`
 
 ## Authors
 

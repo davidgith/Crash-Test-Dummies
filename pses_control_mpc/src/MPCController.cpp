@@ -18,7 +18,7 @@
 #include <opencv2/imgproc/imgproc_c.h>
 #include <opencv2/imgproc/types_c.h>
 #include <opencv2/imgproc.hpp>
-#include <pses_control_test/ParamsConfig.h>
+#include <pses_control_mpc/ParamsConfig.h>
 #include <ros/time.h>
 #include <rosconsole/macros_generated.h>
 #include <sys/time.h>
@@ -137,7 +137,7 @@ namespace mpc {
 		return 0;
 	}
 
-	void MPCController::reconfigureParameters(pses_control_test::ParamsConfig &config, uint32_t level)
+	void MPCController::reconfigureParameters(pses_control_mpc::ParamsConfig &config, uint32_t level)
 	{
 	  showDebugOutputs = config.debug_output;
 

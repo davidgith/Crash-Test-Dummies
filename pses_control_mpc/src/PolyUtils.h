@@ -5,8 +5,8 @@
  *      Author: pses
  */
 
-#ifndef PSES_CONTROL_TEST_SRC_POLYUTILS_H_
-#define PSES_CONTROL_TEST_SRC_POLYUTILS_H_
+#ifndef PSES_CONTROL_MPC_SRC_POLYUTILS_H_
+#define PSES_CONTROL_MPC_SRC_POLYUTILS_H_
 
 #include <eigen3/Eigen/src/Core/DenseCoeffsBase.h>
 #include <eigen3/Eigen/src/Core/Matrix.h>
@@ -63,4 +63,4 @@ double polyeval(const std::vector<double> coeffs, double x) {
   return result;
 }
 
-#endif /* PSES_CONTROL_TEST_SRC_POLYUTILS_H_ */
+#endif /* PSES_CONTROL_MPC_SRC_POLYUTILS_H_ */

@@ -11,13 +11,14 @@ File $Id: QuadProg++.cc 232 2007-06-21 12:29:00Z digasper $
  
  */
 
+#include "QuadProg++.hh"
+
 #include <iostream>
 #include <algorithm>
 #include <cmath>
 #include <limits>
 #include <sstream>
 #include <stdexcept>
-#include "QuadProg++.hh"
 //#define TRACE_SOLVER
 
 namespace quadprogpp {

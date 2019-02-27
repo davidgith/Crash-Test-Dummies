@@ -1,6 +1,6 @@
 #include <dynamic_reconfigure/server.h>
 #include <opencv2/highgui.hpp>
-#include <pses_control_test/ParamsConfig.h>
+#include <pses_control_mpc/ParamsConfig.h>
 #include <ros/init.h>
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
@@ -22,8 +22,8 @@ int main(int argc, char** argv)
   MPCController controller;
 
   // Dynamic Reconfiguration
-  dynamic_reconfigure::Server<pses_control_test::ParamsConfig> server;
-  dynamic_reconfigure::Server<pses_control_test::ParamsConfig>::CallbackType f;
+  dynamic_reconfigure::Server<pses_control_mpc::ParamsConfig> server;
+  dynamic_reconfigure::Server<pses_control_mpc::ParamsConfig>::CallbackType f;
   f = boost::bind(&MPCController::reconfigureParameters, &controller, _1, _2);
   server.setCallback(f);
 

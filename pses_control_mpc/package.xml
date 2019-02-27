@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>pses_control_test</name>
+  <name>pses_control_mpc</name>
   <version>1.0.0</version>
-  <description>The pses_control_test package used for driving the PSES robot car</description>
+  <description>The pses_control_mpc package used for driving the PSES robot car via MPC</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
