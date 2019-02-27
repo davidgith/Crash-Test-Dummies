@@ -1,5 +1,5 @@
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-<title>pses_control_test: MPCController.cpp File Reference</title>
+<title>pses_control_mpc: MPCController.cpp File Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="jquery.js"></script>
@@ -43,7 +43,7 @@ $(function() {
 <code>#include &lt;opencv2/imgproc/imgproc_c.h&gt;</code><br />
 <code>#include &lt;opencv2/imgproc/types_c.h&gt;</code><br />
 <code>#include &lt;opencv2/imgproc.hpp&gt;</code><br />
-<code>#include &lt;pses_control_test/ParamsConfig.h&gt;</code><br />
+<code>#include &lt;pses_control_mpc/ParamsConfig.h&gt;</code><br />
 <code>#include &lt;ros/time.h&gt;</code><br />
 <code>#include &lt;rosconsole/macros_generated.h&gt;</code><br />
 <code>#include &lt;sys/time.h&gt;</code><br />
@@ -65,9 +65,9 @@ Include dependency graph for MPCController.cpp:</div>
 <map name="MPCController_8cpp" id="MPCController_8cpp">
 <area shape="rect" id="node2" href="MPCController_8h.html" title="MPCController class header files, containing the main controller. " alt="" coords="694,80,813,107"/>
 <area shape="rect" id="node12" href="IPM_8h.html" title="IPM.h" alt="" coords="901,162,958,189"/>
-<area shape="rect" id="node18" href="QuadProg_09_09_8hh.html" title="QuadProg++.hh" alt="" coords="1181,162,1296,189"/>
-<area shape="rect" id="node19" href="Array_8hh.html" title="Array.hh" alt="" coords="1310,251,1381,278"/>
-<area shape="rect" id="node43" href="PolyUtils_8h.html" title="PolyUtils.h" alt="" coords="1555,80,1642,107"/>
+<area shape="rect" id="node18" href="QuadProg_09_09_8hh.html" title="QuadProg++.hh" alt="" coords="1233,162,1348,189"/>
+<area shape="rect" id="node19" href="Array_8hh.html" title="Array.hh" alt="" coords="1362,251,1433,278"/>
+<area shape="rect" id="node43" href="PolyUtils_8h.html" title="PolyUtils.h" alt="" coords="1607,80,1694,107"/>
 </map>
 </div>
 </div>
@@ -106,8 +106,14 @@ Macros</h2></td></tr>
 <tr class="separator:a9b347414c801ff986610d52b29fc4328"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a3c013075e7eb9c19007d9f39263435"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="MPCController_8cpp.html#a0a3c013075e7eb9c19007d9f39263435">ROBOT_POSITION_PIXEL_X</a>&#160;&#160;&#160;453</td></tr>
 <tr class="separator:a0a3c013075e7eb9c19007d9f39263435"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ab989450cbd4086dd9c73c48a474817"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="MPCController_8cpp.html#a7ab989450cbd4086dd9c73c48a474817">SIGN_COOLDOWN</a>&#160;&#160;&#160;10</td></tr>
+<tr class="separator:a7ab989450cbd4086dd9c73c48a474817"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0959b20c0fe1299d8885ed763a889a2d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="MPCController_8cpp.html#a0959b20c0fe1299d8885ed763a889a2d">STOP_SIGN_COUNTDOWN</a>&#160;&#160;&#160;2.5f</td></tr>
+<tr class="separator:a0959b20c0fe1299d8885ed763a889a2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac939f962c924ea3cce9294638bfa9a2e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="MPCController_8cpp.html#ac939f962c924ea3cce9294638bfa9a2e">STOP_SIGNAL</a>&#160;&#160;&#160;-1024</td></tr>
 <tr class="separator:ac939f962c924ea3cce9294638bfa9a2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c599b3588b6e954fefa4571b922ba35"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="MPCController_8cpp.html#a8c599b3588b6e954fefa4571b922ba35">STOP_TIME</a>&#160;&#160;&#160;3</td></tr>
+<tr class="separator:a8c599b3588b6e954fefa4571b922ba35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e725c00ff2b0f805a5f2eff6bcca967"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="MPCController_8cpp.html#a9e725c00ff2b0f805a5f2eff6bcca967">U_LOWERBOUND</a>&#160;&#160;&#160;(-3.1415f * 21 / 180)</td></tr>
 <tr class="separator:a9e725c00ff2b0f805a5f2eff6bcca967"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ed507c98bc5b7ab131b61ddd50a4705"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="MPCController_8cpp.html#a5ed507c98bc5b7ab131b61ddd50a4705">U_UPPERBOUND</a>&#160;&#160;&#160;(3.1415f * 21 / 180)</td></tr>
@@ -328,6 +334,38 @@ Macros</h2></td></tr>
 
 </div>
 </div>
+<a id="a7ab989450cbd4086dd9c73c48a474817"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ab989450cbd4086dd9c73c48a474817">&#9670;&nbsp;</a></span>SIGN_COOLDOWN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SIGN_COOLDOWN&#160;&#160;&#160;10</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00070">70</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a0959b20c0fe1299d8885ed763a889a2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0959b20c0fe1299d8885ed763a889a2d">&#9670;&nbsp;</a></span>STOP_SIGN_COUNTDOWN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define STOP_SIGN_COUNTDOWN&#160;&#160;&#160;2.5f</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00068">68</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
+
+</div>
+</div>
 <a id="ac939f962c924ea3cce9294638bfa9a2e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac939f962c924ea3cce9294638bfa9a2e">&#9670;&nbsp;</a></span>STOP_SIGNAL</h2>
 
@@ -341,6 +379,22 @@ Macros</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00066">66</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a8c599b3588b6e954fefa4571b922ba35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c599b3588b6e954fefa4571b922ba35">&#9670;&nbsp;</a></span>STOP_TIME</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define STOP_TIME&#160;&#160;&#160;3</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="MPCController_8cpp_source.html#l00069">69</a> of file <a class="el" href="MPCController_8cpp_source.html">MPCController.cpp</a>.</p>
 
 </div>
 </div>
@@ -396,9 +450,9 @@ Macros</h2></td></tr>
 
 <br clear="all" />
 <hr size="1"><div style="align: right;">
-<a href="http://wiki.ros.org/pses_control_test">pses_control_test</a><br />
+<a href="http://wiki.ros.org/pses_control_mpc">pses_control_mpc</a><br />
 Author(s): </br />
-<small>autogenerated on Thu Feb 21 2019 14:45:20</small>
+<small>autogenerated on Wed Feb 27 2019 17:07:28</small>
 </div>
 </body>
 </html>

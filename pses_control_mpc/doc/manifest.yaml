@@ -7,7 +7,8 @@ depends:
 - sensor_msgs
 - roscpp
 - catkin
-description: The pses_control_test package used for driving the PSES robot car
+description: The pses_control_mpc package used for driving the PSES robot car via
+  MPC
 license: GPLv3
 maintainers: Kai Cui <kai.cui@stud.tu-darmstadt.de>
 msgs: []

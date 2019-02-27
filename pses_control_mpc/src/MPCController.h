@@ -28,6 +28,11 @@ namespace mpc {
 		MPCController();
 		virtual ~MPCController();
 
+		/**
+		 * This function is called in a loop and checks if there are new control steps.
+		 * @param deltaTime the time passed between the last and the current call.
+		 * @return true if new control inputs should be used.
+		 */
 		bool update(float deltaTime);
 
 		/**
