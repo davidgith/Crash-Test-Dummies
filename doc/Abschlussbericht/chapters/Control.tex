@@ -1,4 +1,4 @@
-\section{Regelans{ä}tze}
+\section{Regelansätze}
   
 \subsection{1.Ansatz}
   
@@ -71,8 +71,8 @@ Dann definieren wir
 Wir können dann das folgende quadratische Optimierungsproblem für $n$ Zeitschritte definieren \cite{hovd2004brief}, welches die quadratischen Positionsabweichungen über $n$ Zeitschritte vorwärts minimiert.
 \begin{align}
 	\min_v f(v) 
-	&= \min_v 0.5v^T\tilde{H}v + c^Tv \\
-	&= \min_v (x_0 - x_{ref,0})^TQ(x_0 - x_{ref,0}) + \chi_0^T\hat{Q}\chi_0 + 2\chi_0^T\hat{Q}\chi_v + \chi_v^T\hat{Q}\chi_v + v^T\hat{P}v 
+	&= 0.5v^T\tilde{H}v + c^Tv \\
+	&= (x_0 - x_{ref,0})^TQ(x_0 - x_{ref,0}) + \chi_0^T\hat{Q}\chi_0 + 2\chi_0^T\hat{Q}\chi_v + \chi_v^T\hat{Q}\chi_v + v^T\hat{P}v 
 \end{align}
 mit den Stellgrößen-Nebenbedingungen
 \begin{align}
@@ -114,7 +114,7 @@ Mithilfe dieser Wegpunkte kann man nun eine Trajektorie $x_{ref}$ erzeugen.In Ab
 
 Ein Problem lässt sich in Abbildung \ref{fig:quadratic} jedoch feststellen: Die Trajektorien sind aufgrund der polynomiellen Extrapolation nicht stationär und sehr variant. Zusätzlich kommt hinzu, dass die Regressionsmethode nicht rotationsinvariant ist, denn eine Rotation der Wegpunkte führt aufgrund der vertikalen Polynomausrichtung zu einer völlig anderen Trajektorie. Diese Umstände führen dazu, dass die Regelung versagt.
 
-Eine andere einfache Lösung ist es, nicht zu interpolieren, sondern wie in Abbildung \ref{fig:direct} zu sehen eine direkte lineare Trajektorie zum nächstliegenden Wegpunkt zu setzen. Dadurch wird die Trajektorie deutlich robuster und die Regelung funktioniert wie erwartet. Dasselbe Problem hat man jedoch im begrenzten Maße auch für die direkte lineare Trajektorie. Selbst wenn man auf Extrapolation verzichtet und ausreichend Mittelung verwendet, ist der unterste Bildpunkt aufgrund der auftretenden Rotation des gegenüber der Roboterposition orthogonal ausgerichteten Bildes geringfügig variant. Zusätzlich kann es durch die Diskretisierung bei zu großen Zeitschritten zu Überschwingen trotz Einhaltung der diskreten Zustandssollwerte kommen.
+Eine einfache Lösung ist es, nicht zu interpolieren, sondern wie in Abbildung \ref{fig:direct} zu sehen eine direkte lineare Trajektorie zum nächstliegenden Wegpunkt zu setzen. Dadurch wird die Trajektorie deutlich stationärer und robuster, sodass die Regelung wie erwartet funktioniert. Dasselbe Problem hat man jedoch im begrenzten Maße auch für die direkte lineare Trajektorie. Selbst wenn man auf Extrapolation verzichtet und ausreichend Mittelung verwendet, ist der unterste Bildpunkt aufgrund der auftretenden Rotation des gegenüber der Roboterposition orthogonal ausgerichteten Bildes auch für gerade Fahrstrecken variant, sobald eine Abweichung auftritt. Zusätzlich kommt es durch die Diskretisierung bei großen Zeitschritten zu Überschwingen im kontinuierlichen physikalischen System trotz Einhaltung der Zustandssollwerte im diskreten Modell.
 
 \begin{figure}[ht]
 	\centering
@@ -125,52 +125,55 @@ Eine andere einfache Lösung ist es, nicht zu interpolieren, sondern wie in Abbil
 
 Mit dieser Bildtrajektorie und den Bildtransformationsparametern lassen sich dann diskrete Trajektoriensollwerte $x_{ref,i}$ erzeugen, indem das kinematische Querführungsmodell angenommen wird: Für jeden Trajektorienzeitschritt wird eine konstante Vorwärtsbewegung abhängig von der Geschwindigkeit ausgeführt, um den nächsten Positionssollwert zu ermitteln.
 
-Das größte Problem sind die Nichtlinearitäten. Dieser Ansatz erlaubt noch weitere Verbesserungen, um besseres Regelverhalten zu erreichen und insbesondere hohe Geschwindigkeiten ausreichend genau zu regeln. Darauf wird in diesem Projektseminar aber aufgrund der abweichenden Zielsetzung verzichtet.
+Das größte Problem ist das nicht ausreichend genaue Modell. der MPC-Ansatz erlaubt noch weitere Verbesserungen, um besseres Regelverhalten zu erreichen und insbesondere hohe Geschwindigkeiten ausreichend genau zu regeln. Darauf wird in diesem Projektseminar aber aufgrund der abweichenden Zielsetzung verzichtet.
 
-Es bietet sich zukünftig an, das Fahrzeugmodell durch ein nichtlineares Modell zu ersetzen. Damit landet man bei der nichtlinearen modelprädiktiven Regelung (NMPC), z.B. \cite{allgower2012nonlinear}, bei der aufgrund der nichtlinearen Nebenbedingungen die Konvergenz zum Optimum zwar zunächst nicht formal sichergestellt ist, aber praktisch gesehen klappt. 
+Es bietet sich zukünftig an, das Fahrzeugmodell durch ein nichtlineares Modell zu ersetzen und allgemeinere Optimierer zu verwenden. Damit landet man bei der nichtlinearen modelprädiktiven Regelung (NMPC), z.B. \cite{allgower2012nonlinear}, bei der aufgrund der nichtlinearen Nebenbedingungen die Konvergenz zum Optimum zwar zunächst nicht formal sichergestellt ist, aber praktisch gesehen klappt. 
+
+Weiter kann man das Modell durch ein genaueres Modell ersetzen. Erstens bietet es sich an, ein genaueres Modell als das Ackermann-Modell zu verwenden, um auch bei hohen Fahrgeschwindigkeiten ein ausreichend genaues Dynamikmodell zu erhalten. Zweitens kann man auch Modelle für die Servolenkung berücksichtigen, da diese nicht unendlich schnell einen Lenkwinkel einstellen kann.
 
 Schließlich könnte man auch die Trajektoriengenerierung überarbeiten. Eine naheliegende Wahl, um auch mit Bildraten von unter 1 Hz auszukommen, ist die Verwendung der direkten Trajektorie bis zum ersten Wegpunkt und darauffolgende Verwendung der quadratischen Trajektorie. Da die quadratische Trajektorie in diesem Fall nicht mehr extrapoliert, bietet diese eine hervorragende Trajektorienform für eine Regelung mit wenigen Bildern. 
 
-\begin{figure}
-	\centering
-	\begin{tikzpicture}
-	\begin{axis}[ 
-	xtick={0, 200, ..., 1000},
-	ytick={0, 0.5, ..., 2},
-	ylabel near ticks,
-	xlabel near ticks,
-	xmin=0,
-	xmax=1000,
-	ymin=0,
-	ymax=2,
-	xlabel=$u_{m}$,
-	ylabel={$v(u_{m})$},
-	yticklabel={\SI[round-mode=places, round-precision=1]{\tick}{\frac{m}{s}}}
-	] 
-	\addplot [mark=none,domain=0:1000] {max(0, 0.00225 * (x - 100))}; 
-	\end{axis}
-	\end{tikzpicture}
-	\caption{Geschwindigkeitskennlinie $v(u_{m}) = max(\SI[round-mode=places, round-precision=1]{0}{\frac{mm}{s}}, \SI{2.25}{\frac{mm}{s}} * (u_{m} - 100))$}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\begin{tikzpicture}
-	\begin{axis}[ 
-	xtick={-1000, -600, ..., 1000},
-	ytick={-25, -15, ..., 25},
-	ylabel near ticks,
-	xlabel near ticks,
-	xmin=-1000,
-	xmax=1000,
-	ymin=-25,
-	ymax=25,
-	xlabel=$u_{l}$,
-	ylabel={$\varphi(u_{l})$},
-	yticklabel={\SI[round-mode=places, round-precision=1]{\tick}{^o}}
-	] 
-	\addplot [mark=none,domain=-1000:1000] {21 * x / 1000}; 
-	\end{axis}
-	\end{tikzpicture}
-	\caption{Lenkwinkelkennlinie $\varphi(u_{l}) = \frac{21^o}{1000} * u_{l} ))$}
-\end{figure}
+%\begin{figure}
+%	\centering
+%	\begin{tikzpicture}
+%	\begin{axis}[ 
+%	xtick={0, 200, ..., 1000},
+%	ytick={0, 1, ..., 2},
+%	ylabel near ticks,
+%	xlabel near ticks,
+%	xmin=0,
+%	xmax=1000,
+%	ymin=0,
+%	ymax=2,
+%	xlabel=$u_{m}$,
+%	ylabel={$v(u_{m})$},
+%	scaled y ticks = false,
+%	yticklabel={$\tick \frac{m}{s}$},
+%	]
+%	\addplot [mark=none,domain=0:1000] {max(0, 0.00225 * (x - 100))};
+%	\end{axis}
+%	\end{tikzpicture}
+%	\caption{Geschwindigkeitskennlinie $v(u_{m}) = max({0}{\frac{mm}{s}}, {2.25}{\frac{mm}{s}} * (u_{m} - 100))$}
+%\end{figure}
+%
+%\begin{figure}
+%	\centering
+%	\begin{tikzpicture}
+%	\begin{axis}[ 
+%	xtick={-1000, -600, ..., 1000},
+%	ytick={-25, -15, ..., 25},
+%	ylabel near ticks,
+%	xlabel near ticks,
+%	xmin=-1000,
+%	xmax=1000,
+%	ymin=-25,
+%	ymax=25,
+%	xlabel=$u_{l}$,
+%	ylabel={$\varphi(u_{l})$},
+%	yticklabel={$\tick ^o$}
+%	] 
+%	\addplot [mark=none,domain=-1000:1000] {21 * x / 1000};
+%	\end{axis}
+%	\end{tikzpicture}
+%	\caption{Lenkwinkelkennlinie $\varphi(u_{l}) = \frac{21^o}{1000} * u_{l} ))$}
+%\end{figure}
