@@ -65,7 +65,7 @@ using namespace Eigen;
 
 #define STOP_SIGNAL -1024
 
-#define STOP_SIGN_COUNTDOWN 2.5f
+#define STOP_SIGN_COUNTDOWN 1
 #define STOP_TIME 3
 #define SIGN_COOLDOWN 10
 
@@ -101,7 +101,7 @@ namespace mpc {
 
 			// Catch too big leftover numbers
 			if (currTimeSinceInput > mpcTimestep)
-				currTimeSinceInput = 0;
+				currTimeSinceInput = mpcTimestep;
 
 			return true;
 		}
@@ -664,15 +664,15 @@ namespace mpc {
 		}
 	}
 
-	void MPCController::processStopSign(const std_msgs::Int16ConstPtr& msg) {
+	void MPCController::processStopSign(const std_msgs::Int32ConstPtr& msg) {
 		double currTime = ros::Time::now().toSec();
-		if (currTime > lastStopTime + SIGN_COOLDOWN || currTime < lastStopTime + STOP_SIGN_COUNTDOWN) {
+		if (currTime > lastStopTime + SIGN_COOLDOWN) {
 			lastStopTime = currTime;
 		}
 		ROS_INFO("Found stop sign: currTime: %f, lastStopTime: %f", currTime, lastStopTime);
 	}
 
-	void MPCController::processLaneSign(const std_msgs::Int16ConstPtr& msg) {
+	void MPCController::processLaneSign(const std_msgs::Int32ConstPtr& msg) {
 		double currTime = ros::Time::now().toSec();
 		if (currTime > lastLaneTime + SIGN_COOLDOWN) {
 			lastLaneTime = currTime;
@@ -681,11 +681,11 @@ namespace mpc {
 		ROS_INFO("Found lane sign: currTime: %f, lastTime: %f", currTime, lastLaneTime);
 	}
 
-	void MPCController::processSpeedSign(const std_msgs::Int16ConstPtr& msg) {
+	void MPCController::processSpeedSign(const std_msgs::Int32ConstPtr& msg) {
 		double currTime = ros::Time::now().toSec();
 		if (currTime > lastSpeedTime + SIGN_COOLDOWN) {
 			lastSpeedTime = currTime;
-			targetVelocity = 0.3f;
+			targetVelocity = min(targetVelocity, 0.3);
 		}
 		ROS_INFO("Found speed sign: currTime: %f, lastTime: %f", currTime, lastSpeedTime);
 	}

@@ -10,7 +10,7 @@
 #include <bits/stdint-uintn.h>
 #include <opencv2/core/types.hpp>
 #include <sensor_msgs/Image.h>
-#include <std_msgs/Int16.h>
+#include <std_msgs/Int32.h>
 #include <mutex>
 #include <queue>
 #include <tuple>
@@ -64,19 +64,19 @@ namespace mpc {
 		 * Call when a stop sign has been detected.
 		 * @param msg distance to sign
 		 */
-		void processStopSign(const std_msgs::Int16ConstPtr& msg);
+		void processStopSign(const std_msgs::Int32ConstPtr& msg);
 
 		/**
 		 * Call when a lane change sign has been detected.
 		 * @param msg distance to sign
 		 */
-		void processLaneSign(const std_msgs::Int16ConstPtr& msg);
+		void processLaneSign(const std_msgs::Int32ConstPtr& msg);
 
 		/**
 		 * Call when a speed limit sign has been detected.
 		 * @param msg distance to sign
 		 */
-		void processSpeedSign(const std_msgs::Int16ConstPtr& msg);
+		void processSpeedSign(const std_msgs::Int32ConstPtr& msg);
 
 	private:
 		IPM* ipm;

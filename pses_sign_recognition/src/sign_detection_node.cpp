@@ -14,7 +14,7 @@
 
 #include <ros/ros.h>
 #include <sensor_msgs/Range.h>
-#include <std_msgs/Int16.h>
+#include <std_msgs/Int32.h>
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 
@@ -178,7 +178,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
                         (int)sign_area, (int)good_matches.size());
 
                 // ToDo Caltulate sign distance with area size
-                std_msgs::Int16 distance;
+                std_msgs::Int32 distance;
                 distance.data = (int)areaQuadrangle(scene_corners);
                 if (i == 0) {
                     stopPublisher.publish(distance);
@@ -238,11 +238,11 @@ int main( int argc, char* argv[] )
     
     // topics to publish if signs found
     stopPublisher =
-        nh.advertise<std_msgs::Int16>("/sign_detection_node/StopSign", 1);
+        nh.advertise<std_msgs::Int32>("/sign_detection_node/StopSign", 1);
     lanePublisher =
-        nh.advertise<std_msgs::Int16>("/sign_detection_node/LaneSign", 1);
+        nh.advertise<std_msgs::Int32>("/sign_detection_node/LaneSign", 1);
     speedPublisher =
-        nh.advertise<std_msgs::Int16>("/sign_detection_node/SpeedSign", 1);
+        nh.advertise<std_msgs::Int32>("/sign_detection_node/SpeedSign", 1);
     
 
 
@@ -275,7 +275,7 @@ int main( int argc, char* argv[] )
     }
 
     // Threshold value for each sign of how many matches it counts as detected.
-    std::vector<int> detect_thresh = {20, 10, 20};
+    std::vector<int> detect_thresh = {30, 13, 30};
   
     /*
     if(false){

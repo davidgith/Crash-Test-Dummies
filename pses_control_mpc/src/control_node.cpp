@@ -6,6 +6,7 @@
 #include <ros/publisher.h>
 #include <ros/rate.h>
 #include <sensor_msgs/Image.h>
+#include <std_msgs/Int32.h>
 #include <std_msgs/Int16.h>
 
 #include "MPCController.h"
@@ -30,15 +31,15 @@ int main(int argc, char** argv)
   // generate subscriber for sensor messages
   ros::Subscriber imageSub = nh.subscribe<sensor_msgs::Image>(
       "kinect2/qhd/image_color", 1, boost::bind(&MPCController::processImage, &controller, _1));
-  ros::Subscriber stopSignSub = nh.subscribe<std_msgs::Int16>(
+  ros::Subscriber stopSignSub = nh.subscribe<std_msgs::Int32>(
       "/sign_detection_node/StopSign", 1, boost::bind(&MPCController::processStopSign, &controller, _1));
-  ros::Subscriber laneSignSub = nh.subscribe<std_msgs::Int16>(
+  ros::Subscriber laneSignSub = nh.subscribe<std_msgs::Int32>(
       "/sign_detection_node/LaneSign", 1, boost::bind(&MPCController::processLaneSign, &controller, _1));
-  ros::Subscriber speedSignSub = nh.subscribe<std_msgs::Int16>(
+  ros::Subscriber speedSignSub = nh.subscribe<std_msgs::Int32>(
       "/sign_detection_node/SpeedSign", 1, boost::bind(&MPCController::processSpeedSign, &controller, _1));
 
   // generate control message publisher
-  std_msgs::Int16 motor, steering;
+  std_msgs::Int32 motor, steering;
   ros::Publisher motorCtrl =
       nh.advertise<std_msgs::Int16>("/uc_bridge/set_motor_level_msg", 1);
   ros::Publisher steeringCtrl =
