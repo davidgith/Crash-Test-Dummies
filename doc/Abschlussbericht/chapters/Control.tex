@@ -46,7 +46,7 @@ Es sei nun eine Trajektorie nach den Gleichungen \ref{eq:traj1}, \ref{eq:traj2} 
 \end{align}
 Dann definieren wir
 \begin{align}
-	\hat{Q} &= 100 \cdot diag(1,0,\cdots,1,0) ;\quad
+	\hat{Q} &= 100 \cdot diag(1,0.001,\cdots,1,0.001) ;\quad
 	\hat{P} = \mathbf{I}_{n,n} ;\quad
 	-U_{min} = U_{max} = 21^o \nonumber\\
 	x_0 &= 
@@ -68,7 +68,23 @@ Dann definieren wir
 	\end{pmatrix}
 	u_{ref} - x_{ref} 
 \end{align}
-Wir können dann das folgende quadratische Optimierungsproblem für $n$ Zeitschritte definieren \cite{hovd2004brief}, welches die quadratischen Positionsabweichungen über $n$ Zeitschritte vorwärts minimiert.
+Wir möchten nun die quadratischen Zustandsabweichungen und Stellgrößen über den endlichen Zeithorizont $n$ unter Beachtung der Stellgrößenbeschränkung und Systemdynamik optimieren.
+\begin{align*}
+	\min_v f(x,u) =
+	&\sum_{t=0}^{n-1} \{(x_i - x_{ref,i})^TQ(x_i - x_{ref,i})\\
+	& + (u_i - u_{ref,i})^TP(u_i - u_{ref,i})\}\\
+	& + (x_n - x_{ref,n})^TQ(x_n - x_{ref,n})
+\end{align*}
+unter den Nebenbedingungen
+\begin{align*}
+x_0 
+& = gegeben\\
+x_{i}
+& = Ax_{i-1} + Bu_{i-1} \quad \text{for} \quad 1 \leq i \leq n\\
+U_L
+& \leq u_i \leq U_U \quad \text{for} \quad 0 \leq i \leq n-1
+\end{align*}
+Wir können dann das folgende äquivalente quadratische Optimierungsproblem für $n$ Zeitschritte definieren \cite{hovd2004brief}, welches die quadratischen Positionsabweichungen über $n$ Zeitschritte vorwärts minimiert.
 \begin{align}
 	\min_v f(v) 
 	&= 0.5v^T\tilde{H}v + c^Tv \\
@@ -127,7 +143,7 @@ Mit dieser Bildtrajektorie und den Bildtransformationsparametern lassen sich dan
 
 Das größte Problem ist das nicht ausreichend genaue Modell. der MPC-Ansatz erlaubt noch weitere Verbesserungen, um besseres Regelverhalten zu erreichen und insbesondere hohe Geschwindigkeiten ausreichend genau zu regeln. Darauf wird in diesem Projektseminar aber aufgrund der abweichenden Zielsetzung verzichtet.
 
-Es bietet sich zukünftig an, das Fahrzeugmodell durch ein nichtlineares Modell zu ersetzen und allgemeinere Optimierer zu verwenden. Damit landet man bei der nichtlinearen modelprädiktiven Regelung (NMPC), z.B. \cite{allgower2012nonlinear}, bei der aufgrund der nichtlinearen Nebenbedingungen die Konvergenz zum Optimum zwar zunächst nicht formal sichergestellt ist, aber praktisch gesehen klappt. 
+Es bietet sich zukünftig an, das Fahrzeugmodell durch ein nichtlineares Modell zu ersetzen und allgemeinere Optimierer zu verwenden. Damit landet man bei der nichtlinearen modelprädiktiven Regelung (NMPC), z.B. \cite{allgower2012nonlinear}, bei der ein anderer Modellansatz verfolgt werden muss, da das Querabweichungsmodell eine Linearisierung ist.
 
 Weiter kann man das Modell durch ein genaueres Modell ersetzen. Erstens bietet es sich an, ein genaueres Modell als das Ackermann-Modell zu verwenden, um auch bei hohen Fahrgeschwindigkeiten ein ausreichend genaues Dynamikmodell zu erhalten. Zweitens kann man auch Modelle für die Servolenkung berücksichtigen, da diese nicht unendlich schnell einen Lenkwinkel einstellen kann.
 

@@ -11,6 +11,6 @@
 \contentsline {section}{\numberline {4}Regelans\"atze}{4}% 
 \contentsline {subsection}{\numberline {4.1}1.Ansatz}{4}% 
 \contentsline {subsection}{\numberline {4.2}Modellpr\"adiktiver Regelungansatz}{5}% 
-\contentsline {section}{\numberline {5}Schilderkennung}{10}% 
-\contentsline {section}{\numberline {6}Auswertung}{11}% 
-\contentsline {section}{\numberline {7}Konklusion}{12}% 
+\contentsline {section}{\numberline {5}Schilderkennung}{11}% 
+\contentsline {section}{\numberline {6}Auswertung}{12}% 
+\contentsline {section}{\numberline {7}Konklusion}{13}% 
