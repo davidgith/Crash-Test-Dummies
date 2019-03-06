@@ -1,3 +1,7 @@
+/*
+   this control node is used as a simple control methode to let the car go alone the lane,
+   and do the lane-changing if necessary. it is only a real time control without any prediction.
+*/
 #include <ros/ros.h>
 #include <sensor_msgs/Range.h>
 #include <std_msgs/Int16.h>
@@ -13,22 +17,10 @@
 static int control_deviation = 0;
 pses_control_2::TutorialsConfig newconfig;
 
-void callback(pses_control_2::TutorialsConfig &config) 
-{
-    newconfig = config;
-    ROS_INFO("Parameter are reconfigured:\n P:%d\n I:%d\n D:%d\n H_min:%d\n H_max:%d\n S_min:%d\n S_max:%d\n V_min:%d\n V_max:%d\n turn:%d\n", 
-    config.P_int_param, 
-    config.I_int_param, 
-    config.D_int_param, 
-    config.H_min_int_param,
-    config.H_max_int_param,
-    config.S_min_int_param,
-    config.S_max_int_param,
-    config.V_min_int_param,
-    config.V_max_int_param,
-    config.turn);
-}
-
+/**
+ * this class is used for the deviation calculation
+ * initialized the parameters which can be changed later through reconfig
+ */
 class deviation
 {
 	public:
@@ -56,6 +48,29 @@ class deviation
 		}
 };
 
+/**
+ * this callback function is meant for the reconfiguration
+ * when the parameter changed, the output gives the new parameters as rosinfo
+ */
+void callback(pses_control_2::TutorialsConfig &config) 
+{
+    newconfig = config;
+    ROS_INFO("Parameter are reconfigured:\n P:%d\n I:%d\n D:%d\n H_min:%d\n H_max:%d\n S_min:%d\n S_max:%d\n V_min:%d\n V_max:%d\n turn:%d\n", 
+    config.P_int_param, 
+    config.I_int_param, 
+    config.D_int_param, 
+    config.H_min_int_param,
+    config.H_max_int_param,
+    config.S_min_int_param,
+    config.S_max_int_param,
+    config.V_min_int_param,
+    config.V_max_int_param,
+    config.turn);
+}
+
+/**
+ * this imageCallback function is called everytime a new image is found in Subscriber
+ */
 void imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
   static int imagecounter = 0; 
@@ -68,7 +83,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
     cvtColor(image,HSVImage,CV_BGR2HSV);
     cvtColor(image,HSVImage2,CV_BGR2HSV);
 
-    // filter green and pink
+    // filter for green line and pink line
     cv::Mat ThreshImage;
     cv::Mat ThreshImage2;
     cv::Mat FiltedImage;
@@ -91,8 +106,11 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
     //   cv::imshow("view2", FiltedImage2);
     //   imagecounter = 0;
     // }
-    //for greea line
-    //get submatrix
+
+    //the x-coordinate of the line when the car goes straight on
+    int standarLineRight[20] = {61,61,61,62,62,62,63,63,63,63,64,64,64,65,65,65,66,66,66,66};
+
+    //store the green line pixel
     int subMatrix[20][100];
 		double colpick = FiltedImage.cols / 100.0;
 		double rowpick = FiltedImage.rows / 60.0;
@@ -114,10 +132,9 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
 				}
 			}
 		}
-    int standarLineRight[20] = {61,61,61,62,62,62,63,63,63,63,64,64,64,65,65,65,66,66,66,66};
-    int standarLineleft[20] = {38,38,38,37,37,37,36,36,36,36,35,35,35,34,34,34,33,33,33,33};
 
-    //for pink line
+
+    //store the pink line pixel
      int pinkLine[30] = {0};
     double colpick2 = FiltedImage2.cols / 100.0;
 		double rowpick2 = FiltedImage2.rows / 60.0;
@@ -135,47 +152,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
       }
     }
 
-
-    //with y = a*x^2 + b -----tmp1 = b  tmp2 = a
-    // double tmp1 = 0;
-    // double tmp2 = 0;
-    // int tmp2cnt = 0;
-    // for(int i = 29; i >= 0; i--)
-    // {
-    //   if(pinkLine[i] != 0)
-    //   {
-    //     tmp1 = pinkLine[i];
-    //     break;
-    //   }
-    // }
-    // for(int i = 28; i >= 0; i--)
-    // {
-    //   if(pinkLine[i] != 0)
-    //   {
-    //     tmp2 = tmp2 + (pinkLine[i] - tmp1)/((29-i)*(29-i));
-    //     tmp2cnt++;
-    //   }
-    // }
-    // tmp2 = tmp2 / tmp2cnt;
-    // for(int i = 29; i >= 0; i--)
-    // {
-    //   pinkLine[i] = (int)(tmp1 + tmp2*(29-i)*(29-i));
-    //   if(pinkLine[i] < 0)
-    //   {
-    //     pinkLine[i] = 0;
-    //   }
-    //   if(pinkLine[i] > 99)
-    //   {
-    //     pinkLine[i] = 99;
-    //   }
-    // }
-
-    // int subMatrix2[30][100] = {0};
-    // for(int r = 0; r < 30; r++)
-    // {
-    //   subMatrix2[r][pinkLine[r]]  = 1;
-    // }
-
+    //using linearization to "fill" the dashed pink line
     //with y = a*x + b
     double tmp1 = 0;
     double tmp2 = 0;
@@ -209,7 +186,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
         pinkLine[i] = 99;
       }
     }
-
+ 
+    //store the "new" pink line 
     int subMatrix2[30][100] = {0};
     for(int r = 0; r < 30; r++)
     {
@@ -220,9 +198,9 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
     int turn = newconfig.turn;
     //get the deviation(Abweichung)
 		deviation devi;
+    devi.distance = 0;
     //stop flag;
     int noVision = 0;
-    devi.distance = 0;
     //tur0 == 1 means it goes alone right side green line, -1 pink line
     if(turn == 1)
     {
@@ -358,7 +336,6 @@ int main(int argc, char** argv)
 
   //control variable
   int lastValidDeviation;
-  //lastside can be replaced later by a flag, which can be set because of other event
   int lastside = newconfig.turn;
   int laneChangeCnt = 30;
   while (ros::ok())
@@ -375,6 +352,7 @@ int main(int argc, char** argv)
       steering.data = -900;
     }
 
+   //when the lane changing happens
     if(lastside !=  newconfig.turn)
     {
       steering.data = 900 * newconfig.turn;
@@ -402,6 +380,7 @@ int main(int argc, char** argv)
     {
       lastValidDeviation = control_deviation;
     }
+
     // publish command messages on their topics
     ROS_INFO("steering %d     motor %d", steering.data, motor.data);
     steeringCtrl.publish(steering);
