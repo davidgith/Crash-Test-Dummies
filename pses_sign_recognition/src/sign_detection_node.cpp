@@ -17,6 +17,7 @@
 #include <std_msgs/Int32.h>
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
+#include <math.h>
 
 using namespace cv;
 using namespace cv::xfeatures2d;
@@ -59,6 +60,15 @@ bool signFound(float area, std::vector<Point2f> corners){
     else return true;
 }
 
+/**
+* Calculates the distance to the sign with the area of a quadrilateral.
+* @param area the area of the quadrilateral
+* @return the distance to the road sign in meter
+*/
+float distanceSign(float area){
+    float distance = 385 * std::pow(area, -0.6385);
+    return distance;
+}
 
 /**
 * Called every time a new Kinect image enters.
@@ -170,12 +180,12 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
 
             if(signFound(sign_area, scene_corners)){
 
-                ROS_INFO("Object %i found! position:(%i,%i);(%i,%i);(%i,%i);(%i,%i) area:%i #keypoints=%i",i,
+                ROS_INFO("Object %i found! position:(%i,%i);(%i,%i);(%i,%i);(%i,%i) area:%i distance:%f #keypoints=%i",i,
                         (int)scene_corners[0].x , (int)scene_corners[0].y ,
                         (int)scene_corners[1].x , (int)scene_corners[1].y ,
                         (int)scene_corners[2].x , (int)scene_corners[2].y ,
                         (int)scene_corners[3].x , (int)scene_corners[3].y ,
-                        (int)sign_area, (int)good_matches.size());
+                        (int)sign_area, distanceSign(sign_area), (int)good_matches.size());
 
                 // ToDo Caltulate sign distance with area size
                 std_msgs::Int32 distance;
@@ -275,7 +285,7 @@ int main( int argc, char* argv[] )
     }
 
     // Threshold value for each sign of how many matches it counts as detected.
-    std::vector<int> detect_thresh = {30, 13, 30};
+    std::vector<int> detect_thresh = {25, 13, 30};
   
     /*
     if(false){
