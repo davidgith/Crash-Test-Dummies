@@ -89,6 +89,15 @@ namespace mpc {
 		delete ipm;
 	}
 
+	double MPCController::getTargetVelocity() {
+		double currTime = ros::Time::now().toSec();
+		if (currTime < lastSpeedTime + SIGN_COOLDOWN) {
+			return min(targetVelocity, 0.3);
+		} else {
+			return targetVelocity;
+		}
+	}
+
 	bool MPCController::update(float deltaTime) {
 		// Update driving lane target
 		drivingLane = drivingLane + laneChangeRate * (targetDrivingLane - drivingLane);
@@ -131,7 +140,7 @@ namespace mpc {
 
 		// Continue driving if next control steps exist
 		if (!u_queue.empty() && u_queue.front() != STOP_SIGNAL) {
-			return targetVelocity != 0 ? 100 + 444 * targetVelocity : 0;
+			return getTargetVelocity() != 0 ? 100 + 444 * getTargetVelocity() : 0;
 		}
 
 		return 0;
@@ -487,6 +496,7 @@ namespace mpc {
 	void MPCController::solveMPCProblem(const cv::Mat& transformedImage, const std::vector<double>& trajectory_coeffs, clock_t begin,
 			std::queue<double> prev_u_queue, const cv::Mat& transformedFullImage, quadprogpp::Vector<double>& optimal_u) {
 		int N_QUADPROG_VARS = (N_INPUTS * mpcNumberTimesteps);
+		double targetVelocity = getTargetVelocity();
 
 		// Calculate MPC solution from trajectory and state
 		// Initialize linear discrete system
@@ -685,7 +695,6 @@ namespace mpc {
 		double currTime = ros::Time::now().toSec();
 		if (currTime > lastSpeedTime + SIGN_COOLDOWN) {
 			lastSpeedTime = currTime;
-			targetVelocity = min(targetVelocity, 0.3);
 		}
 		ROS_INFO("Found speed sign: currTime: %f, lastTime: %f", currTime, lastSpeedTime);
 	}

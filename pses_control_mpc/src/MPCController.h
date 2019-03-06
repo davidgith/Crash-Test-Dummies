@@ -116,6 +116,12 @@ namespace mpc {
 		double lastSpeedTime = 0;
 
 		/**
+		 * Gets the current target velocity depending on previous traffic signs.
+		 * @return the current target velocity in meters per second
+		 */
+		double getTargetVelocity();
+
+		/**
 		 * Infers waypoint x from the given triple of lane points
 		 * @param leftLanePoint left lane point
 		 * @param middleLanePoint middle lane point
