@@ -9,8 +9,10 @@
 \contentsline {subparagraph}{quadprog++}{2}% 
 \contentsline {section}{\numberline {3}Protokoll}{3}% 
 \contentsline {section}{\numberline {4}Regelans\"atze}{4}% 
-\contentsline {subsection}{\numberline {4.1}1.Ansatz}{4}% 
-\contentsline {subsection}{\numberline {4.2}Modellpr\"adiktiver Regelungansatz}{5}% 
-\contentsline {section}{\numberline {5}Schilderkennung}{11}% 
-\contentsline {section}{\numberline {6}Auswertung}{12}% 
-\contentsline {section}{\numberline {7}Konklusion}{13}% 
+\contentsline {subsection}{\numberline {4.1}PID-Regelungsansatz}{4}% 
+\contentsline {subparagraph}{Bildverarbeitung}{4}% 
+\contentsline {subparagraph}{Regelkreis}{5}% 
+\contentsline {subsection}{\numberline {4.2}Modellpr\"adiktiver Regelungansatz}{6}% 
+\contentsline {section}{\numberline {5}Schilderkennung}{12}% 
+\contentsline {section}{\numberline {6}Auswertung}{13}% 
+\contentsline {section}{\numberline {7}Konklusion}{14}% 

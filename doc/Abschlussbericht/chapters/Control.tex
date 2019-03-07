@@ -1,6 +1,77 @@
 \section{Regelansätze}
   
-\subsection{1.Ansatz}
+\subsection{PID-Regelungsansatz}
+
+Unser erster Ansatz, das Fahrzeug autonom fahren zu lassen basierte auf einem PID-Regler. Dieses Verfahren lässt sich in 2 große Schritte aufteilen.
+
+\subparagraph{Bildverarbeitung}
+
+Für die Bildverarbeitung wird das Umfeld durch die Farbkamera der Kinect aufgenommen und in den HSV-Farbraum konvertiert. Zum Erkennen der Fahrbahnbegrenzung wird das Bild entsprechend nach grünen Punkten durchsucht und gefiltert. 
+Um das entstandene Rauschen zu reduzieren wird zusätzlich noch ein Medianfilter verwendet.
+Das entstandene Bild wird in einem 2D-Array gespeichert, wobei die linke untere Ecke als Ursprung verwendet wird.
+
+Für einen Spurwechsel ist das Bild der Kinect besonders in Kurven zu schmal, daher wird hier die mittlere Fahrbahnmarkierung genutzt. Hier wird das Bild nach rosafarbenen Punkten gefiltert. Da die mittlere Linie jedoch nicht durchgängig verläuft wird durch das Verfahren der Linearisierung digital eine durchgängige Markierung erzeugt.
+Zuerst wird der unterste weiße Punkt erfasst und in p\textsubscript{0} abgespeichert.
+\begin{align}
+\label{eq:quer}	
+\mathbf{p\textsubscript{0}}
+\begin{pmatrix} {x\textsubscript{0}} & {y\textsubscript{0}}\end{pmatrix}
+\end{align}
+
+Jeder weitere weiße Punkt wird dann in p{\textsubscript{i}} gesichert.
+\begin{align}
+\label{eq:quer}	
+\mathbf{p\textsubscript{i}}
+\begin{pmatrix} {x\textsubscript{i}} & {y\textsubscript{i}}\end{pmatrix}
+\end{align}
+
+Durch die erkannten Punkte kann die Steigung k\textsubscript{i} errechnet werden.
+
+\begin{align}
+\label{eq:quer}	
+\mathbf{k_i}
+= \frac{\mathbf{y_i} - \mathbf{y_0}}{\mathbf{x_i}-\mathbf{x_0}}
+\end{align}
+
+Zuletzt wird daraus dann der Durschnittswert aller Steigungen S berechnet.
+
+\begin{align}
+\label{eq:quer}	
+\mathbf{S}
+= \frac{\mathbf{1}}{\mathbf{m}}\sum \mathbf{k_i}
+\end{align}
+
+Mit dieser Steigung werden die Lücken zwischen den erkannten Linienabschnitten ergänzt.
+
+\subparagraph{Regelkreis}
+  Für die Steuerung des Fahrzeugs wird die Differenz zwischen der aktuellen Stellung des Fahrzeugs und der geplanten Richtung verwendet. Relativ zu dieser Abweichung wird das Steering-Level entsprechend gesetzt.
+  
+  Um die Analyse der Geschwindigkeit zu vereinfachen, wird hierzu lediglich eine Dimension betrachtet, da die anderen Geschwindigkeitsvektoren dazu relativ klein und vernachlässigbar sind. Die Orientierung der Geschwindigkeit wird als B(t) ausgegeben.
+  
+  \begin{align}
+  \label{eq:quer}	
+  \mathbf{B(t)} =
+  \begin{pmatrix} {x_b(t)} & {y_b(t)}\end{pmatrix}
+  \end{align}
+  
+  Als Sollwert A(t) wird die aufgenommene und bearbeitete Strecke verwendet. Die Abweichung zwischen Soll- und Ist-Wert wird aufintegriert und als Eingabewert e(t) für die PID-Regelung verwendet, wodurch das passende Steering-Level u(t) gesetzt werden kann.
+  
+  \begin{align}
+  \label{eq:quer}	
+  \mathbf{A(t)} =
+  \begin{pmatrix} {x_a(t)} & {y_a(t)}\end{pmatrix}
+  \end{align}
+  
+  \begin{align}
+  \label{eq:quer}	
+  \mathbf{e(t)}
+  = \sum_{\mathbf{y=0}}^{\mathbf{n}} \mid \mathbf{x_A-x_B} \mid
+  \end{align}
+  
+  \begin{align}
+  \label{eq:quer}	
+  \mathbf{u(t)=K_p*e(t)+K_D*} \dot{\mathbf{e}}\mathbf{(t)}
+  \end{align}   
   
 \clearpage
 \subsection{Modellprädiktiver Regelungansatz}

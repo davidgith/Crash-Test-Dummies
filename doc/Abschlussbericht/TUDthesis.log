@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/W32TeX) (preloaded format=pdflatex 2019.1.25)  7 MAR 2019 15:51
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/W32TeX) (preloaded format=pdflatex 2019.1.25)  7 MAR 2019 17:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1448,7 +1448,32 @@ File: lstmisc.sty 2018/09/02 1.7 (Carsten Heinz)
 LaTeX Warning: Unused global option(s):
     [12pt,article,colorbacktitle,accentcolor=tud1c,instlogo].
 
-(./TUDthesis.aux)
+(./TUDthesis.aux
+
+LaTeX Warning: Label `eq:quer' multiply defined.
+
+
+LaTeX Warning: Label `eq:quer' multiply defined.
+
+
+LaTeX Warning: Label `eq:quer' multiply defined.
+
+
+LaTeX Warning: Label `eq:quer' multiply defined.
+
+
+LaTeX Warning: Label `eq:quer' multiply defined.
+
+
+LaTeX Warning: Label `eq:quer' multiply defined.
+
+
+LaTeX Warning: Label `eq:quer' multiply defined.
+
+
+LaTeX Warning: Label `eq:quer' multiply defined.
+
+)
 \openout1 = `TUDthesis.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 66.
@@ -1830,75 +1855,79 @@ Underfull \hbox (badness 10000) in paragraph at lines 84--84
 ] (./chapters/Protokoll.tex) [3
 
 ]
-(./chapters/Control.tex [4
+(./chapters/Control.tex
+LaTeX Font Info:    Font shape `T1/mdbch/b/n' will be
+(Font)              scaled to size 12.00008pt on input line 19.
+LaTeX Font Info:    Font shape `T1/mdbch/b/n' will be
+(Font)              scaled to size 8.44806pt on input line 19.
+LaTeX Font Info:    Font shape `T1/mdbch/b/n' will be
+(Font)              scaled to size 7.20004pt on input line 19.
+ [4
 
-]
-LaTeX Font Info:    Font shape `T1/mdbch/b/n' will be
-(Font)              scaled to size 12.00008pt on input line 22.
-LaTeX Font Info:    Font shape `T1/mdbch/b/n' will be
-(Font)              scaled to size 8.44806pt on input line 22.
-LaTeX Font Info:    Font shape `T1/mdbch/b/n' will be
-(Font)              scaled to size 7.20004pt on input line 22.
- [5
+] [5] [6
 
-] [6]
-<pics/windowedorig.png, id=67, 720.44156pt x 303.38344pt>
+] [7]
+<pics/windowedorig.png, id=70, 720.44156pt x 303.38344pt>
 File: pics/windowedorig.png Graphic file (type png)
 <use pics/windowedorig.png>
-Package pdftex.def Info: pics/windowedorig.png  used on input line 117.
+Package pdftex.def Info: pics/windowedorig.png  used on input line 188.
 (pdftex.def)             Requested size: 409.71692pt x 172.53223pt.
-<pics/windowed.png, id=68, 720.44156pt x 360.59718pt>
+<pics/windowed.png, id=71, 720.44156pt x 360.59718pt>
 File: pics/windowed.png Graphic file (type png)
 <use pics/windowed.png>
-Package pdftex.def Info: pics/windowed.png  used on input line 126.
+Package pdftex.def Info: pics/windowed.png  used on input line 197.
 (pdftex.def)             Requested size: 409.71692pt x 205.06934pt.
- [7]
-<pics/windoweddirect.png, id=72, 720.44156pt x 360.59718pt>
+ [8]
+<pics/windoweddirect.png, id=76, 720.44156pt x 360.59718pt>
 File: pics/windoweddirect.png Graphic file (type png)
 <use pics/windoweddirect.png>
-Package pdftex.def Info: pics/windoweddirect.png  used on input line 137.
+Package pdftex.def Info: pics/windoweddirect.png  used on input line 208.
 (pdftex.def)             Requested size: 409.71692pt x 205.06934pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [8 <./pics/windowedorig.png>]) [9 <./pics/windowed.png>] [10 <./pics/windowedd
-irect.png>] (./chapters/Vision.tex) [11
+ [9 <./pics/windowedorig.png>]) [10 <./pics/windowed.png>] [11 <./pics/windowed
+direct.png>] (./chapters/Vision.tex) [12
 
-] (./chapters/Evaluation.tex) [12
+] (./chapters/Evaluation.tex) [13
 
 ]
-(./chapters/Conclusion.tex) [13
+(./chapters/Conclusion.tex) [14
 
-] (./TUDthesis.bbl) [14
+] (./TUDthesis.bbl) [15
 
-] (./TUDthesis.aux) ) 
+] (./TUDthesis.aux)
+
+LaTeX Warning: There were multiply-defined labels.
+
+ ) 
 Here is how much of TeX's memory you used:
- 30588 strings out of 492616
- 716725 string characters out of 6132768
+ 30589 strings out of 492616
+ 716731 string characters out of 6132768
  1155935 words of memory out of 5000000
  33776 multiletter control sequences out of 15000+600000
- 166974 words of font info for 114 fonts, out of 8000000 for 9000
+ 168126 words of font info for 115 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 73i,16n,100p,9121b,609s stack positions out of 5000i,500n,10000p,200000b,80000s
-{c:/texlive/2018/texmf-dist/fonts/enc/dvips/base/8r.enc}{c
-:/texlive/2018/texmf-dist/fonts/enc/dvips/base/texnansi.enc}<c:/texlive/texmf-l
-ocal/fonts/type1/softmake/charter/5chr8a.pfb><c:/texlive/texmf-local/fonts/type
-1/softmake/charter/5chri8a.pfb><c:/texlive/texmf-local/fonts/type1/softmake/fro
-ntpage/5fpm8a.pfb><c:/texlive/texmf-local/fonts/type1/softmake/frontpage/5fpr8a
-.pfb><c:/texlive/texmf-local/fonts/type1/softmake/stafford/5sfr8a.pfb><c:/texli
-ve/2018/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2018/tex
-mf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2018/texmf-dist/fon
-ts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2018/texmf-dist/fonts/type1/p
-ublic/mathdesign/mdbch/md-chr7t.pfb><c:/texlive/2018/texmf-dist/fonts/type1/pub
-lic/mathdesign/mdbch/md-chr7v.pfb><c:/texlive/2018/texmf-dist/fonts/type1/publi
-c/mathdesign/mdbch/md-chr7y.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/
-mathdesign/mdbch/md-chri7m.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/m
-athdesign/mdbch/md-chrma.pfb><c:/texlive/2018/texmf-dist/fonts/type1/adobe/utop
-ia/putri8a.pfb><c:/texlive/2018/texmf-dist/fonts/type1/urw/zapfding/uzdr.pfb>
-Output written on TUDthesis.pdf (19 pages, 1584575 bytes).
+ 73i,18n,100p,9121b,609s stack positions out of 5000i,500n,10000p,200000b,80000s
+{c:/texlive/2018/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2018/texm
+f-dist/fonts/enc/dvips/base/texnansi.enc}<c:/texlive/texmf-local/fonts/type1/so
+ftmake/charter/5chr8a.pfb><c:/texlive/texmf-local/fonts/type1/softmake/charter/
+5chri8a.pfb><c:/texlive/texmf-local/fonts/type1/softmake/frontpage/5fpm8a.pfb><
+c:/texlive/texmf-local/fonts/type1/softmake/frontpage/5fpr8a.pfb><c:/texlive/te
+xmf-local/fonts/type1/softmake/stafford/5sfr8a.pfb><c:/texlive/2018/texmf-dist/
+fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2018/texmf-dist/fonts/type1
+/bitstrea/charter/bchr8a.pfb><c:/texlive/2018/texmf-dist/fonts/type1/bitstrea/c
+harter/bchri8a.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/mathdesign/md
+bch/md-chr7t.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/mathdesign/mdbc
+h/md-chr7v.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/mathdesign/mdbch/
+md-chr7y.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/mathdesign/mdbch/md
+-chri7m.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/mathdesign/mdbch/md-
+chrma.pfb><c:/texlive/2018/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb><c:/
+texlive/2018/texmf-dist/fonts/type1/urw/zapfding/uzdr.pfb>
+Output written on TUDthesis.pdf (20 pages, 1590011 bytes).
 PDF statistics:
- 148 PDF objects out of 1000 (max. 8388607)
- 100 compressed objects within 1 object stream
+ 152 PDF objects out of 1000 (max. 8388607)
+ 102 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  62 words of extra memory for PDF output out of 10000 (max. 10000000)
 
