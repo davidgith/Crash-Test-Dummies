@@ -58,7 +58,7 @@ using namespace Eigen;
 #define MAX_DELTA_U 0.1f
 
 // MPC Model Definitions
-#define MODEL_PARAM_L_H 0.2f
+#define MODEL_PARAM_L_H 0.25f
 #define MODEL_PARAM_L 0.26f
 #define N_STATES 2
 #define N_INPUTS 1

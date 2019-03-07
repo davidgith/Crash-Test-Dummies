@@ -39,7 +39,7 @@ int main(int argc, char** argv)
       "/sign_detection_node/SpeedSign", 1, boost::bind(&MPCController::processSpeedSign, &controller, _1));
 
   // generate control message publisher
-  std_msgs::Int32 motor, steering;
+  std_msgs::Int16 motor, steering;
   ros::Publisher motorCtrl =
       nh.advertise<std_msgs::Int16>("/uc_bridge/set_motor_level_msg", 1);
   ros::Publisher steeringCtrl =
