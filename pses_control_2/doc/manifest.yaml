@@ -1,0 +1,17 @@
+actions: []
+authors: ''
+brief: ''
+bugtracker: ''
+depends:
+- std_msgs
+- sensor_msgs
+- roscpp
+- catkin
+description: The pses_control_2 package
+license: GPLv3
+maintainers: Kai Cui <kai.cui@stud.tu-darmstadt.de>
+msgs: []
+package_type: package
+repo_url: ''
+srvs: []
+url: ''

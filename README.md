@@ -17,10 +17,13 @@ After installing required dependencies, you can start the control node and begin
 
 ```
 roslaunch pses_ucbridge uc_bridge.launch 
-roslaunch pses_dashboard dashboard.launch
-rosrun pses_control_test pses_control_test
+rosrun kinect2_bridge kinect2_bridge
+rosrun pses_control_mpc pses_control_mpc
+rosrun pses_sign_recognition obj_detection _gui:=true
 rosrun rqt_reconfigure rqt_reconfigure
 ```
+
+You can then use dynamic reconfiguration to set parameters such as the target velocity to begin driving.
 
 ## Utilities
 ```
