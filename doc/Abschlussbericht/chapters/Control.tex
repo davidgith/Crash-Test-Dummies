@@ -55,24 +55,30 @@ Mit dieser Steigung werden die Lücken zwischen den erkannten Linienabschnitten e
   \end{align}
   
   Als Sollwert A(t) wird die aufgenommene und bearbeitete Strecke verwendet. Die Abweichung zwischen Soll- und Ist-Wert wird aufintegriert und als Eingabewert e(t) für die PID-Regelung verwendet, wodurch das passende Steering-Level u(t) gesetzt werden kann.
-  
   \begin{align}
   \label{eq:quer}	
   \mathbf{A(t)} =
   \begin{pmatrix} {x_a(t)} & {y_a(t)}\end{pmatrix}
   \end{align}
-  
   \begin{align}
   \label{eq:quer}	
   \mathbf{e(t)}
   = \sum_{\mathbf{y=0}}^{\mathbf{n}} \mid \mathbf{x_A-x_B} \mid
   \end{align}
-  
   \begin{align}
   \label{eq:quer}	
   \mathbf{u(t)=K_p*e(t)+K_D*} \dot{\mathbf{e}}\mathbf{(t)}
   \end{align}   
+  \\
   
+  \begin{figure}[ht]
+  	\centering
+  	\includegraphics[width=0.9\textwidth]{pics/PID-Regelung.png}
+  	\caption{PID-Regeldifferenz, Solllinie(rot), Lanepixel(blau), Abweichungen(schwarz)}
+  	\label{fig:quadraticorig}
+  \end{figure}
+
+
 \clearpage
 \subsection{Modellprädiktiver Regelungansatz}
 Ein zweiter experimenteller Ansatz, der im Rahmen des Projektseminars verfolgt wurde, ist die sogenannte lineare modellprädiktive Regelung. Bei dieser wird anhand eines linearen, diskretisierten Fahrzeugmodells über ein quadratisches Optimierungsproblem eine Lösung für die optimalen Lenkwinkel berechnet. Diese sind optimal in dem Sinne, dass eine Linearkombination der mittleren quadratischen Abweichungen des prädiktierten Systemzustands und Stellgröße zu einer vorgegebenen Solltrajektorie über einen endlichen Zeithorizont hinaus minimiert wird.
