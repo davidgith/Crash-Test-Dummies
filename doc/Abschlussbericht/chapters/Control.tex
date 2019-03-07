@@ -26,7 +26,6 @@ Jeder weitere weiße Punkt wird dann in p{\textsubscript{i}} gesichert.
 \end{align}
 
 Durch die erkannten Punkte kann die Steigung k\textsubscript{i} errechnet werden.
-
 \begin{align}
 \label{eq:quer}	
 \mathbf{k_i}
@@ -34,7 +33,6 @@ Durch die erkannten Punkte kann die Steigung k\textsubscript{i} errechnet werden
 \end{align}
 
 Zuletzt wird daraus dann der Durschnittswert aller Steigungen S berechnet.
-
 \begin{align}
 \label{eq:quer}	
 \mathbf{S}
@@ -42,12 +40,12 @@ Zuletzt wird daraus dann der Durschnittswert aller Steigungen S berechnet.
 \end{align}
 
 Mit dieser Steigung werden die Lücken zwischen den erkannten Linienabschnitten ergänzt.
+\clearpage
 
 \subparagraph{Regelkreis}
   Für die Steuerung des Fahrzeugs wird die Differenz zwischen der aktuellen Stellung des Fahrzeugs und der geplanten Richtung verwendet. Relativ zu dieser Abweichung wird das Steering-Level entsprechend gesetzt.
   
   Um die Analyse der Geschwindigkeit zu vereinfachen, wird hierzu lediglich eine Dimension betrachtet, da die anderen Geschwindigkeitsvektoren dazu relativ klein und vernachlässigbar sind. Die Orientierung der Geschwindigkeit wird als B(t) ausgegeben.
-  
   \begin{align}
   \label{eq:quer}	
   \mathbf{B(t)} =
