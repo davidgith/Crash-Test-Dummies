@@ -7,7 +7,7 @@ Please feel free to browse the project's documentation, where you can find instr
 
 [Pses_docs](https://github.com/tud-pses/pses_docs)
 
-For OpenCV 3.4, you can use the script installOpenCV3_4.sh. 
+You can find the submodule documentations and instructions in the corresponding folders.
 
 After installing required dependencies of the submodules, you can start the control node and begin driving. To give the control nodes commands, you can use dynamic reconfiguration, i.e. rqt_reconfigure. For example: 
 
@@ -20,6 +20,8 @@ rosrun rqt_reconfigure rqt_reconfigure
 ```
 
 You can then use dynamic reconfiguration to set parameters such as the target velocity to begin driving.
+
+For OpenCV 3.4, you can use the script installOpenCV3_4.sh if necessary.
 
 ## Authors
 

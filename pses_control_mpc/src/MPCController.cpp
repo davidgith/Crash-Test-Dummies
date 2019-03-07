@@ -58,7 +58,7 @@ using namespace Eigen;
 #define MAX_DELTA_U 0.1f
 
 // MPC Model Definitions
-#define MODEL_PARAM_L_H 0.13f
+#define MODEL_PARAM_L_H 0.2f
 #define MODEL_PARAM_L 0.26f
 #define N_STATES 2
 #define N_INPUTS 1
@@ -103,7 +103,7 @@ namespace mpc {
 		drivingLane = drivingLane + laneChangeRate * (targetDrivingLane - drivingLane);
 
 		// Update time and check if new control step is triggered
-		// Assumption: deltaTime < currTImeSinceInput
+		// Assumption: deltaTime < currTimeSinceInput
 		currTimeSinceInput += deltaTime;
 		if (currTimeSinceInput > mpcTimestep) {
 			currTimeSinceInput -= mpcTimestep;

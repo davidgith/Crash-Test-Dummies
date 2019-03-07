@@ -34,9 +34,9 @@ The GUI can be turned on and off with the ROS-Parameter `_gui:=true` or `_gui:=f
 
 The node subscribes to the topic `kinect2/qhd/image_color`
 
-Publishes to `/sign_detection_node/StopSign` if stop sign is detected
-Publishes to `/sign_detection_node/LaneSign` if change lane sign is detected
-Publishes to `/sign_detection_node/SpeedSign` if speed limit sign is detected
+Publishes distance in cm to `/sign_detection_node/StopSign` if stop sign is detected
+Publishes distance in cm to `/sign_detection_node/LaneSign` if change lane sign is detected
+Publishes distance in cm to `/sign_detection_node/SpeedSign` if speed limit sign is detected
 
 ### How to use the find_object ROS-Package
 

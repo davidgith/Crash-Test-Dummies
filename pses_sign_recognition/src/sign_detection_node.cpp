@@ -177,19 +177,20 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
             perspectiveTransform( obj_corners, scene_corners, H);            
             
             float sign_area = areaQuadrangle(scene_corners);
+            float sign_distance = distanceSign(sign_area);
 
             if(signFound(sign_area, scene_corners)){
 
-                ROS_INFO("Object %i found! position:(%i,%i);(%i,%i);(%i,%i);(%i,%i) area:%i distance:%f #keypoints=%i",i,
+                ROS_INFO("Object %i found! position:(%i,%i);(%i,%i);(%i,%i);(%i,%i) area:%i distance:%.2fm #keypoints=%i",i,
                         (int)scene_corners[0].x , (int)scene_corners[0].y ,
                         (int)scene_corners[1].x , (int)scene_corners[1].y ,
                         (int)scene_corners[2].x , (int)scene_corners[2].y ,
                         (int)scene_corners[3].x , (int)scene_corners[3].y ,
-                        (int)sign_area, distanceSign(sign_area), (int)good_matches.size());
+                        (int)sign_area, sign_distance, (int)good_matches.size());
 
-                // ToDo Caltulate sign distance with area size
+                
                 std_msgs::Int32 distance;
-                distance.data = (int)areaQuadrangle(scene_corners);
+                distance.data = (int)(sign_distance*100);
                 if (i == 0) {
                     stopPublisher.publish(distance);
                 } else if (i == 1) {
