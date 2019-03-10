@@ -2,27 +2,24 @@
   
 \subsection{PID-Regelungsansatz}
 
-Unser erster Ansatz, das Fahrzeug autonom fahren zu lassen basierte auf einem PID-Regler. Dieses Verfahren lässt sich in 2 große Schritte aufteilen.
+Unser erster Ansatz, das Fahrzeug autonom fahren zu lassen, basiert auf einem PID-Regler. Dieses Verfahren lässt sich in 2 große Schritte aufteilen.
 
 \subparagraph{Bildverarbeitung}
 
-Für die Bildverarbeitung wird das Umfeld durch die Farbkamera der Kinect aufgenommen und in den HSV-Farbraum konvertiert. Zum Erkennen der Fahrbahnbegrenzung wird das Bild entsprechend nach grünen Punkten durchsucht und gefiltert. 
-Um das entstandene Rauschen zu reduzieren wird zusätzlich noch ein Medianfilter verwendet.
-Das entstandene Bild wird in einem 2D-Array gespeichert, wobei die linke untere Ecke als Ursprung verwendet wird.
+Für die Bildverarbeitung wird das Umfeld durch die Farbkamera der Kinect aufgenommen und in den HSV-Farbraum konvertiert. Zum Erkennen der Fahrbahnbegrenzung wird das Bild entsprechend nach grünen Punkten durchsucht und gefiltert. Um das entstandene Rauschen zu reduzieren, wird zusätzlich noch ein Medianfilter verwendet. Das entstandene Bild wird in einem 2D-Array gespeichert, wobei die linke untere Ecke als Ursprung verwendet wird.
 
-Für einen Spurwechsel ist das Bild der Kinect besonders in Kurven zu schmal, daher wird hier die mittlere Fahrbahnmarkierung genutzt. Hier wird das Bild nach rosafarbenen Punkten gefiltert. Da die mittlere Linie jedoch nicht durchgängig verläuft wird durch das Verfahren der Linearisierung digital eine durchgängige Markierung erzeugt.
-Zuerst wird der unterste weiße Punkt erfasst und in p\textsubscript{0} abgespeichert.
+Für einen Spurwechsel ist das Bild der Kinect besonders in Kurven zu schmal, daher wird hier die mittlere Fahrbahnmarkierung genutzt. Hier wird das Bild nach rosafarbenen Punkten gefiltert. Da die mittlere Linie jedoch nicht durchgängig verläuft, wird durch das folgende Verfahren digital eine durchgängige Markierung erzeugt. Zuerst wird der unterste rosa Punkt erfasst und in p\textsubscript{0} abgespeichert.
 \begin{align}
 \label{eq:quer}	
-\mathbf{p\textsubscript{0}}
-\begin{pmatrix} {x\textsubscript{0}} & {y\textsubscript{0}}\end{pmatrix}
+\mathbf{p\textsubscript{0}} =
+\begin{pmatrix} {x\textsubscript{0}}, & {y\textsubscript{0}}\end{pmatrix}
 \end{align}
 
 Jeder weitere weiße Punkt wird dann in p{\textsubscript{i}} gesichert.
 \begin{align}
 \label{eq:quer}	
-\mathbf{p\textsubscript{i}}
-\begin{pmatrix} {x\textsubscript{i}} & {y\textsubscript{i}}\end{pmatrix}
+\mathbf{p\textsubscript{i}} =
+\begin{pmatrix} {x\textsubscript{i}}, & {y\textsubscript{i}}\end{pmatrix}
 \end{align}
 
 Durch die erkannten Punkte kann die Steigung k\textsubscript{i} errechnet werden.
@@ -32,14 +29,14 @@ Durch die erkannten Punkte kann die Steigung k\textsubscript{i} errechnet werden
 = \frac{\mathbf{y_i} - \mathbf{y_0}}{\mathbf{x_i}-\mathbf{x_0}}
 \end{align}
 
-Zuletzt wird daraus dann der Durschnittswert aller Steigungen S berechnet.
+Zuletzt wird daraus dann der Durchschnittswert aller Steigungen S berechnet.
 \begin{align}
 \label{eq:quer}	
 \mathbf{S}
 = \frac{\mathbf{1}}{\mathbf{m}}\sum \mathbf{k_i}
 \end{align}
 
-Mit dieser Steigung werden die Lücken zwischen den erkannten Linienabschnitten ergänzt.
+Mit dieser Steigung werden die Lücken zwischen den erkannten Linienabschnitten ergänzt. Daraus resultiert dann eine durchgängige Linie der Fahrbahnbegrenzung.
 \clearpage
 
 \subparagraph{Regelkreis}
@@ -73,7 +70,7 @@ Mit dieser Steigung werden die Lücken zwischen den erkannten Linienabschnitten e
   	\centering
   	\includegraphics[width=0.9\textwidth]{pics/PID-Regelung.png}
   	\caption{PID-Regeldifferenz, Solllinie(rot), Lanepixel(blau), Abweichungen(schwarz)}
-  	\label{fig:quadraticorig}
+  	\label{fig:pid}
   \end{figure}
 
 
@@ -145,7 +142,7 @@ Dann definieren wir
 \end{align}
 Wir möchten nun die quadratischen Zustandsabweichungen und Stellgrößen über den endlichen Zeithorizont $n$ unter Beachtung der Stellgrößenbeschränkung und Systemdynamik optimieren.
 \begin{align*}
-	\min_v f(x,u) =
+	\min_u f(x,u) =
 	&\sum_{t=0}^{n-1} \{(x_i - x_{ref,i})^TQ(x_i - x_{ref,i})\\
 	& + (u_i - u_{ref,i})^TP(u_i - u_{ref,i})\}\\
 	& + (x_n - x_{ref,n})^TQ(x_n - x_{ref,n})
@@ -176,31 +173,31 @@ Da wir keine Zustandsgrößenbeschränkung vorsehen, benötigen wir die restlichen N
 \end{align} 
 Die Konvergenz, Optimalität und numerische Stabilität der Lösung des Optimierungsproblems der linearen modellprädiktiven Regelung ist hierbei durch die Verwendung von Methoden aus der quadratischen Programmierung, z.B. hier \cite{goldfarb1983numerically}, sichergestellt.
 
-Wir haben hier die Gewichtungsmatrizen $\hat{Q}, \hat{P}$ so gesetzt, dass näherungsweise lediglich die Positionsabweichung zur Solltrajektorie minimiert werden soll. Dies erlaubt es uns daher, als Solltrajektorie den Sollstellgrößenverlauf zu ignorieren und eine beliebige Sollwinkeltrajektorie vorzugeben, da Inkonsistenzen mit dem Sollzustandsverlauf kaum ins Gewicht fallen:
+Wir haben hier die Gewichtungsmatrizen $\hat{Q}, \hat{P}$ so gesetzt, dass näherungsweise lediglich die Positionsabweichung zur Solltrajektorie minimiert werden soll. Dies erlaubt es uns daher, als Solltrajektorie den Sollstellgrößenverlauf zu ignorieren und eine beliebige Sollwinkeltrajektorie vorzugeben, da Inkonsistenzen mit dem Sollzustandsverlauf dann kaum ins Gewicht fallen:
 \begin{align}	
 u_{ref} &= 
 \begin{pmatrix} 0 & 0 & \hdots & 0 & 0 \end{pmatrix}^T 
 \end{align}
-Als nächstes wird die Beschaffung der Sollzustandstrajektorie erläutert. Dazu bedienen wir uns der Kamera, dessen Farbdaten zunächst mithilfe einer inversen Perspektiventransformation (IPM) auf ein Birdeye-View gebracht werden. Beispielhaft ist ein bearbeitetes, transformiertes Bild in Abbildung \ref{fig:quadratic} zu sehen.
-
-Das Bild wird in horizontale Streifen einer vordefinierten Breite unterteilt. Anschließend werden die Streifen nach den Fahrbahnbegrenzungsfarben gefiltert und Spaltenhistogramme gebildet. Die Histogrammmaxima am nächsten zur Mitte des Bildes mit einem vordefinierten Mindestabstand werden selektiert. In diesem Fall also bis zu zwei Seitenstreifenpunkte und bis zu ein Mittellinienpunkt. Diese sind in Abbildung \ref{fig:quadraticorig} als schwarze Kreise eingezeichnet.
-
-Anschließend werden diese Punkte verwendet, um sinnvolle Wegpunkte zu definieren. Diese sind in der Abbildung \ref{fig:quadraticorig} als grüne Kreise eingezeichnet. Wegpunkte werden priorisiert zwischen einen Mittellinienpunkt und den Seitenstreifenpunkt der entsprechenden Fahrbahnseite gelegt. Falls das nicht möglich ist, z.B. weil einer der Punkte nicht existiert, legen wir ihn $\frac{1}{4}$ oder $\frac{3}{4}$ zwischen die Seitenstreifenpunkte je nach Fahrbahnseite. Falls auch das nicht möglich ist, können zusätzliche Punkte aus den bereits existierenden inferiert werden, falls mindestens ein Seitenstreifenpunkt existiert.
-
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=0.9\textwidth]{pics/windowedorig.png}
-	\caption{Bearbeitetes, rücktransformiertes Bild mit quadratischer Trajektorie. Sichtbar sind Wegpunkte (grüne Kreise), die Solltrajektorie (blaue Linie), die prädiktierte Trajektorie (rote Punkte) und Lanepunkte (schwarze Kreise)}
-	\label{fig:quadraticorig}
-\end{figure}
-
-Mithilfe dieser Wegpunkte kann man nun eine Trajektorie $x_{ref}$ erzeugen.In Abbildung \ref{fig:quadraticorig} ist die blaue Linie eine quadratische Trajektorie, die an die grünen Wegpunkte gefittet wird. Die Trajektorie scheint zunächst gut an die Fahrbahn angepasst zu sein. Man erkennt, dass die Solltrajektorie nicht einhaltbar ist, da die Querabweichung sich aus dem Unterschied zwischen polynomiell extrapolierter Solltrajektorie und Roboterposition zusammensetzt und nicht bei null beginnt. Dies ist kein Problem, da lediglich der quadratische Fehler über die nächsten Zeitschritte minimiert wird. 
+Als nächstes wird die Beschaffung der Sollzustandstrajektorie erläutert. Dazu bedienen wir uns der Kinectkamera, dessen Farbdaten zunächst mithilfe einer inversen Perspektiventransformation (IPM) auf ein Birdeye-View gebracht werden. Beispielhaft ist ein bearbeitetes, transformiertes Bild in Abbildung \ref{fig:quadratic} zu sehen.
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{pics/windowed.png}
 	\caption{Transformierte und um Roboterposition erweiterte Version von Abbildung \ref{fig:quadraticorig}.}
 	\label{fig:quadratic}
+\end{figure}
+
+Das Bild wird in horizontale Streifen einer vordefinierten Breite unterteilt. Anschließend werden die Streifen nach den Fahrbahnbegrenzungsfarben gefiltert und Spaltenhistogramme gebildet. Die Histogrammmaxima am nächsten zur Mitte des Bildes werden mit einem vordefinierten Mindestabstand selektiert. In diesem Fall also bis zu zwei Seitenstreifenpunkte und bis zu ein Mittellinienpunkt. Diese sind in Abbildung \ref{fig:quadraticorig} als schwarze Kreise eingezeichnet.
+
+Anschließend werden diese Punkte verwendet, um sinnvolle Wegpunkte zu definieren. Diese sind in der Abbildung \ref{fig:quadraticorig} als grüne Kreise eingezeichnet. Wegpunkte werden priorisiert zwischen einen Mittellinienpunkt und den Seitenstreifenpunkt der entsprechenden Fahrbahnseite gelegt. Falls das nicht möglich ist, z.B. weil einer der Punkte nicht existiert, legen wir ihn $\frac{1}{4}$ oder $\frac{3}{4}$ zwischen die Seitenstreifenpunkte je nach Fahrbahnseite. Falls auch das nicht möglich ist, können zusätzliche Punkte aus den bereits existierenden inferiert werden, falls mindestens ein Seitenstreifenpunkt existiert.
+
+Mithilfe dieser Wegpunkte kann man nun eine Trajektorie $x_{ref}$ erzeugen. In Abbildung \ref{fig:quadraticorig} ist die blaue Linie eine quadratische Trajektorie, die an die grünen Wegpunkte gefittet wird. Die Trajektorie scheint zunächst gut an die Fahrbahn angepasst zu sein. Man erkennt, dass die Solltrajektorie nicht einhaltbar ist, da die Querabweichung sich aus dem Unterschied zwischen polynomiell extrapolierter Solltrajektorie und Roboterposition zusammensetzt und nicht bei null beginnt. Dies ist kein Problem, da lediglich der quadratische Fehler über die nächsten Zeitschritte minimiert wird. 
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{pics/windowedorig.png}
+	\caption{Bearbeitetes, rücktransformiertes Bild mit quadratischer Trajektorie. Sichtbar sind Wegpunkte (grüne Kreise), die Solltrajektorie (blaue Linie), die prädiktierte Trajektorie (rote Punkte) und Lanepunkte (schwarze Kreise)}
+	\label{fig:quadraticorig}
 \end{figure}
 
 Ein Problem lässt sich in Abbildung \ref{fig:quadratic} jedoch feststellen: Die Trajektorien sind aufgrund der polynomiellen Extrapolation nicht stationär und sehr variant. Zusätzlich kommt hinzu, dass die Regressionsmethode nicht rotationsinvariant ist, denn eine Rotation der Wegpunkte führt aufgrund der vertikalen Polynomausrichtung zu einer völlig anderen Trajektorie. Diese Umstände führen dazu, dass die Regelung versagt.
@@ -216,7 +213,7 @@ Eine einfache Lösung ist es, nicht zu interpolieren, sondern wie in Abbildung \r
 
 Mit dieser Bildtrajektorie und den Bildtransformationsparametern lassen sich dann diskrete Trajektoriensollwerte $x_{ref,i}$ erzeugen, indem das kinematische Querführungsmodell angenommen wird: Für jeden Trajektorienzeitschritt wird eine konstante Vorwärtsbewegung abhängig von der Geschwindigkeit ausgeführt, um den nächsten Positionssollwert zu ermitteln.
 
-Das größte Problem ist das nicht ausreichend genaue Modell. der MPC-Ansatz erlaubt noch weitere Verbesserungen, um besseres Regelverhalten zu erreichen und insbesondere hohe Geschwindigkeiten ausreichend genau zu regeln. Darauf wird in diesem Projektseminar aber aufgrund der abweichenden Zielsetzung verzichtet.
+Das größte Problem ist das nicht ausreichend genaue Modell. Der MPC-Ansatz erlaubt noch weitere Verbesserungen, um besseres Regelverhalten zu erreichen und insbesondere hohe Geschwindigkeiten ausreichend genau zu regeln. Darauf wird in diesem Projektseminar aber aufgrund der abweichenden Zielsetzung verzichtet.
 
 Es bietet sich zukünftig an, das Fahrzeugmodell durch ein nichtlineares Modell zu ersetzen und allgemeinere Optimierer zu verwenden. Damit landet man bei der nichtlinearen modelprädiktiven Regelung (NMPC), z.B. \cite{allgower2012nonlinear}, bei der ein anderer Modellansatz verfolgt werden muss, da das Querabweichungsmodell eine Linearisierung ist.
 
