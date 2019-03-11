@@ -3,14 +3,16 @@ authors: ''
 brief: ''
 bugtracker: ''
 depends:
-- cv_bridge
-- std_msgs
-- sensor_msgs
-- roscpp
 - catkin
-description: The pses_sign_recognition package
-license: TODO
-maintainers: pses <pses@todo.todo>
+- roscpp
+- sensor_msgs
+- std_msgs
+- cv_bridge
+- math
+description: The pses_sign_recognition package used for road sign recognition for
+  the PSES robot car
+license: GPLv3
+maintainers: Regis Fayard <regis.fayard@stud.tu-darmstadt.de>
 msgs: []
 package_type: package
 repo_url: ''
