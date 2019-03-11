@@ -3,6 +3,7 @@
  * @brief Sign Detection node, to find road signs an publish them on ros topics.
  *
 */
+// Code is based on the OpenCV-Example "SURF_FLANN_matching_homography_Demo.cpp"
 
 #include <iostream>
 #include "opencv2/core.hpp"
@@ -82,21 +83,19 @@ float distanceSign(float area){
 */
 void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[], std::vector<Mat> schilder, std::vector<int> detect_thresh)
 {
-    //Loading kinect image (Resolution: 960x540)
+    //-- Loading kinect image (Resolution: 960x540)
     cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image;
     cv::Mat imageGrey;
     cv::cvtColor(image, imageGrey, CV_BGR2GRAY);
-
-    //ROS_INFO("image callback");
     cv::waitKey(10);
-
-    
     Mat img_scene = imageGrey;
+
+    //-- Check if kinect image is found 
     if ( img_scene.empty() )
         ROS_ERROR("Could not find kinect image");
  
 
-    //-- Step 1: Detect the keypoints using SURF Detector, compute the descriptors
+    //-- Step 1a: Detect the keypoints, in the camera image, using SURF Detector, compute the descriptors
     int minHessian = 400;
     Ptr<SURF> detector = SURF::create( minHessian );
      
@@ -106,13 +105,16 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
     
     detector->detectAndCompute( img_scene, noArray(), keypoints_scene, descriptors_scene );
 
-    // For each sign, check if it is found in the scene.
+    //-- For each sign, check if it is found in the scene.
     // i=0 -> stop sign     i=1 -> Change lane sign     i=2 -> Speed limit sign
     for( int i = 0; i < detect_thresh.size(); i++){
-        //ROS_INFO("i=%i", i);
+        
+        //-- Skip if sign referene image is not found
         if(schilder[i].empty()){
             continue;
         }
+
+        //-- Step 1b: Detect the keypoints, in the road signs, using SURF Detector, compute the descriptors
         Mat img_object = schilder[i];
         std::vector<KeyPoint> keypoints_object;
         Mat descriptors_object;
@@ -120,12 +122,12 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
 
 
         //-- Step 2: Matching descriptor vectors with a FLANN based matcher
-        // Since SURF is a floating-point descriptor NORM_L2 is used
+        // Since SURF is a floating-point descriptor NORM_L2 (Euclidian Distance) is used
         Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create(DescriptorMatcher::FLANNBASED);
         std::vector< std::vector<DMatch> > knn_matches;
         matcher->knnMatch( descriptors_object, descriptors_scene, knn_matches, 2 );
 
-        //-- Filter matches using the Lowe's ratio test
+        //-- Step 3: Filter matches using the Lowe's ratio test
         const float ratio_thresh = 0.75f;
         std::vector<DMatch> good_matches;
         for (size_t i = 0; i < knn_matches.size(); i++)
@@ -136,7 +138,6 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
             }
         }
 
-        //ROS_INFO("knn_matches.size=%i good_matches.size=%i", (int)knn_matches.size(), (int)good_matches.size());
 
         //-- Draw matches
         Mat img_matches;
@@ -156,11 +157,10 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
 
         Mat H;
 
-        // Continue only if enough key point matches have been found.
+        //-- Continue only if enough key point matches have been found.
         // Threshold values are defined individually for each sign in detect_thresh
         if((int)good_matches.size() > detect_thresh[i]){
-                H = findHomography( obj, scene, RANSAC );
-                
+                H = findHomography( obj, scene, RANSAC );  
             } 
 
         if (! H.empty()){
@@ -178,7 +178,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
             
             float sign_area = areaQuadrangle(scene_corners);
             float sign_distance = distanceSign(sign_area);
-
+            
+            //-- Continue only if a road sign is found
             if(signFound(sign_area, scene_corners)){
 
                 ROS_INFO("Object %i found! position:(%i,%i);(%i,%i);(%i,%i);(%i,%i) area:%i distance:%.2fm #keypoints=%i",i,
@@ -188,7 +189,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
                         (int)scene_corners[3].x , (int)scene_corners[3].y ,
                         (int)sign_area, sign_distance, (int)good_matches.size());
 
-                
+                //-- Publish distance to rostopics
                 std_msgs::Int32 distance;
                 distance.data = (int)(sign_distance*100);
                 if (i == 0) {
@@ -202,7 +203,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
 
                 if(gui){
 
-                // draw circles around the 4 corners
+                //-- Draw circles around the 4 corners
                 cv::circle( img_matches, scene_corners[0] + Point2f((float)img_object.cols), 5, Scalar(255, 0, 0), 2 );
                 cv::circle( img_matches, scene_corners[1] + Point2f((float)img_object.cols), 5, Scalar(255, 0, 0), 2 );
                 cv::circle( img_matches, scene_corners[2] + Point2f((float)img_object.cols), 5, Scalar(255, 0, 0), 2 );
@@ -232,7 +233,6 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, int argc, char * argv[
                 imshow("Schildererkennung Speed", img_matches );
             }
     }
-  //  waitKey();
 }
 
 
@@ -247,7 +247,7 @@ int main( int argc, char* argv[] )
     // get ros node handle
   	ros::NodeHandle nh;
     
-    // topics to publish if signs found
+    //-- Topics to publish if signs found
     stopPublisher =
         nh.advertise<std_msgs::Int32>("/sign_detection_node/StopSign", 1);
     lanePublisher =
@@ -256,11 +256,10 @@ int main( int argc, char* argv[] )
         nh.advertise<std_msgs::Int32>("/sign_detection_node/SpeedSign", 1);
     
 
-
     ROS_INFO("Node starting ...");
 
-    // How to use parameter: http://enesbot.me/understanding-the-parameter-server-in-ros.html
 
+    //-- The GUI can be turned on and off with the ROS-Parameter 'gui'
     if(nh.hasParam("sign_detection_node/gui")){
 		ROS_INFO("gui parameter found");
 		}
@@ -270,7 +269,7 @@ int main( int argc, char* argv[] )
 
     ROS_INFO("gui=%d", gui);
 
-    // Load reference road signs as greyscale 
+    //-- Load reference road signs as greyscale 
     // index 0 -> Stop sign
     // index 1 -> Change lane sign
     // indey 2 -> Speed limit sign
@@ -285,18 +284,12 @@ int main( int argc, char* argv[] )
         ROS_WARN("Schild %i konnte nicht geladen werden", i);
     }
 
-    // Threshold value for each sign of how many matches it counts as detected.
+    //-- Threshold value for each sign of how many matches it counts as detected.
     std::vector<int> detect_thresh = {25, 13, 30};
-  
-    /*
-    if(false){
-        cv::imshow("Stop Schild", schilder[0]);
-        cv::imshow("Spurwechsel Schild", schilder[1]);
-        cv::imshow("Geschwindikeitsbegrenzungsschild Schild", schilder[2]);
-    }
-    */
+
 
     ROS_INFO("Waiting for kinect picture ...");
+
     ros::Subscriber imageSub = nh.subscribe<sensor_msgs::Image>(
       "kinect2/qhd/image_color", 1, boost::bind(imageCallback, _1, argc, argv, schilder, detect_thresh));
 

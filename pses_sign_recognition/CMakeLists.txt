@@ -163,7 +163,6 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(sign_recognition src/sign_recognition_node.cpp)
 # add_executable(obj_detection )
 add_executable(obj_detection src/sign_detection_node.cpp)
 
@@ -178,17 +177,12 @@ add_executable(obj_detection src/sign_detection_node.cpp)
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
- target_link_libraries(sign_recognition
-   ${catkin_LIBRARIES}
-   ${QT_LIBRARIES}
-   ${OpenCV_LIBS}
- )
-
  target_link_libraries(obj_detection
    ${catkin_LIBRARIES}
    ${QT_LIBRARIES}
    ${OpenCV_LIBS}
  )
+ 
 #############
 ## Install ##
 #############
