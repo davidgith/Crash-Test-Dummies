@@ -1,14 +1,12 @@
 \section{Regelansätze}
   
 \subsection{PID-Regelungsansatz}
-
 Unser erster Ansatz, das Fahrzeug autonom fahren zu lassen, basiert auf einem PID-Regler. Dieses Verfahren lässt sich in 2 große Schritte aufteilen.
 
 \subparagraph{Bildverarbeitung}
-
 Für die Bildverarbeitung wird das Umfeld durch die Farbkamera der Kinect aufgenommen und in den HSV-Farbraum konvertiert. Zum Erkennen der Fahrbahnbegrenzung wird das Bild entsprechend nach grünen Punkten durchsucht und gefiltert. Um das entstandene Rauschen zu reduzieren, wird zusätzlich noch ein Medianfilter verwendet. Das entstandene Bild wird in einem 2D-Array gespeichert, wobei die linke untere Ecke als Ursprung verwendet wird.
 
-Für einen Spurwechsel ist das Bild der Kinect besonders in Kurven zu schmal, daher wird hier die mittlere Fahrbahnmarkierung genutzt. Hier wird das Bild nach rosafarbenen Punkten gefiltert. Da die mittlere Linie jedoch nicht durchgängig verläuft, wird durch das folgende Verfahren digital eine durchgängige Markierung erzeugt. Zuerst wird der unterste rosa Punkt erfasst und in p\textsubscript{0} abgespeichert.
+Für einen Spurwechsel ist das Bild der Kinect besonders in Kurven zu schmal, da die Kamera nicht mittig, sondern weiter rechts am Chassis angebracht ist. Daher wird hier die mittlere Fahrbahnmarkierung genutzt. Hier wird das Bild nach rosafarbenen Punkten gefiltert. Da die mittlere Linie jedoch nicht durchgängig verläuft, wird durch das folgende Verfahren digital eine durchgängige Markierung erzeugt. Zuerst wird der unterste rosane Punkt erfasst und in p\textsubscript{0} abgespeichert.
 \begin{align}
 \label{eq:quer}	
 \mathbf{p\textsubscript{0}} =
@@ -46,14 +44,14 @@ Mit dieser Steigung werden die Lücken zwischen den erkannten Linienabschnitten e
   \begin{align}
   \label{eq:quer}	
   \mathbf{B(t)} =
-  \begin{pmatrix} {x_b(t)} & {y_b(t)}\end{pmatrix}
+  \begin{pmatrix} {x_b(t)}, & {y_b(t)}\end{pmatrix}
   \end{align}
   
   Als Sollwert A(t) wird die aufgenommene und bearbeitete Strecke verwendet. Die Abweichung zwischen Soll- und Ist-Wert wird aufintegriert und als Eingabewert e(t) für die PID-Regelung verwendet, wodurch das passende Steering-Level u(t) gesetzt werden kann.
   \begin{align}
   \label{eq:quer}	
   \mathbf{A(t)} =
-  \begin{pmatrix} {x_a(t)} & {y_a(t)}\end{pmatrix}
+  \begin{pmatrix} {x_a(t)}, & {y_a(t)}\end{pmatrix}
   \end{align}
   \begin{align}
   \label{eq:quer}	
@@ -62,14 +60,14 @@ Mit dieser Steigung werden die Lücken zwischen den erkannten Linienabschnitten e
   \end{align}
   \begin{align}
   \label{eq:quer}	
-  \mathbf{u(t)=K_p*e(t)+K_D*} \dot{\mathbf{e}}\mathbf{(t)}
+  \mathbf{u(t)=K_p e(t)+K_D} \dot{\mathbf{e}}\mathbf{(t)}
   \end{align}   
   \\
   
   \begin{figure}[ht]
   	\centering
   	\includegraphics[width=0.9\textwidth]{pics/PID-Regelung.png}
-  	\caption{PID-Regeldifferenz, Solllinie(rot), Lanepixel(blau), Abweichungen(schwarz)}
+  	\caption{PID-Regeldifferenz. Rot: Solllinie. Blaue: Lanepixel. Schwarz: Abweichungen}
   	\label{fig:pid}
   \end{figure}
 

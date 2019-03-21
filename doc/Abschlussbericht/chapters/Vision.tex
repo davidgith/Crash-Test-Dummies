@@ -1,1 +1,77 @@
 \section{Schilderkennung}
+Als Vertiefungsaufgabe haben wir uns entschieden, eine Schilderkennung zu implementieren. Unser Ziel beschränkt sich darauf, drei verschiedene Schilder zu erkennen, auf die das Auto dann reagiert. Diese Schilder sind in Abbildung \ref{fig:v1} abgebildet. Im Folgenden werden die zwei Ansätze erklärt, die wir für die Realisierung verfolgt haben.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.25\textwidth]{pics/Stopschild.png}
+	\includegraphics[width=0.25\textwidth]{pics/spurwechselschild.jpg}
+	\includegraphics[width=0.25\textwidth]{pics/Geschwindikeitsschild.png}
+	\caption{Verwendete Schilder. Links: Auf Höhe des Schildes 2 s anhalten. Mitte: Auf die andere Spur wechseln. Rechts: Geschwindigkeit verringern auf 1 km/h für 10 s}
+	\label{fig:v1}
+\end{figure}
+
+\subsection{Erster Ansatz: Find-Object}
+Unser erster Ansatz für die Schilderkennung war es, das ROS-Packet Find-Object von IntRoLab \cite{findObject} zu benutzen. Dieses ermöglicht es, mit einer grafischen Benutzeroberfläche (siehe Abbildung \ref{fig:v2}), Referenzbilder zu laden, welche im Live-Bild der Kamera gesucht werden. Verschiedenen Suchalgorithmen (SIFT, SURF, FAST, BRIEF etc.) und Parameter konnten für schnelles Prototyping ausprobiert werden. 
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{pics/find_object_sceenshot.png}
+	\caption{Grafische Benutzeroberfläche von Find-Object. Links: Referenzbilder. Mitte: Kamerabild. Rechts: Parameter.}
+	\label{fig:v2}
+\end{figure}
+
+\subparagraph{Probleme mit diesem Ansatz}
+Als wir die Schilderkennung und den Regler für die Steuerung gleichzeitig laufen ließen, begann das Auto stark zu schwingen und es war diesem nicht mehr möglich die Spur korrekt zu halten. Die Performanz-Probleme konnten wir auf die CPU zurückführen, welche alleine durch die Verwendung der Kinect-Kamera zu ca. 50 \% ausgelastet war. Außerdem ist das Paket Find-Object mit seinen umfangreichen Funktionen (von denen wir nicht alle benötigten), sehr rechenintensiv. So musste ein anderer Ansatz mit einem simplen, überschaubaren Codeumfang angewendet werden.
+
+\subsection{Finaler Ansatz: Schilderkennung mit SURF}
+Mit dem ersten Ansatz hatten wir experimentell ermittelt, dass der Suchalgorithmus SURF (Speeded Up Robust Features) \cite{bay2006surf} für unser Anwendungsszenario am schnellsten und robustesten funktioniert. Schilder werden unabhängig von Größe und Orientation erkannt.
+
+Als Code-Basis haben wir bestehenden OpenCV-Beispielcode verwendet. Diesen haben wir für unsere Zwecke angepasst, damit dieser mit ROS und der Kinect-Kamera kompatibel ist, und haben Funktionen wie Multi-Objekt-Erkennung hinzugefügt.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{pics/Schildererkennung-Pipeline.png}
+	\caption{Schilderkennungs-Pipeline}
+	\label{fig:v3}
+\end{figure}
+
+Um die Funktionsweise unseres Ansatzes zu erklären, gehen wir die Schilderkennung-Pipeline Schritt für Schritt durch:
+
+\subparagraph{Schritt 1}: Schild-Referenzbilder und das aktuellste Bild der Kamera werden geladen.
+
+\subparagraph{Schritt 2}: Beide Bilder werden in Graustufen konvertiert, da Farbinformationen sind für diese Art der Objekterkennung irrelevant sind.
+
+\subparagraph{Schritt 3}: Mit dem Detektor SURF wird in beiden Bildern separat nach markanten Punkten (auch Keypoint oder Point-of-Interest genannt) gesucht. Jeder Keypoint wird als ein Vektor von Eigenschaften (Koordinaten, Durchmesser, Winkel, Octave etc.) beschrieben.
+
+\subparagraph{Schritt 4}: Nun wird nach Übereinstimmungen zwischen den Keypoints des Referenzbildes und des Kamerabildes gesucht. In diesem Schritt werden für jeden Keypoint des Referenzbildes zwei Keypoints aus dem Kamera-Bild gesucht, welche die größte Gemeinsamkeit haben. Dafür wird der Nearest-Neighbor Algorithmus von FLANN (Fast Library for Approximate Nearest Neighbors) \cite{flann_pami_2014} genutzt.
+
+\subparagraph{Schritt 5}: Anschließend werden die Übereinstimmungen gefiltert, so dass wir nur noch die besten Übereinstimmungen haben. Dazu verwenden wir den Lowe's-Ratio-Test \cite{lowe2004distinctive}, dieser schaut sich die Distanz zwischen dem Keypoint des Referenzbild und dem des Kamerabild an und filtert Übereinstimmungen aus, welche den Vorgegebenen Threshold nicht erfüllen. Mit Distanz ist hier keine physikalische Distanz gemeint, sondern die Euklidische Distanz von zwei Keypoint-Vektoren. Dieser gibt den Wert der Ähnlichkeit an.
+
+\subparagraph{Schritt 6}: Wenn ein Schild gefunden wird, wird die physikalische Distanz vom Schild zum Auto ermittelt und diese wird auf einem ROS-Topic ausgegeben: \\
+Wenn das Stoppschild erkannt wird: /sign\_detection\_node/StopSign \\
+Wenn das Geschwindigkeitsschild erkannt wird: /sign\_detection\_node/LaneSign \\
+Wenn das Spurwechselschild erkannt wird: /sign\_detection\_node/SpeedSign 
+
+\subparagraph{Distanz vom Auto zum Schild ermitteln}
+Um die Distanz vom Auto zum Schild zu ermitteln, war unsere erste Idee, das Tiefenbild der Kinect zu nutzen. Dieses verbraucht aber zu viel Rechenleistung, sodass die Regelung nicht mehr richtig funktioniert.
+
+Daher verwenden wir die Fläche des gefundenen Bildes, um diese in eine Distanz umzurechnen. Dafür haben wir für verschiedene Distanzen gemessen, wie groß die Fläche ist und haben mittels Regressionsanalyse nach einer Funktion gesucht, welche die Messpunkte möglichst gut beschreibt. Wie in Abbildung \ref{fig:v4} zu sehen, werden die Messpunkte am besten von einer Potenzfunktion beschrieben: 
+
+\begin{align*}
+	d = 385 * A^{-0.6385}
+\end{align*}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.8\textwidth]{pics/Schildererkennung_Distanz.png}
+	\caption{Messpunkte für Verhältnis Fläche zu Distanz und verschiedene Regressionsfunktionen}
+	\label{fig:v4}
+\end{figure}
+
+\subsection{Ausblick: Verbesserungsmöglichkeiten}
+Man kann überlegen, einen anderen Deskriptor als SURF zu verwenden. Dieser ist zwar für Forschungszwecke lizenzfrei aber nicht für kommerzielle Zwecke. Womöglich ist der lizenzfreie (BSD-Lizenz) Deskriptor ORB \cite{rublee2011orb} eine bessere Lösung.
+
+Bei der aktuellen Implementierung wird jedes Mal wenn ein neues Kamera-Bild reinkommt, beim Referenzbild des Schildes von neuem die Keypoints gesucht. Da diese sich aber nicht verändern, könnte man diesen Schritt auslagern, sodass er nur ein Mal ausgeführt wird.
+
+Außerdem könnte man die Schilderkennung erweitern, sodass mehr als nur drei Schilder erkannt werden.
+

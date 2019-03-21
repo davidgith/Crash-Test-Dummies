@@ -1,18 +1,28 @@
 \babel@toc {ngerman}{}
-\contentsline {section}{\numberline {1}Einf\"uhrung}{1}
-\contentsline {paragraph}{Fahrzeug}{1}
-\contentsline {paragraph}{Aufgaben}{1}
-\contentsline {section}{\numberline {2}Projektorganisation}{2}
-\contentsline {subparagraph}{Trello}{2}
-\contentsline {subparagraph}{Github}{2}
-\contentsline {subparagraph}{OpenCV}{2}
-\contentsline {subparagraph}{quadprog++}{2}
-\contentsline {section}{\numberline {3}Testprotokoll}{3}
-\contentsline {section}{\numberline {4}Regelans\"atze}{4}
-\contentsline {subsection}{\numberline {4.1}PID-Regelungsansatz}{4}
-\contentsline {subparagraph}{Bildverarbeitung}{4}
-\contentsline {subparagraph}{Regelkreis}{5}
-\contentsline {subsection}{\numberline {4.2}Modellpr\"adiktiver Regelungansatz}{6}
-\contentsline {section}{\numberline {5}Schilderkennung}{12}
-\contentsline {section}{\numberline {6}Auswertung}{13}
-\contentsline {section}{\numberline {7}Konklusion}{14}
+\contentsline {section}{\numberline {1}Einf\"uhrung}{1}% 
+\contentsline {paragraph}{Fahrzeug}{1}% 
+\contentsline {paragraph}{Aufgaben}{1}% 
+\contentsline {section}{\numberline {2}Projektorganisation}{2}% 
+\contentsline {subparagraph}{Trello}{2}% 
+\contentsline {subparagraph}{Github}{2}% 
+\contentsline {subparagraph}{OpenCV}{2}% 
+\contentsline {subparagraph}{quadprog++}{2}% 
+\contentsline {section}{\numberline {3}Testprotokoll}{3}% 
+\contentsline {section}{\numberline {4}Regelans\"atze}{4}% 
+\contentsline {subsection}{\numberline {4.1}PID-Regelungsansatz}{4}% 
+\contentsline {subparagraph}{Bildverarbeitung}{4}% 
+\contentsline {subparagraph}{Regelkreis}{5}% 
+\contentsline {subsection}{\numberline {4.2}Modellpr\"adiktiver Regelungansatz}{6}% 
+\contentsline {section}{\numberline {5}Schilderkennung}{12}% 
+\contentsline {subsection}{\numberline {5.1}Erster Ansatz: Find-Object}{12}% 
+\contentsline {subparagraph}{Probleme mit diesem Ansatz}{12}% 
+\contentsline {subsection}{\numberline {5.2}Finaler Ansatz: Schilderkennung mit SURF}{12}% 
+\contentsline {subparagraph}{Schritt 1}{13}% 
+\contentsline {subparagraph}{Schritt 2}{13}% 
+\contentsline {subparagraph}{Schritt 3}{13}% 
+\contentsline {subparagraph}{Schritt 4}{14}% 
+\contentsline {subparagraph}{Schritt 5}{14}% 
+\contentsline {subparagraph}{Schritt 6}{14}% 
+\contentsline {subparagraph}{Distanz vom Auto zum Schild ermitteln}{14}% 
+\contentsline {subsection}{\numberline {5.3}Ausblick: Verbesserungsm\"oglichkeiten}{14}% 
+\contentsline {section}{\numberline {6}Konklusion}{16}% 
