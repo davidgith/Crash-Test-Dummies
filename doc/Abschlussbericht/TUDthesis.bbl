@@ -30,6 +30,10 @@
   quadratic programs.
 \newblock {In: }\emph{Mathematical programming} 27 (1983), Nr. 1, S. 1--33
 
+\bibitem[Git]{Github}
+\emph{Github}.
+\newblock \url{https://github.com/}
+
 \bibitem[Hee]{doxygen}
 \textsc{Heesch}, Dimitri van:
 \newblock \emph{doxygen}.
@@ -69,5 +73,9 @@
   \textsc{Bradski}, Gary:
 \newblock ORB: An efficient alternative to SIFT or SURF.
 \newblock   (2011)
+
+\bibitem[Tre]{Trello}
+\emph{Trello}.
+\newblock \url{https://trello.com/de}
 
 \end{thebibliography}

@@ -1,12 +1,66 @@
-This is BibTeX, Version 0.99dThe top-level auxiliary file: TUDthesis.aux
+This is BibTeX, Version 0.99d (TeX Live 2018/W32TeX)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: TUDthesis.aux
 The style file: alphadin.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: literature.bib
-Warning--entry type for "OpenCV" isn't style-file defined
---line 28 of file literature.bib
-Warning--entry type for "doxygen" isn't style-file defined
---line 34 of file literature.bib
-Warning--entry type for "quadprog" isn't style-file defined
---line 49 of file literature.bib
-Warning--entry type for "findObject" isn't style-file defined
+Warning--entry type for "Trello" isn't style-file defined
 --line 55 of file literature.bib
-(There were 4 warnings)
+Warning--entry type for "Github" isn't style-file defined
+--line 65 of file literature.bib
+Warning--entry type for "OpenCV" isn't style-file defined
+--line 75 of file literature.bib
+Warning--entry type for "doxygen" isn't style-file defined
+--line 87 of file literature.bib
+Warning--entry type for "quadprog" isn't style-file defined
+--line 117 of file literature.bib
+Warning--entry type for "findObject" isn't style-file defined
+--line 129 of file literature.bib
+Warning--to sort, need author or key in Trello
+Warning--to sort, need author or key in Github
+You've used 13 entries,
+            4793 wiz_defined-function locations,
+            952 strings with 7675 characters,
+and the built_in function-call counts, 6377 in all, are:
+= -- 652
+> -- 163
+< -- 162
++ -- 186
+- -- 54
+* -- 378
+:= -- 1071
+add.period$ -- 13
+call.type$ -- 13
+change.case$ -- 58
+chr.to.int$ -- 13
+cite$ -- 17
+duplicate$ -- 206
+empty$ -- 472
+format.name$ -- 106
+if$ -- 1292
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 66
+newline$ -- 73
+num.names$ -- 33
+pop$ -- 108
+preamble$ -- 1
+purify$ -- 84
+quote$ -- 0
+skip$ -- 369
+stack$ -- 0
+substring$ -- 362
+swap$ -- 39
+text.length$ -- 29
+text.prefix$ -- 6
+top$ -- 0
+type$ -- 126
+warning$ -- 2
+while$ -- 52
+width$ -- 16
+write$ -- 154
+(There were 8 warnings)

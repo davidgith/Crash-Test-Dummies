@@ -1,20 +1,22 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6930 64-bit) (preloaded format=pdflatex 2019.2.28)  21 MAR 2019 23:42
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/W32TeX) (preloaded format=pdflatex 2019.1.25)  24 MAR 2019 00:27
 entering extended mode
-**./TUDthesis.tex
-(TUDthesis.tex
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**TUDthesis.tex
+(./TUDthesis.tex
 LaTeX2e <2018-12-01>
-(tudthesis.cls
+(./tudthesis.cls
 Document Class: tudthesis 2009/05/15 0.96 Joe Werner's TUD-Design-Manual packag
 e
-("C:\Program Files\MiKTeX 2.9\tex/latex/xkeyval\xkeyval.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/xkeyval/xkeyval.sty
 Package: xkeyval 2014/12/03 v2.7a package option processing (HA)
 
-("C:\Program Files\MiKTeX 2.9\tex/generic/xkeyval\xkeyval.tex"
-("C:\Program Files\MiKTeX 2.9\tex/generic/xkeyval\xkvutils.tex"
+(c:/texlive/2018/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(c:/texlive/2018/texmf-dist/tex/generic/xkeyval/xkvutils.tex
 \XKV@toks=\toks14
 \XKV@tempa@toks=\toks15
 
-("C:\Program Files\MiKTeX 2.9\tex/generic/xkeyval\keyval.tex"))
+(c:/texlive/2018/texmf-dist/tex/generic/xkeyval/keyval.tex))
 \XKV@depth=\count80
 File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 ))
@@ -30,11 +32,10 @@ Class tudthesis Info: Unknown option 'accentcolor=tud1c`. Pass to tudreport cla
 ss. on input line 37.
 Class tudthesis Info: Unknown option 'twoside`. Pass to tudreport class. on inp
 ut line 37.
-
-(tudreport.cls
+ (./tudreport.cls
 Document Class: tudreport 2009/11/17 1.13 Clemens von Loewenich's and Joe Werne
 r's TUD-Design package
-("C:\Program Files\MiKTeX 2.9\tex/latex/base\ifthen.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/base/ifthen.sty
 Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
 )
 Class tudreport Info: Option `paper=a4report' selected. on input line 142.
@@ -43,50 +44,38 @@ input line 144.
 Class tudreport Info: Unknown option 'twoside`. Pass to KOMA-Script class. on i
 nput line 144.
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/koma-script\scrartcl.cls
-Document Class: scrartcl 2016/06/14 v3.21 KOMA-Script document class (article)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/koma-script\scrkbase.sty
-Package: scrkbase 2016/06/14 v3.21 KOMA-Script package (KOMA-Script-dependent b
-asics and keyval usage)
+(c:/texlive/2018/texmf-dist/tex/latex/koma-script/scrartcl.cls
+Document Class: scrartcl 2018/12/30 v3.26a KOMA-Script document class (article)
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/koma-script\scrbase.sty
-Package: scrbase 2016/06/14 v3.21 KOMA-Script package (KOMA-Script-independent 
+(c:/texlive/2018/texmf-dist/tex/latex/koma-script/scrkbase.sty
+Package: scrkbase 2018/12/30 v3.26a KOMA-Script package (KOMA-Script-dependent 
 basics and keyval usage)
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/koma-script\scrlfile.sty
-Package: scrlfile 2016/06/14 v3.21 KOMA-Script package (loading files)
+(c:/texlive/2018/texmf-dist/tex/latex/koma-script/scrbase.sty
+Package: scrbase 2018/12/30 v3.26a KOMA-Script package (KOMA-Script-independent
+ basics and keyval usage)
 
-Package scrlfile, 2016/06/14 v3.21 KOMA-Script package (loading files)
-                  Copyright (C) Markus Kohm
-
-))) (C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/koma-script\tocbasic.sty
-Package: tocbasic 2016/06/14 v3.21 KOMA-Script package (handling toc-files)
+(c:/texlive/2018/texmf-dist/tex/latex/koma-script/scrlfile.sty
+Package: scrlfile 2018/12/30 v3.26a KOMA-Script package (loading files)
+)))
+(c:/texlive/2018/texmf-dist/tex/latex/koma-script/tocbasic.sty
+Package: tocbasic 2018/12/30 v3.26a KOMA-Script package (handling toc-files)
 \scr@dte@tocline@numberwidth=\skip41
 \scr@dte@tocline@numbox=\box27
 )
 Package tocbasic Info: omitting babel extension for `toc'
 (tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `toc' on input line 130.
-Package tocbasic Info: omitting babel extension for `lof'
-(tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `lof' on input line 131.
-Package tocbasic Info: omitting babel extension for `lot'
-(tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `lot' on input line 132.
+(tocbasic)             for `toc' on input line 134.
 Class scrartcl Info: File `scrsize11pt.clo' used instead of
-(scrartcl)           file `scrsize11.clo' to setup font sizes on input line 205
-2.
+(scrartcl)           file `scrsize11.clo' to setup font sizes on input line 214
+4.
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/koma-script\scrsize11pt.clo
-File: scrsize11pt.clo 2016/06/14 v3.21 KOMA-Script font size class option (11pt
+(c:/texlive/2018/texmf-dist/tex/latex/koma-script/scrsize11pt.clo
+File: scrsize11pt.clo 2018/12/30 v3.26a KOMA-Script font size class option (11p
+t)
 )
-) (C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/koma-script\typearea.sty
-Package: typearea 2016/06/14 v3.21 KOMA-Script package (type area)
-
-Package typearea, 2016/06/14 v3.21 KOMA-Script package (type area)
-                  Copyright (C) Frank Neukam, 1992-1994
-                  Copyright (C) Markus Kohm, 1994-
-
+(c:/texlive/2018/texmf-dist/tex/latex/koma-script/typearea.sty
+Package: typearea 2018/12/30 v3.26a KOMA-Script package (type area)
 \ta@bcor=\skip42
 \ta@div=\count81
 \ta@hblk=\skip43
@@ -109,7 +98,7 @@ Package typearea Info: These are the values describing the layout:
 (typearea)              \topskip        = 11.0pt
 (typearea)              \footskip       = 47.6pt
 (typearea)              \baselineskip   = 13.6pt
-(typearea)              on input line 1529.
+(typearea)              on input line 1714.
 )
 \c@part=\count82
 \c@section=\count83
@@ -117,47 +106,75 @@ Package typearea Info: These are the values describing the layout:
 \c@subsubsection=\count85
 \c@paragraph=\count86
 \c@subparagraph=\count87
-\scr@dte@part@maxnumwidth=\skip47
-\scr@dte@section@maxnumwidth=\skip48
+\scr@dte@section@maxnumwidth=\skip47
+Class scrartcl Info: using compatibility default `runin=bysign'
+(scrartcl)           for `\section on input line 4443.
+Class scrartcl Info: using compatibility default `afterindent=bysign'
+(scrartcl)           for `\section on input line 4443.
+\scr@dte@part@maxnumwidth=\skip48
+Class scrartcl Info: using compatibility default `afterindent=false'
+(scrartcl)           for `\part on input line 4451.
 \scr@dte@subsection@maxnumwidth=\skip49
+Class scrartcl Info: using compatibility default `runin=bysign'
+(scrartcl)           for `\subsection on input line 4461.
+Class scrartcl Info: using compatibility default `afterindent=bysign'
+(scrartcl)           for `\subsection on input line 4461.
 \scr@dte@subsubsection@maxnumwidth=\skip50
+Class scrartcl Info: using compatibility default `runin=bysign'
+(scrartcl)           for `\subsubsection on input line 4471.
+Class scrartcl Info: using compatibility default `afterindent=bysign'
+(scrartcl)           for `\subsubsection on input line 4471.
 \scr@dte@paragraph@maxnumwidth=\skip51
+Class scrartcl Info: using compatibility default `runin=bysign'
+(scrartcl)           for `\paragraph on input line 4481.
+Class scrartcl Info: using compatibility default `afterindent=bysign'
+(scrartcl)           for `\paragraph on input line 4481.
 \scr@dte@subparagraph@maxnumwidth=\skip52
-LaTeX Info: Redefining \textsubscript on input line 4036.
+Class scrartcl Info: using compatibility default `runin=bysign'
+(scrartcl)           for `\subparagraph on input line 4491.
+Class scrartcl Info: using compatibility default `afterindent=bysign'
+(scrartcl)           for `\subparagraph on input line 4491.
 \abovecaptionskip=\skip53
 \belowcaptionskip=\skip54
 \c@pti@nb@sid@b@x=\box28
+Package tocbasic Info: omitting babel extension for `lof'
+(tocbasic)             because of feature `nobabel' available
+(tocbasic)             for `lof' on input line 5735.
+\scr@dte@figure@maxnumwidth=\skip55
 \c@figure=\count88
+Package tocbasic Info: omitting babel extension for `lot'
+(tocbasic)             because of feature `nobabel' available
+(tocbasic)             for `lot' on input line 5747.
+\scr@dte@table@maxnumwidth=\skip56
 \c@table=\count89
-Class scrartcl Info: Redefining `\numberline' on input line 5049.
+Class scrartcl Info: Redefining `\numberline' on input line 5911.
 \bibindent=\dimen102
-) ("C:\Program Files\MiKTeX 2.9\tex/latex/tools\calc.sty"
+)
+(c:/texlive/2018/texmf-dist/tex/latex/tools/calc.sty
 Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
 \calc@Acount=\count90
 \calc@Bcount=\count91
 \calc@Adimen=\dimen103
 \calc@Bdimen=\dimen104
-\calc@Askip=\skip55
-\calc@Bskip=\skip56
+\calc@Askip=\skip57
+\calc@Bskip=\skip58
 LaTeX Info: Redefining \setlength on input line 80.
 LaTeX Info: Redefining \addtolength on input line 81.
 \calc@Ccount=\count92
-\calc@Cskip=\skip57
-)
-(colours/tudcolours.sty
+\calc@Cskip=\skip59
+) (./colours/tudcolours.sty
 Package: colours/tudcolours 2009/03/12 1.9 Clemens von Loewenich's and Joe Wern
 er's TUD-Design package
-
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/xcolor\xcolor.sty
+(c:/texlive/2018/texmf-dist/tex/latex/xcolor/xcolor.sty
 Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/graphics-cfg\color.cfg
+(c:/texlive/2018/texmf-dist/tex/latex/graphics-cfg/color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package xcolor Info: Package option `override' ignored on input line 216.
 Package xcolor Info: Driver file: pdftex.def on input line 225.
 
-("C:\Program Files\MiKTeX 2.9\tex/latex/graphics-def\pdftex.def"
+(c:/texlive/2018/texmf-dist/tex/latex/graphics-def/pdftex.def
 File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
 )
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
@@ -170,25 +187,26 @@ Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
 )
-(colours/tudcolours.cfg
+(./colours/tudcolours.cfg
 File: tudcolours.cfg 2008/12/03
-) (colours/tudcolours.def
+) (./colours/tudcolours.def
 File: tudcolours.def 2008/12/03
-)) (report/tudreprt_fonts.sty
+))
+(./report/tudreprt_fonts.sty
 Package: report/tudreprt_fonts 2009/00/18 1.11 Clemens von Loewenich's and Joe 
 Werner's TUD-Design package
-
-(base/tudfonts.sty
+ (./base/tudfonts.sty
 Package: base/tudfonts 2009/09/18 1.12 Clemens von Loewenich's and Joe Werner's
  TUD-Design package
- ("C:\Program Files\MiKTeX 2.9\tex/latex/base\fontenc.sty"
+
+(c:/texlive/2018/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2018/08/11 v2.0j Standard LaTeX package
 
-("C:\Program Files\MiKTeX 2.9\tex/latex/base\t1enc.def"
+(c:/texlive/2018/texmf-dist/tex/latex/base/t1enc.def
 File: t1enc.def 2018/08/11 v2.0j Standard LaTeX file
 LaTeX Font Info:    Redeclaring font encoding T1 on input line 48.
 ))
-("C:\Program Files\MiKTeX 2.9\tex/latex/base\textcomp.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/base/textcomp.sty
 Package: textcomp 2018/08/11 v2.0j Standard LaTeX package
 Package textcomp Info: Sub-encoding information:
 (textcomp)               5 = only ISO-Adobe without \textcurrency
@@ -204,12 +222,12 @@ Package textcomp Info: Sub-encoding information:
 Package textcomp Info: Setting ? sub-encoding to TS1/1 on input line 79.
 Package textcomp Info: Changing ? sub-encoding to TS1/4 on input line 80.
 
-("C:\Program Files\MiKTeX 2.9\tex/latex/base\ts1enc.def"
+(c:/texlive/2018/texmf-dist/tex/latex/base/ts1enc.def
 File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
 Now handling font encoding TS1 ...
 ... processing UTF-8 mapping file for font encoding TS1
 
-("C:\Program Files\MiKTeX 2.9\tex/latex/base\ts1enc.dfu"
+(c:/texlive/2018/texmf-dist/tex/latex/base/ts1enc.dfu
 File: ts1enc.dfu 2018/10/05 v1.2f UTF-8 support for inputenc
    defining Unicode char U+00A2 (decimal 162)
    defining Unicode char U+00A3 (decimal 163)
@@ -346,28 +364,28 @@ Package textcomp Info: Setting pplj sub-encoding to TS1/3 on input line 407.
 Package textcomp Info: Setting ptmx sub-encoding to TS1/4 on input line 408.
 Package textcomp Info: Setting ptmj sub-encoding to TS1/4 on input line 409.
 )
-("C:\Program Files\MiKTeX 2.9\tex/latex/base\fix-cm.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/base/fix-cm.sty
 Package: fix-cm 2015/01/14 v1.1t fixes to LaTeX
 
-("C:\Program Files\MiKTeX 2.9\tex/latex/base\ts1enc.def"
+(c:/texlive/2018/texmf-dist/tex/latex/base/ts1enc.def
 File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
 LaTeX Font Info:    Redeclaring font encoding TS1 on input line 47.
 ))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/mathdesign\mathdesign.sty
+(c:/texlive/2018/texmf-dist/tex/latex/mathdesign/mathdesign.sty
 Package: mathdesign 2013/08/29 v2.31 Math Design Project
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/mathdesign/mdbch\mdbch.cfg)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/mathdesign/mdbch\mdbch.sty
+(c:/texlive/2018/texmf-dist/tex/latex/mathdesign/mdbch/mdbch.cfg)
+(c:/texlive/2018/texmf-dist/tex/latex/mathdesign/mdbch/mdbch.sty
 Package: mdbch 2013/08/29 v2.31 bitstream bitstream charter + mdbch (Math Desig
 n Project)
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/mathdesign\mdfont.def
+(c:/texlive/2018/texmf-dist/tex/latex/mathdesign/mdfont.def
 File: mdfont.def 2013/08/29 v2.31 (Math Design Project)
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/mathdesign\mdsffont.def
+(c:/texlive/2018/texmf-dist/tex/latex/mathdesign/mdsffont.def
 File: mdsffont.def 2013/08/29 v2.31 (Math Design Project)
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/mathdesign\mdttfont.def
+(c:/texlive/2018/texmf-dist/tex/latex/mathdesign/mdttfont.def
 File: mdttfont.def 2013/08/29 v2.31 (Math Design Project)
 )
 \symmdcal=\mathgroup4
@@ -423,7 +441,7 @@ LaTeX Font Info:    Overwriting math alphabet `\mathcal' in version `normal'
 LaTeX Font Info:    Try loading font information for T1+mdbch on input line 186
 .
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/mathdesign/mdbch\t1mdbch.fd
+(c:/texlive/2018/texmf-dist/tex/latex/mathdesign/mdbch/t1mdbch.fd
 File: t1mdbch.fd 2013/08/29 Fontinst v1.933 font definitions for T1/mdbch.
 )
 LaTeX Font Info:    Font shape `T1/mdbch/m/n' will be
@@ -443,11 +461,12 @@ LaTeX Font Info:    Overwriting symbol font `mathdesignB' in version `bold'
 \@emptytoks=\toks16
 LaTeX Font Info:    Redeclaring math accent \widetilde on input line 532.
 LaTeX Font Info:    Redeclaring math accent \widehat on input line 533.
-\rulethickness=\skip58
-) ("C:\Program Files\MiKTeX 2.9\tex/latex/base\fontenc.sty"
+\rulethickness=\skip60
+)
+(c:/texlive/2018/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2018/08/11 v2.0j Standard LaTeX package
 
-("C:\Program Files\MiKTeX 2.9\tex/latex/base\t1enc.def"
+(c:/texlive/2018/texmf-dist/tex/latex/base/t1enc.def
 File: t1enc.def 2018/08/11 v2.0j Standard LaTeX file
 LaTeX Font Info:    Redeclaring font encoding T1 on input line 48.
 )))
@@ -457,90 +476,93 @@ LaTeX Font Info:    Overwriting math alphabet `\mathmb' in version `normal'
 LaTeX Font Info:    Overwriting math alphabet `\mathmb' in version `bold'
 (Font)                  T1/5ch/mb/n --> T1/5ch/mb/n on input line 35.
 LaTeX Info: Redefining \em on input line 37.
-\fontheight=\skip59
-\fontdepth=\skip60
+\fontheight=\skip61
+\fontdepth=\skip62
 \fontstrutbox=\box29
 LaTeX Info: Redefining \LaTeX on input line 108.
 )
 LaTeX Font Info:    Font shape `T1/mdbch/m/n' will be
 (Font)              scaled to size 11.52008pt on input line 239.
 )
-\TUD@headfootsep=\skip61
- (base/tudpage.sty
+\TUD@headfootsep=\skip63
+ (./base/tudpage.sty
 Package: base/tudpage 2009/08/11 1.10 Clemens von Loewenich's and Joe Werner's 
 TUD-Design package
 
-(base/tudpaper.sty
+(./base/tudpaper.sty
 Package: base/tudpaper 2009/01/28 1.9 Clemens von Loewenich's and Joe Werner's 
 TUD-Design package
- ("C:\Program Files\MiKTeX 2.9\tex/latex/graphics\graphicx.sty"
+
+(c:/texlive/2018/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
- ("C:\Program Files\MiKTeX 2.9\tex/latex/graphics\graphics.sty"
+
+(c:/texlive/2018/texmf-dist/tex/latex/graphics/graphics.sty
 Package: graphics 2017/06/25 v1.2c Standard LaTeX Graphics (DPC,SPQR)
 
-("C:\Program Files\MiKTeX 2.9\tex/latex/graphics\trig.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/graphics/trig.sty
 Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/graphics-cfg\graphics.cfg
+(c:/texlive/2018/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 99.
 )
 \Gin@req@height=\dimen105
 \Gin@req@width=\dimen106
-) (C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/eso-pic\eso-pic.sty
-Package: eso-pic 2015/07/21 v2.0g eso-pic (RN)
+)
+(c:/texlive/2018/texmf-dist/tex/latex/eso-pic/eso-pic.sty
+Package: eso-pic 2018/04/12 v2.0h eso-pic (RN)
 
-("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\atbegshi.sty"
+(c:/texlive/2018/texmf-dist/tex/generic/oberdiek/atbegshi.sty
 Package: atbegshi 2016/06/09 v1.18 At begin shipout hook (HO)
 
-("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\infwarerr.sty"
+(c:/texlive/2018/texmf-dist/tex/generic/oberdiek/infwarerr.sty
 Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
 )
-("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\ltxcmds.sty"
+(c:/texlive/2018/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
 Package: ltxcmds 2016/05/16 v1.23 LaTeX kernel commands for general use (HO)
 )
-("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\ifpdf.sty"
+(c:/texlive/2018/texmf-dist/tex/generic/oberdiek/ifpdf.sty
 Package: ifpdf 2018/09/07 v3.3 Provides the ifpdf switch
 )))
-\TUD@logo@height=\skip62
-\TUD@logo@leftskip=\skip63
-\TUD@sep@top=\skip64
-\TUD@sep@left=\skip65
-\TUD@sep@right=\skip66
-\TUD@sep@bottom=\skip67
-\TUD@titlepos=\skip68
-\TUD@titlebox@sep@left=\skip69
-\TUD@titlebox@sep@right=\skip70
-\TUD@titlebox@sep@bottom=\skip71
-\TUD@subtitlebox@sep=\skip72
-\TUD@textwidth=\skip73
-\TUD@cols@width=\skip74
-\TUD@cols@sep=\skip75
+\TUD@logo@height=\skip64
+\TUD@logo@leftskip=\skip65
+\TUD@sep@top=\skip66
+\TUD@sep@left=\skip67
+\TUD@sep@right=\skip68
+\TUD@sep@bottom=\skip69
+\TUD@titlepos=\skip70
+\TUD@titlebox@sep@left=\skip71
+\TUD@titlebox@sep@right=\skip72
+\TUD@titlebox@sep@bottom=\skip73
+\TUD@subtitlebox@sep=\skip74
+\TUD@textwidth=\skip75
+\TUD@cols@width=\skip76
+\TUD@cols@sep=\skip77
 \c@TUD@cols@n=\count93
 
-(base/tudrules.sty
+(./base/tudrules.sty
 Package: base/tudrules 2008/10/09 1.6 Clemens von Loewenich's and Joe Werner's 
 TUD-Design package
-\TUD@indentbar@height=\skip76
-\TUD@indentbar@depth=\skip77
-\TUD@indentbar@totalheight=\skip78
-\@TUD@indentbar@width=\skip79
-\@TUD@largeruleheight=\skip80
-\@TUD@smallruleheight=\skip81
-\@TUD@rulesep=\skip82
-\@TUD@ruleheight=\skip83
+\TUD@indentbar@height=\skip78
+\TUD@indentbar@depth=\skip79
+\TUD@indentbar@totalheight=\skip80
+\@TUD@indentbar@width=\skip81
+\@TUD@largeruleheight=\skip82
+\@TUD@smallruleheight=\skip83
+\@TUD@rulesep=\skip84
+\@TUD@ruleheight=\skip85
 )
-\TUD@indentbarheight=\skip84
+\TUD@indentbarheight=\skip86
 
-("C:\Program Files\MiKTeX 2.9\tex/latex/geometry\geometry.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/geometry/geometry.sty
 Package: geometry 2018/04/16 v5.8 Page Geometry
 
-("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\ifvtex.sty"
+(c:/texlive/2018/texmf-dist/tex/generic/oberdiek/ifvtex.sty
 Package: ifvtex 2016/05/16 v1.6 Detect VTeX and its facilities (HO)
 Package ifvtex Info: VTeX not detected.
 )
-("C:\Program Files\MiKTeX 2.9\tex/generic/ifxetex\ifxetex.sty"
+(c:/texlive/2018/texmf-dist/tex/generic/ifxetex/ifxetex.sty
 Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 )
 \Gm@cnth=\count94
@@ -555,31 +577,37 @@ Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 \Gm@layouthoffset=\dimen113
 \Gm@layoutvoffset=\dimen114
 \Gm@dimlist=\toks17
-
-("C:\Program Files\MiKTeX 2.9\tex/latex/geometry\geometry.cfg")))
-\TUD@footparindent=\skip85
+))
+\TUD@footparindent=\skip87
 
 
 Class scrartcl Warning: Usage of package `fancyhdr' together
 (scrartcl)              with a KOMA-Script class is not recommended.
 (scrartcl)              I'd suggest to use 
-(scrartcl)              package `scrlayer-scrpage'.
+(scrartcl)              package `scrlayer' or `scrlayer-scrpage', because
+(scrartcl)              they support KOMA-Script classes.
+(scrartcl)              With `fancyhdr' several features of class `scrartcl'
+(scrartcl)              like options `headsepline', `footsepline' or command
+(scrartcl)              `\MakeMarkcase' and the commands `\setkomafont' and
+(scrartcl)              `\addtokomafont' for the page style elements need
+(scrartcl)              explicite user intervention to work.
 (scrartcl)              Nevertheless, using requested
 (scrartcl)              package `fancyhdr' on input line 47.
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/fancyhdr\fancyhdr.sty
-Package: fancyhdr 2016/09/06 3.8 Extensive control of page headers and footers
-\fancy@headwidth=\skip86
-\f@ncyO@elh=\skip87
-\f@ncyO@erh=\skip88
-\f@ncyO@olh=\skip89
-\f@ncyO@orh=\skip90
-\f@ncyO@elf=\skip91
-\f@ncyO@erf=\skip92
-\f@ncyO@olf=\skip93
-\f@ncyO@orf=\skip94
+(c:/texlive/2018/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+Package: fancyhdr 2017/06/30 v3.9a Extensive control of page headers and footer
+s
+\f@nch@headwidth=\skip88
+\f@nch@O@elh=\skip89
+\f@nch@O@erh=\skip90
+\f@nch@O@olh=\skip91
+\f@nch@O@orh=\skip92
+\f@nch@O@elf=\skip93
+\f@nch@O@erf=\skip94
+\f@nch@O@olf=\skip95
+\f@nch@O@orf=\skip96
 ))
-(base/tudheading.sty
+(./base/tudheading.sty
 Package: base/tudheading 2009/12/31 1.17 Clemens von Loewenich's and Joe Werner
 's TUD-Design package
 
@@ -594,11 +622,11 @@ Class scrartcl Warning: Usage of package `titlesec' together
 (scrartcl)              Nevertheless, using requested
 (scrartcl)              package `titlesec' on input line 12.
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/titlesec\titlesec.sty
+(c:/texlive/2018/texmf-dist/tex/latex/titlesec/titlesec.sty
 Package: titlesec 2016/03/21 v2.10.2 Sectioning titles
 \ttl@box=\box30
-\beforetitleunit=\skip95
-\aftertitleunit=\skip96
+\beforetitleunit=\skip97
+\aftertitleunit=\skip98
 \ttl@plus=\dimen115
 \ttl@minus=\dimen116
 \ttl@toksa=\toks18
@@ -628,103 +656,95 @@ Package titlesec Warning: Non standard sectioning command detected
 
 )
 
-Package scrartcl Warning: Activating an ugly workaround for a missing
-(scrartcl)                feature of package `titlesec` on input line 12.
+Class scrartcl Warning: Activating an ugly workaround for a missing
+(scrartcl)              feature of package `titlesec` on input line 12.
 
 \c@seclinedepth=\count97
-\TUD@chapter@diff@height=\skip97
+\TUD@chapter@diff@height=\skip99
 LaTeX Font Info:    Font shape `T1/mdbch/m/n' will be
 (Font)              scaled to size 12.09608pt on input line 75.
-\@TUD@above@headskip=\skip98
-\@TUD@below@headskip=\skip99
-(base/tudheading.def
+\@TUD@above@headskip=\skip100
+\@TUD@below@headskip=\skip101
+(./base/tudheading.def
 File: base/tudheading.def 2009/07/14
-\TUD@part@tmp@height=\skip100
-\TUD@part@tmp@depth=\skip101
+\TUD@part@tmp@height=\skip102
+\TUD@part@tmp@depth=\skip103
 \@TUD@partbox=\box31
 )
-\TUD@parind=\skip102
-\TUD@chapind=\skip103
-\TUD@secind=\skip104
-\TUD@subsecind=\skip105
-\TUD@subsubsecind=\skip106
+\TUD@parind=\skip104
+\TUD@chapind=\skip105
+\TUD@secind=\skip106
+\TUD@subsecind=\skip107
+\TUD@subsubsecind=\skip108
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/titlesec\block.tss
+(c:/texlive/2018/texmf-dist/tex/latex/titlesec/block.tss
 File: block.tss 2016/03/15
-))
-(base/tudredef.sty
+)) (./base/tudredef.sty
 Package: base/tudredef 2010/04/10 1.2 Clemens von Loewenich's and Joe Werner's 
 TUD-Design package
 \TUD@abstract@count=\count98
-) (report/tudreprt_title.sty
+) (./report/tudreprt_title.sty
 Package: report/tudreprt_title 2009/09/18 1.11 Clemens von Loewenich's and Joe 
 Werner's TUD-Design package
 \TUD@sponsorlogo=\box32
-\TUD@titleskip=\skip107
-)) (tudthess_title.sty
+\TUD@titleskip=\skip109
+)) (./tudthess_title.sty
 Package: tudthess_title 2010/03/22 0.99 Joe Werner's TUD-Design-Manual package
 ))
-("C:\Program Files\MiKTeX 2.9\tex/generic/babel\babel.sty"
+(c:/texlive/2018/texmf-dist/tex/generic/babel/babel.sty
 Package: babel 2018/11/13 3.27 The Babel package
 
-("C:\Program Files\MiKTeX 2.9\tex/generic/babel\switch.def"
+(c:/texlive/2018/texmf-dist/tex/generic/babel/switch.def
 File: switch.def 2018/11/13 3.27 Babel switching mechanism
 )
-*************************************
-* Local config file bblopts.cfg used
-*
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/arabi\bblopts.cfg
-File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of
- babel
-)
-("C:\Program Files\MiKTeX 2.9\tex/latex/babel-german\ngerman.ldf"
+(c:/texlive/2018/texmf-dist/tex/generic/babel-german/ngerman.ldf
 Language: ngerman 2018/12/08 v2.11 German support for babel (post-1996 orthogra
 phy)
 
-("C:\Program Files\MiKTeX 2.9\tex/latex/babel-german\ngermanb.ldf"
+(c:/texlive/2018/texmf-dist/tex/generic/babel-german/ngermanb.ldf
 Language: ngermanb 2018/12/08 v2.11 German support for babel (post-1996 orthogr
 aphy)
 
-("C:\Program Files\MiKTeX 2.9\tex/generic/babel\babel.def"
+(c:/texlive/2018/texmf-dist/tex/generic/babel/babel.def
 File: babel.def 2018/11/13 3.27 Babel common definitions
 \babel@savecnt=\count99
 \U@D=\dimen120
 
-("C:\Program Files\MiKTeX 2.9\tex/generic/babel\txtbabel.def")
+(c:/texlive/2018/texmf-dist/tex/generic/babel/txtbabel.def)
 \bbl@dirlevel=\count100
 )
 Package babel Info: Making " an active character on input line 121.
 )))
-("C:\Program Files\MiKTeX 2.9\tex/latex/base\inputenc.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2018/08/11 v1.3c Input encoding file
 \inpenc@prehook=\toks19
 \inpenc@posthook=\toks20
 
-("C:\Program Files\MiKTeX 2.9\tex/latex/base\latin1.def"
+(c:/texlive/2018/texmf-dist/tex/latex/base/latin1.def
 File: latin1.def 2018/08/11 v1.3c Input encoding file
 ))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/url\url.sty
+(c:/texlive/2018/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip10
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
-("C:\Program Files\MiKTeX 2.9\tex/latex/amsmath\amsmath.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2018/12/01 v2.17b AMS math features
-\@mathmargin=\skip108
+\@mathmargin=\skip110
 
 For additional information on amsmath, use the `?' option.
-("C:\Program Files\MiKTeX 2.9\tex/latex/amsmath\amstext.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/amsmath/amstext.sty
 Package: amstext 2000/06/29 v2.01 AMS text
 
-("C:\Program Files\MiKTeX 2.9\tex/latex/amsmath\amsgen.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks21
 \ex@=\dimen121
 ))
-("C:\Program Files\MiKTeX 2.9\tex/latex/amsmath\amsbsy.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 \pmbraise@=\dimen122
 )
-("C:\Program Files\MiKTeX 2.9\tex/latex/amsmath\amsopn.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 2016/03/08 v2.02 operator names
 )
 \inf@bad=\count101
@@ -759,13 +779,13 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 730.
 \totwidth@=\dimen128
 \lineht@=\dimen129
 \@envbody=\toks24
-\multlinegap=\skip109
-\multlinetaggap=\skip110
+\multlinegap=\skip111
+\multlinetaggap=\skip112
 \mathdisplay@stack=\toks25
 LaTeX Info: Redefining \[ on input line 2844.
 LaTeX Info: Redefining \] on input line 2845.
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/listings\listings.sty
+(c:/texlive/2018/texmf-dist/tex/latex/listings/listings.sty
 \lst@mode=\count113
 \lst@gtempboxa=\box35
 \lst@token=\toks26
@@ -779,63 +799,57 @@ LaTeX Info: Redefining \] on input line 2845.
 \lst@lineno=\count118
 \lst@maxwidth=\dimen133
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/listings\lstmisc.sty
-File: lstmisc.sty 2015/06/04 1.6 (Carsten Heinz)
+(c:/texlive/2018/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2018/09/02 1.7 (Carsten Heinz)
 \c@lstnumber=\count119
 \lst@skipnumbers=\count120
 \lst@framebox=\box36
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/listings\listings.cfg
-File: listings.cfg 2015/06/04 1.6 listings configuration
+(c:/texlive/2018/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2018/09/02 1.7 listings configuration
 ))
-Package: listings 2015/06/04 1.6 (Carsten Heinz)
+Package: listings 2018/09/02 1.7 (Carsten Heinz)
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/chngcntr\chngcntr.sty
+(c:/texlive/2018/texmf-dist/tex/latex/chngcntr/chngcntr.sty
 Package: chngcntr 2018/04/09 v1.1a change counter resetting
 Package chngcntr Info: \counterwithout already defined.
 (chngcntr)             Quitting chngcntr on input line 21.
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/pgfplots\pgfplots.sty
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots\pgfplots.revision
-.tex)
-Package: pgfplots 2016/08/10 v1.14 Data Visualization (1.14)
+(c:/texlive/2018/texmf-dist/tex/latex/pgfplots/pgfplots.sty
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/pgfplots.revision.tex)
+Package: pgfplots 2018/03/28 v1.16 Data Visualization (1.16)
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/pgf/frontendlayer\tikz.sty
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/pgf/basiclayer\pgf.sty
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/pgf/utilities\pgfrcs.sty
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/utilities\pgfutil-comm
-on.tex
+(c:/texlive/2018/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty
+(c:/texlive/2018/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty
+(c:/texlive/2018/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex
 \pgfutil@everybye=\toks27
 \pgfutil@tempdima=\dimen134
 \pgfutil@tempdimb=\dimen135
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/utilities\pgfutil-comm
-on-lists.tex))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/utilities\pgfutil-late
-x.def
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/utilities/pgfutil-common-lists.tex)
+) (c:/texlive/2018/texmf-dist/tex/generic/pgf/utilities/pgfutil-latex.def
 \pgfutil@abb=\box37
- (C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/ms\everyshi.sty
+
+(c:/texlive/2018/texmf-dist/tex/latex/ms/everyshi.sty
 Package: everyshi 2001/05/15 v3.00 EveryShipout Package (MS)
 ))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/utilities\pgfrcs.code.
-tex
-Package: pgfrcs 2015/08/07 v3.0.1a (rcs-revision 1.31)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/pgf.revision.tex)
+Package: pgfrcs 2019/01/05 v3.1 (3.1)
 ))
-Package: pgf 2015/08/07 v3.0.1a (rcs-revision 1.15)
+Package: pgf 2019/01/05 v3.1 (3.1)
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/pgf/basiclayer\pgfcore.sty
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/pgf/systemlayer\pgfsys.sty
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/systemlayer\pgfsys.cod
-e.tex
-Package: pgfsys 2014/07/09 v3.0.1a (rcs-revision 1.48)
+(c:/texlive/2018/texmf-dist/tex/latex/pgf/basiclayer/pgfcore.sty
+(c:/texlive/2018/texmf-dist/tex/latex/pgf/systemlayer/pgfsys.sty
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/systemlayer/pgfsys.code.tex
+Package: pgfsys 2019/01/05 v3.1 (3.1)
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/utilities\pgfkeys.code
-.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
 \pgfkeys@pathtoks=\toks28
 \pgfkeys@temptoks=\toks29
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/utilities\pgfkeysfilte
-red.code.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/utilities/pgfkeysfiltered.code.tex
 \pgfkeys@tmptoks=\toks30
 ))
 \pgf@x=\dimen136
@@ -855,73 +869,61 @@ red.code.tex
 \t@pgf@toka=\toks31
 \t@pgf@tokb=\toks32
 \t@pgf@tokc=\toks33
-
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/systemlayer\pgf.cfg
-File: pgf.cfg 2008/05/14  (rcs-revision 1.7)
+\pgf@sys@id@count=\count125
+ (c:/texlive/2018/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg
+File: pgf.cfg 2019/01/05 v3.1 (3.1)
 )
 Driver file for pgf: pgfsys-pdftex.def
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/systemlayer\pgfsys-pdf
-tex.def
-File: pgfsys-pdftex.def 2014/10/11  (rcs-revision 1.35)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-pdftex.def
+File: pgfsys-pdftex.def 2019/01/05 v3.1 (3.1)
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/systemlayer\pgfsys-com
-mon-pdf.def
-File: pgfsys-common-pdf.def 2013/10/10  (rcs-revision 1.13)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-common-pdf.def
+File: pgfsys-common-pdf.def 2019/01/05 v3.1 (3.1)
 )))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/systemlayer\pgfsyssoft
-path.code.tex
-File: pgfsyssoftpath.code.tex 2013/09/09  (rcs-revision 1.9)
-\pgfsyssoftpath@smallbuffer@items=\count125
-\pgfsyssoftpath@bigbuffer@items=\count126
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.tex
+File: pgfsyssoftpath.code.tex 2019/01/05 v3.1 (3.1)
+\pgfsyssoftpath@smallbuffer@items=\count126
+\pgfsyssoftpath@bigbuffer@items=\count127
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/systemlayer\pgfsysprot
-ocol.code.tex
-File: pgfsysprotocol.code.tex 2006/10/16  (rcs-revision 1.4)
-))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcore.cod
-e.tex
-Package: pgfcore 2010/04/11 v3.0.1a (rcs-revision 1.7)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprotocol.code.tex
+File: pgfsysprotocol.code.tex 2019/01/05 v3.1 (3.1)
+)) (c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcore.code.tex
+Package: pgfcore 2019/01/05 v3.1 (3.1)
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/math\pgfmath.code.tex
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/math\pgfmathcalc.code.
-tex
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/math\pgfmathutil.code.
-tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/math\pgfmathparser.cod
-e.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/math/pgfmathcalc.code.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.tex)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/math/pgfmathparser.code.tex
 \pgfmath@dimen=\dimen144
-\pgfmath@count=\count127
+\pgfmath@count=\count128
 \pgfmath@box=\box38
 \pgfmath@toks=\toks34
 \pgfmath@stack@operand=\toks35
 \pgfmath@stack@operation=\toks36
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/math\pgfmathfunctions.
-code.tex
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/math\pgfmathfunctions.
-basic.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/math\pgfmathfunctions.
-trigonometric.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/math\pgfmathfunctions.
-random.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/math\pgfmathfunctions.
-comparison.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/math\pgfmathfunctions.
-base.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/math\pgfmathfunctions.
-round.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/math\pgfmathfunctions.
-misc.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/math\pgfmathfunctions.
-integerarithmetics.code.tex)))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/math\pgfmathfloat.code
-.tex
-\c@pgfmathroundto@lastzeros=\count128
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.code.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.basic.code.te
+x)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.trigonometric
+.code.tex)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.random.code.t
+ex)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.comparison.co
+de.tex)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.base.code.tex
+)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.round.code.te
+x)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.misc.code.tex
+)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.integerarithm
+etics.code.tex)))
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code.tex
+\c@pgfmathroundto@lastzeros=\count129
 ))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcorepoin
-ts.code.tex
-File: pgfcorepoints.code.tex 2013/10/07  (rcs-revision 1.27)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoints.code.tex
+File: pgfcorepoints.code.tex 2019/01/05 v3.1 (3.1)
 \pgf@picminx=\dimen145
 \pgf@picmaxx=\dimen146
 \pgf@picminy=\dimen147
@@ -937,125 +939,112 @@ File: pgfcorepoints.code.tex 2013/10/07  (rcs-revision 1.27)
 \pgf@zx=\dimen157
 \pgf@zy=\dimen158
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcorepath
-construct.code.tex
-File: pgfcorepathconstruct.code.tex 2013/10/07  (rcs-revision 1.29)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathconstruct.cod
+e.tex
+File: pgfcorepathconstruct.code.tex 2019/01/05 v3.1 (3.1)
 \pgf@path@lastx=\dimen159
 \pgf@path@lasty=\dimen160
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcorepath
-usage.code.tex
-File: pgfcorepathusage.code.tex 2014/11/02  (rcs-revision 1.24)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathusage.code.te
+x
+File: pgfcorepathusage.code.tex 2019/01/05 v3.1 (3.1)
 \pgf@shorten@end@additional=\dimen161
 \pgf@shorten@start@additional=\dimen162
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcorescop
-es.code.tex
-File: pgfcorescopes.code.tex 2015/05/08  (rcs-revision 1.46)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcorescopes.code.tex
+File: pgfcorescopes.code.tex 2019/01/05 v3.1 (3.1)
 \pgfpic=\box39
 \pgf@hbox=\box40
 \pgf@layerbox@main=\box41
-\pgf@picture@serial@count=\count129
+\pgf@picture@serial@count=\count130
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcoregrap
-hicstate.code.tex
-File: pgfcoregraphicstate.code.tex 2014/11/02  (rcs-revision 1.12)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregraphicstate.code
+.tex
+File: pgfcoregraphicstate.code.tex 2019/01/05 v3.1 (3.1)
 \pgflinewidth=\dimen163
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcoretran
-sformations.code.tex
-File: pgfcoretransformations.code.tex 2015/08/07  (rcs-revision 1.20)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransformations.c
+ode.tex
+File: pgfcoretransformations.code.tex 2019/01/05 v3.1 (3.1)
 \pgf@pt@x=\dimen164
 \pgf@pt@y=\dimen165
 \pgf@pt@temp=\dimen166
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcorequic
-k.code.tex
-File: pgfcorequick.code.tex 2008/10/09  (rcs-revision 1.3)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcorequick.code.tex
+File: pgfcorequick.code.tex 2019/01/05 v3.1 (3.1)
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcoreobje
-cts.code.tex
-File: pgfcoreobjects.code.tex 2006/10/11  (rcs-revision 1.2)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreobjects.code.tex
+File: pgfcoreobjects.code.tex 2019/01/05 v3.1 (3.1)
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcorepath
-processing.code.tex
-File: pgfcorepathprocessing.code.tex 2013/09/09  (rcs-revision 1.9)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathprocessing.co
+de.tex
+File: pgfcorepathprocessing.code.tex 2019/01/05 v3.1 (3.1)
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcorearro
-ws.code.tex
-File: pgfcorearrows.code.tex 2015/05/14  (rcs-revision 1.43)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcorearrows.code.tex
+File: pgfcorearrows.code.tex 2019/01/05 v3.1 (3.1)
 \pgfarrowsep=\dimen167
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcoreshad
-e.code.tex
-File: pgfcoreshade.code.tex 2013/07/15  (rcs-revision 1.15)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex
+File: pgfcoreshade.code.tex 2019/01/05 v3.1 (3.1)
 \pgf@max=\dimen168
-\pgf@sys@shading@range@num=\count130
+\pgf@sys@shading@range@num=\count131
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcoreimag
-e.code.tex
-File: pgfcoreimage.code.tex 2013/07/15  (rcs-revision 1.18)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex
+File: pgfcoreimage.code.tex 2019/01/05 v3.1 (3.1)
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcoreexte
-rnal.code.tex
-File: pgfcoreexternal.code.tex 2014/07/09  (rcs-revision 1.21)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreexternal.code.tex
+File: pgfcoreexternal.code.tex 2019/01/05 v3.1 (3.1)
 \pgfexternal@startupbox=\box42
 ))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcorelaye
-rs.code.tex
-File: pgfcorelayers.code.tex 2013/07/18  (rcs-revision 1.7)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcorelayers.code.tex
+File: pgfcorelayers.code.tex 2019/01/05 v3.1 (3.1)
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcoretran
-sparency.code.tex
-File: pgfcoretransparency.code.tex 2013/09/30  (rcs-revision 1.5)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransparency.code
+.tex
+File: pgfcoretransparency.code.tex 2019/01/05 v3.1 (3.1)
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/basiclayer\pgfcorepatt
-erns.code.tex
-File: pgfcorepatterns.code.tex 2013/11/07  (rcs-revision 1.5)
-)))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/modules\pgfmoduleshape
-s.code.tex
-File: pgfmoduleshapes.code.tex 2014/03/21  (rcs-revision 1.35)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepatterns.code.tex
+File: pgfcorepatterns.code.tex 2019/01/05 v3.1 (3.1)
+) (c:/texlive/2018/texmf-dist/tex/generic/pgf/basiclayer/pgfcorerdf.code.tex
+File: pgfcorerdf.code.tex 2019/01/05 v3.1 (3.1)
+))) (c:/texlive/2018/texmf-dist/tex/generic/pgf/modules/pgfmoduleshapes.code.te
+x
+File: pgfmoduleshapes.code.tex 2019/01/05 v3.1 (3.1)
 \pgfnodeparttextbox=\box43
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/modules\pgfmoduleplot.
-code.tex
-File: pgfmoduleplot.code.tex 2015/08/03  (rcs-revision 1.13)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/modules/pgfmoduleplot.code.tex
+File: pgfmoduleplot.code.tex 2019/01/05 v3.1 (3.1)
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/pgf/compatibility\pgfcomp-ve
-rsion-0-65.sty
-Package: pgfcomp-version-0-65 2007/07/03 v3.0.1a (rcs-revision 1.7)
+(c:/texlive/2018/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-0-65.st
+y
+Package: pgfcomp-version-0-65 2019/01/05 v3.1 (3.1)
 \pgf@nodesepstart=\dimen169
 \pgf@nodesepend=\dimen170
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/pgf/compatibility\pgfcomp-ve
-rsion-1-18.sty
-Package: pgfcomp-version-1-18 2007/07/23 v3.0.1a (rcs-revision 1.1)
-))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/pgf/utilities\pgffor.sty
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/pgf/utilities\pgfkeys.sty
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/utilities\pgfkeys.code
-.tex)) (C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/pgf/math\pgfmath.sty
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/math\pgfmath.code.tex)
-)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/utilities\pgffor.code.
-tex
-Package: pgffor 2013/12/13 v3.0.1a (rcs-revision 1.25)
+(c:/texlive/2018/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-1-18.st
+y
+Package: pgfcomp-version-1-18 2019/01/05 v3.1 (3.1)
+)) (c:/texlive/2018/texmf-dist/tex/latex/pgf/utilities/pgffor.sty
+(c:/texlive/2018/texmf-dist/tex/latex/pgf/utilities/pgfkeys.sty
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex))
+(c:/texlive/2018/texmf-dist/tex/latex/pgf/math/pgfmath.sty
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex))
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/utilities/pgffor.code.tex
+Package: pgffor 2019/01/05 v3.1 (3.1)
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/math\pgfmath.code.tex)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)
 \pgffor@iter=\dimen171
 \pgffor@skip=\dimen172
 \pgffor@stack=\toks37
 \pgffor@toks=\toks38
 ))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/frontendlayer/tikz\tik
-z.code.tex
-Package: tikz 2015/08/07 v3.0.1a (rcs-revision 1.151)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
+Package: tikz 2019/01/05 v3.1 (3.1)
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/libraries\pgflibrarypl
-othandlers.code.tex
-File: pgflibraryplothandlers.code.tex 2013/08/31 v3.0.1a (rcs-revision 1.20)
-\pgf@plot@mark@count=\count131
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers.co
+de.tex
+File: pgflibraryplothandlers.code.tex 2019/01/05 v3.1 (3.1)
+\pgf@plot@mark@count=\count132
 \pgfplotmarksize=\dimen173
 )
 \tikz@lastx=\dimen174
@@ -1068,130 +1057,115 @@ File: pgflibraryplothandlers.code.tex 2013/08/31 v3.0.1a (rcs-revision 1.20)
 \tikz@figbox@bg=\box45
 \tikz@tempbox=\box46
 \tikz@tempbox@bg=\box47
-\tikztreelevel=\count132
-\tikznumberofchildren=\count133
-\tikznumberofcurrentchild=\count134
-\tikz@fig@count=\count135
+\tikztreelevel=\count133
+\tikznumberofchildren=\count134
+\tikznumberofcurrentchild=\count135
+\tikz@fig@count=\count136
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/modules\pgfmodulematri
-x.code.tex
-File: pgfmodulematrix.code.tex 2013/09/17  (rcs-revision 1.8)
-\pgfmatrixcurrentrow=\count136
-\pgfmatrixcurrentcolumn=\count137
-\pgf@matrix@numberofcolumns=\count138
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.code.tex
+File: pgfmodulematrix.code.tex 2019/01/05 v3.1 (3.1)
+\pgfmatrixcurrentrow=\count137
+\pgfmatrixcurrentcolumn=\count138
+\pgf@matrix@numberofcolumns=\count139
 )
-\tikz@expandcount=\count139
+\tikz@expandcount=\count140
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/frontendlayer/tikz/lib
-raries\tikzlibrarytopaths.code.tex
-File: tikzlibrarytopaths.code.tex 2008/06/17 v3.0.1a (rcs-revision 1.2)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzli
+brarytopaths.code.tex
+File: tikzlibrarytopaths.code.tex 2019/01/05 v3.1 (3.1)
 )))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots\pgfplots.code.tex
-
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots\pgfplotscore.code
-.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/pgfplots.code.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/pgfplotscore.code.tex
 \t@pgfplots@toka=\toks39
 \t@pgfplots@tokb=\toks40
 \t@pgfplots@tokc=\toks41
 \pgfplots@tmpa=\dimen180
-\c@pgfplots@coordindex=\count140
-\c@pgfplots@scanlineindex=\count141
+\c@pgfplots@coordindex=\count141
+\c@pgfplots@scanlineindex=\count142
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/sys\pgfplotssysge
-neric.code.tex))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/libs\pgfplotslibr
-ary.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/oldpgfcompatib\pg
-fplotsoldpgfsupp_loader.code.tex
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/libraries\pgflibraryfp
-u.code.tex)
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/sys/pgfplotssysgeneric.code.te
+x))
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/libs/pgfplotslibrary.code.tex)
+
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/oldpgfcompatib/pgfplotsoldpgfs
+upp_loader.code.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/libraries/pgflibraryfpu.code.tex)
 Package pgfplots: loading complementary arithmetics for your pgf version...
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/oldpgfcompatib\pg
-fplotsoldpgfsupp_pgflibraryfpu.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/oldpgfcompatib\pg
-fplotsoldpgfsupp_pgfmathfloat.code.tex
-\c@pgfmathroundto@lastzeros=\count142
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/oldpgfcompatib/pgfplotsoldpgfs
+upp_pgflibraryfpu.code.tex)
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/oldpgfcompatib/pgfplotsoldpgfs
+upp_pgfmathfloat.code.tex
+\c@pgfmathroundto@lastzeros=\count143
 ))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/util\pgfplotsutil
-.code.tex
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/liststructure\pgf
-plotsliststructure.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/liststructure\pgf
-plotsliststructureext.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/liststructure\pgf
-plotsarray.code.tex
-\c@pgfplotsarray@tmp=\count143
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/util/pgfplotsutil.code.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotsliststru
+cture.code.tex)
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotsliststru
+ctureext.code.tex)
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotsarray.co
+de.tex
+\c@pgfplotsarray@tmp=\count144
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/liststructure\pgf
-plotsmatrix.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/numtable\pgfplots
-tableshared.code.tex
-\c@pgfplotstable@counta=\count144
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotsmatrix.c
+ode.tex)
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/numtable/pgfplotstableshared.c
+ode.tex
+\c@pgfplotstable@counta=\count145
 \t@pgfplotstable@a=\toks42
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/liststructure\pgf
-plotsdeque.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/util\pgfplotsbina
-ry.code.tex
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/util\pgfplotsbina
-ry.data.code.tex))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/util\pgfplotsutil
-.verb.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/libs\pgflibrarypg
-fplots.surfshading.code.tex
-\c@pgfplotslibrarysurf@no=\count145
-
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/sys\pgflibrarypgf
-plots.surfshading.pgfsys-pdftex.def)))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/util\pgfplotscolo
-rmap.code.tex
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots/util\pgfplotscolo
-r.code.tex))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots\pgfplotsstackedpl
-ots.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots\pgfplotsplothandl
-ers.code.tex
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots\pgfplotsmeshploth
-andler.code.tex
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots\pgfplotsmeshploti
-mage.code.tex)))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots\pgfplots.scaling.
-code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots\pgfplotscoordproc
-essing.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots\pgfplots.errorbar
-s.code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots\pgfplots.markers.
-code.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots\pgfplotsticks.cod
-e.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgfplots\pgfplots.paths.co
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotsdeque.co
 de.tex)
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/frontendlayer/tikz/lib
-raries\tikzlibrarydecorations.code.tex
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/modules\pgfmoduledecor
-ations.code.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/util/pgfplotsbinary.code.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/util/pgfplotsbinary.data.code.
+tex))
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/util/pgfplotsutil.verb.code.te
+x)
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/libs/pgflibrarypgfplots.surfsh
+ading.code.tex
+\c@pgfplotslibrarysurf@no=\count146
+
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/sys/pgflibrarypgfplots.surfsha
+ding.pgfsys-pdftex.def)))
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/util/pgfplotscolormap.code.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/util/pgfplotscolor.code.tex))
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/pgfplotsstackedplots.code.tex)
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/pgfplotsplothandlers.code.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/pgfplotsmeshplothandler.code.t
+ex
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/pgfplotsmeshplotimage.code.tex
+))) (c:/texlive/2018/texmf-dist/tex/generic/pgfplots/pgfplots.scaling.code.tex)
+
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/pgfplotscoordprocessing.code.t
+ex)
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/pgfplots.errorbars.code.tex)
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/pgfplots.markers.code.tex)
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/pgfplotsticks.code.tex)
+(c:/texlive/2018/texmf-dist/tex/generic/pgfplots/pgfplots.paths.code.tex)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzli
+brarydecorations.code.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/modules/pgfmoduledecorations.code.t
+ex
 \pgfdecoratedcompleteddistance=\dimen181
 \pgfdecoratedremainingdistance=\dimen182
 \pgfdecoratedinputsegmentcompleteddistance=\dimen183
 \pgfdecoratedinputsegmentremainingdistance=\dimen184
 \pgf@decorate@distancetomove=\dimen185
-\pgf@decorate@repeatstate=\count146
+\pgf@decorate@repeatstate=\count147
 \pgfdecorationsegmentamplitude=\dimen186
 \pgfdecorationsegmentlength=\dimen187
 )
 \tikz@lib@dec@box=\box48
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/frontendlayer/tikz/lib
-raries\tikzlibrarydecorations.pathmorphing.code.tex
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/libraries/decorations\
-pgflibrarydecorations.pathmorphing.code.tex))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/frontendlayer/tikz/lib
-raries\tikzlibrarydecorations.pathreplacing.code.tex
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/libraries/decorations\
-pgflibrarydecorations.pathreplacing.code.tex))
-\pgfplots@numplots=\count147
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzli
+brarydecorations.pathmorphing.code.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/libraries/decorations/pgflibrarydec
+orations.pathmorphing.code.tex))
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzli
+brarydecorations.pathreplacing.code.tex
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/libraries/decorations/pgflibrarydec
+orations.pathreplacing.code.tex))
+\pgfplots@numplots=\count148
 \pgfplots@xmin@reg=\dimen188
 \pgfplots@xmax@reg=\dimen189
 \pgfplots@ymin@reg=\dimen190
@@ -1199,27 +1173,27 @@ pgflibrarydecorations.pathreplacing.code.tex))
 \pgfplots@zmin@reg=\dimen192
 \pgfplots@zmax@reg=\dimen193
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/frontendlayer/tikz/lib
-raries\tikzlibraryplotmarks.code.tex
-File: tikzlibraryplotmarks.code.tex 2008/01/09 v3.0.1a (rcs-revision 1.1)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzli
+braryplotmarks.code.tex
+File: tikzlibraryplotmarks.code.tex 2019/01/05 v3.1 (3.1)
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/generic/pgf/libraries\pgflibrarypl
-otmarks.code.tex
-File: pgflibraryplotmarks.code.tex 2015/08/03 v3.0.1a (rcs-revision 1.14)
-))) ("C:\Program Files\MiKTeX 2.9\tex/latex/tools\array.sty"
-Package: array 2018/11/13 v2.4j Tabular extension package (FMi)
+(c:/texlive/2018/texmf-dist/tex/generic/pgf/libraries/pgflibraryplotmarks.code.
+tex
+File: pgflibraryplotmarks.code.tex 2019/01/05 v3.1 (3.1)
+))) (c:/texlive/2018/texmf-dist/tex/latex/tools/array.sty
+Package: array 2018/12/30 v2.4k Tabular extension package (FMi)
 \col@sep=\dimen194
 \ar@mcellbox=\box49
 \extrarowheight=\dimen195
 \NC@list=\toks43
-\extratabsurround=\skip111
-\backup@length=\skip112
+\extratabsurround=\skip113
+\backup@length=\skip114
 \ar@cellbox=\box50
 )
-("C:\Program Files\MiKTeX 2.9\tex/latex/amsfonts\amssymb.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
 
-("C:\Program Files\MiKTeX 2.9\tex/latex/amsfonts\amsfonts.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/amsfonts/amsfonts.sty
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \symAMSa=\mathgroup10
 \symAMSb=\mathgroup11
@@ -1449,32 +1423,32 @@ LaTeX Font Info:    Redeclaring math symbol \Bbbk on input line 261.
 LaTeX Font Info:    Redeclaring math symbol \hslash on input line 262.
 LaTeX Font Info:    Redeclaring math symbol \backepsilon on input line 265.
 )
-("C:\Program Files\MiKTeX 2.9\tex/latex/psnfss\pifont.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/psnfss/pifont.sty
 Package: pifont 2005/04/12 PSNFSS-v9.2a Pi font support (SPQR) 
 LaTeX Font Info:    Try loading font information for U+pzd on input line 63.
 
-("C:\Program Files\MiKTeX 2.9\tex/latex/psnfss\upzd.fd"
+(c:/texlive/2018/texmf-dist/tex/latex/psnfss/upzd.fd
 File: upzd.fd 2001/06/04 font definitions for U/pzd.
 )
 LaTeX Font Info:    Try loading font information for U+psy on input line 64.
 
-("C:\Program Files\MiKTeX 2.9\tex/latex/psnfss\upsy.fd"
+(c:/texlive/2018/texmf-dist/tex/latex/psnfss/upsy.fd
 File: upsy.fd 2001/06/04 font definitions for U/psy.
 ))
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/listings\lstlang1.sty
-File: lstlang1.sty 2015/06/04 1.6 listings language file
+(c:/texlive/2018/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2018/09/02 1.7 listings language file
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/listings\lstlang1.sty
-File: lstlang1.sty 2015/06/04 1.6 listings language file
+(c:/texlive/2018/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2018/09/02 1.7 listings language file
 )
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/listings\lstmisc.sty
-File: lstmisc.sty 2015/06/04 1.6 (Carsten Heinz)
+(c:/texlive/2018/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2018/09/02 1.7 (Carsten Heinz)
 )
 
 LaTeX Warning: Unused global option(s):
     [12pt,article,colorbacktitle,accentcolor=tud1c,instlogo].
 
-(TUDthesis.aux
+(./TUDthesis.aux
 
 LaTeX Warning: Label `eq:quer' multiply defined.
 
@@ -1518,57 +1492,63 @@ LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 67.
 LaTeX Font Info:    ... okay on input line 67.
 LaTeX Font Info:    Checking defaults for MDA/cmr/m/n on input line 67.
 LaTeX Font Info:    Try loading font information for MDA+cmr on input line 67.
- (C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/mathdesign\mdacmr.fd
+ (c:/texlive/2018/texmf-dist/tex/latex/mathdesign/mdacmr.fd
 File: mdacmr.fd 
 )
 LaTeX Font Info:    ... okay on input line 67.
 LaTeX Font Info:    Checking defaults for MDB/cmr/m/n on input line 67.
 LaTeX Font Info:    Try loading font information for MDB+cmr on input line 67.
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/mathdesign\mdbcmr.fd
+(c:/texlive/2018/texmf-dist/tex/latex/mathdesign/mdbcmr.fd
 File: mdbcmr.fd 
 )
 LaTeX Font Info:    ... okay on input line 67.
 LaTeX Font Info:    Try loading font information for T1+5ch on input line 67.
 
-("C:/Program Files/tuddesign\tex/latex/tex-tudfonts/softmake/charter\t15ch.fd"
+(c:/texlive/texmf-local/tex/latex/tex-tudfonts/softmake/charter/t15ch.fd
 File: t15ch.fd 2008/06/23 Fontinst v1.927 font definitions for T1/5ch.
-) (C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/context/base\supp-pdf.mkii
+)
+(c:/texlive/2018/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count148
+\scratchcounter=\count149
 \scratchdimen=\dimen196
 \scratchbox=\box51
-\nofMPsegments=\count149
-\nofMParguments=\count150
+\nofMPsegments=\count150
+\nofMParguments=\count151
 \everyMPshowfont=\toks44
-\MPscratchCnt=\count151
+\MPscratchCnt=\count152
 \MPscratchDim=\dimen197
-\MPnumerator=\count152
-\makeMPintoPDFobject=\count153
+\MPnumerator=\count153
+\makeMPintoPDFobject=\count154
 \everyMPtoPDFconversion=\toks45
-) ("C:\Program Files\MiKTeX 2.9\tex/latex/oberdiek\epstopdf-base.sty"
+) (c:/texlive/2018/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
 
-("C:\Program Files\MiKTeX 2.9\tex/latex/oberdiek\grfext.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/oberdiek/grfext.sty
 Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
 
-("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\kvdefinekeys.sty"
+(c:/texlive/2018/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
 Package: kvdefinekeys 2016/05/16 v1.4 Define keys (HO)
 ))
-("C:\Program Files\MiKTeX 2.9\tex/latex/oberdiek\kvoptions.sty"
+(c:/texlive/2018/texmf-dist/tex/latex/oberdiek/kvoptions.sty
 Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
 
-("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\kvsetkeys.sty"
+(c:/texlive/2018/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
 Package: kvsetkeys 2016/05/16 v1.17 Key value parser (HO)
 
-("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\etexcmds.sty"
+(c:/texlive/2018/texmf-dist/tex/generic/oberdiek/etexcmds.sty
 Package: etexcmds 2016/05/16 v1.6 Avoid name clashes with e-TeX commands (HO)
 
-("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\ifluatex.sty"
+(c:/texlive/2018/texmf-dist/tex/generic/oberdiek/ifluatex.sty
 Package: ifluatex 2016/05/16 v1.4 Provides the ifluatex switch (HO)
 Package ifluatex Info: LuaTeX not detected.
-))))
-("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\pdftexcmds.sty"
+)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+(c:/texlive/2018/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
 Package: pdftexcmds 2018/09/10 v0.29 Utility functions of pdfTeX for LuaTeX (HO
 )
 Package pdftexcmds Info: LuaTeX not detected.
@@ -1582,7 +1562,11 @@ Package grfext Info: Graphics extension search list:
 (grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
 G,.JBIG2,.JB2,.eps]
 (grfext)             \AppendGraphicsExtensions on input line 456.
-)
+
+(c:/texlive/2018/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
 
 Package mathdesign/mdbch Warning: Package 'amssymb' shouldn't be used in conjon
 ction with package mdbch, on input line 67.
@@ -1625,12 +1609,12 @@ nction with package mdbch, on input line 67.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-\TUD@part@topskip=\skip113
-\c@lstlisting=\count154
+\TUD@part@topskip=\skip115
+\c@lstlisting=\count155
 ABD: EveryShipout initializing macros
 
 Package pgfplots Warning: running in backwards compatibility mode (unsuitable t
-ick labels; missing features). Consider writing \pgfplotsset{compat=1.14} into 
+ick labels; missing features). Consider writing \pgfplotsset{compat=1.16} into 
 your preamble.
  on input line 67.
 
@@ -1638,39 +1622,38 @@ your preamble.
 Package  Warning: Command `\dateofsubmit ' ignored!
 ()                See documentation for details. on input line 83.
 
-\@TUD@tmp@baselineskip=\skip114
-\TUD@titleboxheight=\skip115
-\TUD@titleboxdepth=\skip116
-\TUD@subtitleboxheight=\skip117
-\TUD@subtitleboxdepth=\skip118
-\TUD@logoboxheight=\skip119
-\TUD@logoboxwidth=\skip120
-\TUD@colorbackheight=\skip121
-\TUD@colorbacktitleheight=\skip122
-\TUD@instboxheight=\skip123
-\TUD@instboxdepth=\skip124
-\TUD@instboxwidth=\skip125
-\TUD@instlogoheight=\skip126
-\TUD@instlogowidth=\skip127
-\TUD@sponsorheight=\skip128
-\TUD@refereeheight=\skip129
+\@TUD@tmp@baselineskip=\skip116
+\TUD@titleboxheight=\skip117
+\TUD@titleboxdepth=\skip118
+\TUD@subtitleboxheight=\skip119
+\TUD@subtitleboxdepth=\skip120
+\TUD@logoboxheight=\skip121
+\TUD@logoboxwidth=\skip122
+\TUD@colorbackheight=\skip123
+\TUD@colorbacktitleheight=\skip124
+\TUD@instboxheight=\skip125
+\TUD@instboxdepth=\skip126
+\TUD@instboxwidth=\skip127
+\TUD@instlogoheight=\skip128
+\TUD@instlogowidth=\skip129
+\TUD@sponsorheight=\skip130
+\TUD@refereeheight=\skip131
 \TUD@titlebox=\box53
 \TUD@subtitlebox=\box54
 \TUD@logobox=\box55
 \TUD@instbox=\box56
 \TUD@sponsorbox=\box57
 \TUD@refereebox=\box58
-\TUD@tmp@height=\skip130
-\TUD@tmp@depth=\skip131
+\TUD@tmp@height=\skip132
+\TUD@tmp@depth=\skip133
 LaTeX Font Info:    Try loading font information for T1+5fp on input line 84.
-("C:/Program Files/tuddesign\tex/latex/tex-tudfonts/softmake/frontpage\t15fp.fd
-"
+(c:/texlive/texmf-local/tex/latex/tex-tudfonts/softmake/frontpage/t15fp.fd
 File: t15fp.fd 2009/08/06 Fontinst v1.927 font definitions for T1/5fp.
 )
 LaTeX Font Info:    Try loading font information for OT1+mdbch on input line 84
 .
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/mathdesign/mdbch\ot1mdbch.fd
+(c:/texlive/2018/texmf-dist/tex/latex/mathdesign/mdbch/ot1mdbch.fd
 File: ot1mdbch.fd 2013/08/29 Fontinst v1.933 font definitions for OT1/mdbch.
 )
 LaTeX Font Info:    Font shape `OT1/mdbch/m/n' will be
@@ -1682,7 +1665,7 @@ LaTeX Font Info:    Font shape `OT1/mdbch/m/n' will be
 LaTeX Font Info:    Try loading font information for OML+mdbch on input line 84
 .
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/mathdesign/mdbch\omlmdbch.fd
+(c:/texlive/2018/texmf-dist/tex/latex/mathdesign/mdbch/omlmdbch.fd
 File: omlmdbch.fd 2013/08/29 Fontinst v1.933 font definitions for OML/mdbch.
 )
 LaTeX Font Info:    Font shape `OML/mdbch/m/it' will be
@@ -1694,7 +1677,7 @@ LaTeX Font Info:    Font shape `OML/mdbch/m/it' will be
 LaTeX Font Info:    Try loading font information for OMS+mdbch on input line 84
 .
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/mathdesign/mdbch\omsmdbch.fd
+(c:/texlive/2018/texmf-dist/tex/latex/mathdesign/mdbch/omsmdbch.fd
 File: omsmdbch.fd 2013/08/29 Fontinst v1.933 font definitions for OMS/mdbch.
 )
 LaTeX Font Info:    Font shape `OMS/mdbch/m/n' will be
@@ -1706,7 +1689,7 @@ LaTeX Font Info:    Font shape `OMS/mdbch/m/n' will be
 LaTeX Font Info:    Try loading font information for OMX+mdbch on input line 84
 .
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/mathdesign/mdbch\omxmdbch.fd
+(c:/texlive/2018/texmf-dist/tex/latex/mathdesign/mdbch/omxmdbch.fd
 File: omxmdbch.fd 2013/08/29 Fontinst v1.933 font definitions for OMX/mdbch.
 )
 LaTeX Font Info:    Font shape `OMX/mdbch/m/n' will be
@@ -1724,7 +1707,7 @@ LaTeX Font Info:    Font shape `OML/mdbch/m/n' will be
 LaTeX Font Info:    Try loading font information for MDA+mdbch on input line 84
 .
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/mathdesign/mdbch\mdamdbch.fd
+(c:/texlive/2018/texmf-dist/tex/latex/mathdesign/mdbch/mdamdbch.fd
 File: mdamdbch.fd 2013/08/29 Fontinst v1.933 font definitions for MDA/mdbch.
 )
 LaTeX Font Info:    Font shape `MDA/mdbch/m/n' will be
@@ -1736,7 +1719,7 @@ LaTeX Font Info:    Font shape `MDA/mdbch/m/n' will be
 LaTeX Font Info:    Try loading font information for MDB+mdbch on input line 84
 .
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/mathdesign/mdbch\mdbmdbch.fd
+(c:/texlive/2018/texmf-dist/tex/latex/mathdesign/mdbch/mdbmdbch.fd
 File: mdbmdbch.fd 2013/08/29 Fontinst v1.933 font definitions for MDB/mdbch.
 )
 LaTeX Font Info:    Font shape `MDB/mdbch/m/n' will be
@@ -1748,7 +1731,7 @@ LaTeX Font Info:    Font shape `MDB/mdbch/m/n' will be
 LaTeX Font Info:    Try loading font information for OML+mdput on input line 84
 .
 
-(C:\Users\Ich\AppData\Roaming\MiKTeX\2.9\tex/latex/mathdesign/mdput\omlmdput.fd
+(c:/texlive/2018/texmf-dist/tex/latex/mathdesign/mdput/omlmdput.fd
 File: omlmdput.fd 2013/08/29 Fontinst v1.933 font definitions for OML/mdput.
 )
 LaTeX Font Info:    Font shape `OML/mdput/m/it' will be
@@ -1758,15 +1741,16 @@ LaTeX Font Info:    Font shape `OML/mdput/m/it' will be
 LaTeX Font Info:    Font shape `OML/mdput/m/it' will be
 (Font)              scaled to size 7.05002pt on input line 84.
 LaTeX Font Info:    Try loading font information for U+msa on input line 84.
- ("C:\Program Files\MiKTeX 2.9\tex/latex/amsfonts\umsa.fd"
+
+(c:/texlive/2018/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Try loading font information for U+msb on input line 84.
 
-("C:\Program Files\MiKTeX 2.9\tex/latex/amsfonts\umsb.fd"
+(c:/texlive/2018/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-\@TUD@titlelines=\count155
+\@TUD@titlelines=\count156
 <logo/tud_logo.pdf, id=4, 157.58875pt x 63.23625pt>
 File: logo/tud_logo.pdf Graphic file (type pdf)
 <use logo/tud_logo.pdf>
@@ -1781,7 +1765,7 @@ File: logo/ESlogo.png Graphic file (type png)
 <use logo/ESlogo.png>
 Package pdftex.def Info: logo/ESlogo.png  used on input line 84.
 (pdftex.def)             Requested size: 44.88461pt x 41.31361pt.
-\temp@logoboxwidth=\skip132
+\temp@logoboxwidth=\skip134
 File: logo/ESlogo.png Graphic file (type png)
 <use logo/ESlogo.png>
 Package pdftex.def Info: logo/ESlogo.png  used on input line 84.
@@ -1826,7 +1810,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 84--84
 
  []
 
-[-1{C:/Users/Ich/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}
+[-1{c:/Users/apfel/.texlive2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 Non-PDF special ignored!
 <special> papersize=597.50787pt,845.04684pt
 
@@ -1837,9 +1821,15 @@ Non-PDF special ignored!
 ]
 LaTeX Font Info:    Try loading font information for T1+5sf on input line 85.
 
-("C:/Program Files/tuddesign\tex/latex/tex-tudfonts/softmake/stafford\t15sf.fd"
+(c:/texlive/texmf-local/tex/latex/tex-tudfonts/softmake/stafford/t15sf.fd
 File: t15sf.fd 2008/06/23 Fontinst v1.927 font definitions for T1/5sf.
 )
+Overfull \hbox (2.80533pt too wide) in paragraph at lines 85--85
+\T1/5sf/m/n/14.4 Hiermit versichere ich, die vorliegende Projektseminararbeit s
+elbstständig
+ []
+
+
 Underfull \hbox (badness 10000) in paragraph at lines 85--85
 
  []
@@ -1853,23 +1843,23 @@ Underfull \hbox (badness 10000) in paragraph at lines 85--85
 
 
 
-] (TUDthesis.toc)
+] (./TUDthesis.toc)
 \tf@toc=\write4
 \openout4 = `TUDthesis.toc'.
 
- [1] (chapters/Introduction.tex) [1
+ [1] (./chapters/Introduction.tex) [1
 
 ]
-(chapters/Organization.tex) [2
+(./chapters/Organization.tex) [2
 
-] (chapters/Protokoll.tex
+] (./chapters/Protokoll.tex
 Underfull \hbox (badness 10000) in paragraph at lines 2--3
 
  []
 
 ) [3
 
-] (chapters/Control.tex
+] (./chapters/Control.tex
 LaTeX Font Info:    Font shape `T1/mdbch/b/n' will be
 (Font)              scaled to size 12.00008pt on input line 14.
 LaTeX Font Info:    Font shape `T1/mdbch/b/n' will be
@@ -1883,65 +1873,59 @@ Underfull \hbox (badness 10000) in paragraph at lines 64--66
 
  []
 
-<pics/PID-Regelung.png, id=58, 408.5664pt x 176.3388pt>
+<pics/PID-Regelung.png, id=59, 408.5664pt x 176.3388pt>
 File: pics/PID-Regelung.png Graphic file (type png)
 <use pics/PID-Regelung.png>
 Package pdftex.def Info: pics/PID-Regelung.png  used on input line 69.
 (pdftex.def)             Requested size: 409.71692pt x 176.83614pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 70--70
-[][]\T1/5fp/m/n/12 PID-Regeldifferenz. Rot: Soll-li-nie. Blaue: La-ne-pi-xel. S
-chwarz:
- []
-
 [5
 
  <./pics/PID-Regelung.png>] [6
 
 ] [7]
-<pics/windowed.png, id=71, 720.44156pt x 360.59718pt>
+<pics/windowed.png, id=72, 720.44156pt x 360.59718pt>
 File: pics/windowed.png Graphic file (type png)
 <use pics/windowed.png>
 Package pdftex.def Info: pics/windowed.png  used on input line 183.
 (pdftex.def)             Requested size: 409.71692pt x 205.06934pt.
  [8 <./pics/windowed.png>]
-<pics/windowedorig.png, id=76, 720.44156pt x 303.38344pt>
+<pics/windowedorig.png, id=77, 720.44156pt x 303.38344pt>
 File: pics/windowedorig.png Graphic file (type png)
 <use pics/windowedorig.png>
 Package pdftex.def Info: pics/windowedorig.png  used on input line 196.
 (pdftex.def)             Requested size: 409.71692pt x 172.53223pt.
  [9 <./pics/windowedorig.png>]
-<pics/windoweddirect.png, id=80, 720.44156pt x 360.59718pt>
+<pics/windoweddirect.png, id=81, 720.44156pt x 360.59718pt>
 File: pics/windoweddirect.png Graphic file (type png)
 <use pics/windoweddirect.png>
 Package pdftex.def Info: pics/windoweddirect.png  used on input line 207.
 (pdftex.def)             Requested size: 409.71692pt x 205.06934pt.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 6316) has occurred while \output is active []
 
- [10 <./pics/windoweddirect.png>]) [11] (chapters/Vision.tex
-<pics/Stopschild.png, id=88, 1204.5pt x 1204.5pt>
+ [10 <./pics/windoweddirect.png>]) [11] (./chapters/Vision.tex
+<pics/Stopschild.png, id=89, 1204.5pt x 1204.5pt>
 File: pics/Stopschild.png Graphic file (type png)
 <use pics/Stopschild.png>
 Package pdftex.def Info: pics/Stopschild.png  used on input line 6.
 (pdftex.def)             Requested size: 113.81102pt x 113.80379pt.
-<pics/spurwechselschild.jpg, id=89, 501.875pt x 447.6725pt>
+<pics/spurwechselschild.jpg, id=90, 501.875pt x 447.6725pt>
 File: pics/spurwechselschild.jpg Graphic file (type jpg)
 <use pics/spurwechselschild.jpg>
 Package pdftex.def Info: pics/spurwechselschild.jpg  used on input line 7.
 (pdftex.def)             Requested size: 113.81102pt x 101.51434pt.
-<pics/Geschwindikeitsschild.png, id=90, 1204.5pt x 1204.5pt>
+<pics/Geschwindikeitsschild.png, id=91, 1204.5pt x 1204.5pt>
 File: pics/Geschwindikeitsschild.png Graphic file (type png)
 <use pics/Geschwindikeitsschild.png>
 Package pdftex.def Info: pics/Geschwindikeitsschild.png  used on input line 8.
 (pdftex.def)             Requested size: 113.81102pt x 113.80379pt.
-<pics/find_object_sceenshot.png, id=91, 1221.56375pt x 639.38875pt>
+<pics/find_object_sceenshot.png, id=92, 1221.56375pt x 639.38875pt>
 File: pics/find_object_sceenshot.png Graphic file (type png)
 <use pics/find_object_sceenshot.png>
 Package pdftex.def Info: pics/find_object_sceenshot.png  used on input line 18.
 
 (pdftex.def)             Requested size: 409.71692pt x 214.45265pt.
-<pics/Schildererkennung-Pipeline.png, id=92, 1078.0275pt x 335.2525pt>
+<pics/Schildererkennung-Pipeline.png, id=93, 1078.0275pt x 335.2525pt>
 File: pics/Schildererkennung-Pipeline.png Graphic file (type png)
 <use pics/Schildererkennung-Pipeline.png>
 Package pdftex.def Info: pics/Schildererkennung-Pipeline.png  used on input lin
@@ -1951,57 +1935,53 @@ e 33.
 
  <./pics/Stopschild.png> <./pics/spurwechselschild.jpg> <./pics/Geschwindikeits
 schild.png>] [13 <./pics/find_object_sceenshot.png> <./pics/Schildererkennung-P
-ipeline.png>]
-<pics/Schildererkennung_Distanz.png, id=103, 602.25pt x 413.3844pt>
+ipeline.png>] [14]
+<pics/Schildererkennung_Distanz.png, id=108, 602.25pt x 413.3844pt>
 File: pics/Schildererkennung_Distanz.png Graphic file (type png)
 <use pics/Schildererkennung_Distanz.png>
 Package pdftex.def Info: pics/Schildererkennung_Distanz.png  used on input line
- 66.
+ 67.
 (pdftex.def)             Requested size: 364.19667pt x 249.99425pt.
+)
+[15
 
-Underfull \hbox (badness 5893) in paragraph at lines 67--67
-[][]\T1/5fp/m/n/12 Messpunkte für Ver-hält-nis Flä-che zu Di-stanz und ver-schi
-e-de-ne
- []
-
-) [14] [15 <./pics/Schildererkennung_Distanz.png>] (chapters/Conclusion.tex)
+ <./pics/Schildererkennung_Distanz.png>] (./chapters/Conclusion.tex)
 [16
 
-] (TUDthesis.bbl) [17
+] (./TUDthesis.bbl) [17
 
-] (TUDthesis.aux)
+] (./TUDthesis.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 29991 strings out of 492946
- 706597 string characters out of 3135431
- 994720 words of memory out of 3000000
- 33158 multiletter control sequences out of 15000+200000
- 168126 words of font info for 115 fonts, out of 3000000 for 9000
+ 30632 strings out of 492616
+ 717847 string characters out of 6132768
+ 1155927 words of memory out of 5000000
+ 33814 multiletter control sequences out of 15000+600000
+ 168126 words of font info for 115 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 73i,18n,100p,8855b,609s stack positions out of 5000i,500n,10000p,200000b,50000s
-{C:/Users/Ich/AppData/Roaming/MiKTeX/2.9/fonts/enc/dvips/base/8r.enc}{C:/User
-s/Ich/AppData/Roaming/MiKTeX/2.9/fonts/enc/dvips/ly1/texnansi.enc}<C:/Program F
-iles/tuddesign/fonts/type1/softmake/charter/5chr8a.pfb><C:/Program Files/tuddes
-ign/fonts/type1/softmake/charter/5chri8a.pfb><C:/Program Files/tuddesign/fonts/
-type1/softmake/frontpage/5fpm8a.pfb><C:/Program Files/tuddesign/fonts/type1/sof
-tmake/frontpage/5fpr8a.pfb><C:/Program Files/tuddesign/fonts/type1/softmake/sta
-fford/5sfr8a.pfb><C:/Users/Ich/AppData/Roaming/MiKTeX/2.9/fonts/type1/bitstrea/
-charter/bchb8a.pfb><C:/Users/Ich/AppData/Roaming/MiKTeX/2.9/fonts/type1/bitstre
-a/charter/bchr8a.pfb><C:/Users/Ich/AppData/Roaming/MiKTeX/2.9/fonts/type1/bitst
-rea/charter/bchri8a.pfb><C:/Users/Ich/AppData/Roaming/MiKTeX/2.9/fonts/type1/ma
-thdesign/mdbch/md-chr7t.pfb><C:/Users/Ich/AppData/Roaming/MiKTeX/2.9/fonts/type
-1/mathdesign/mdbch/md-chr7v.pfb><C:/Users/Ich/AppData/Roaming/MiKTeX/2.9/fonts/
-type1/mathdesign/mdbch/md-chr7y.pfb><C:/Users/Ich/AppData/Roaming/MiKTeX/2.9/fo
-nts/type1/mathdesign/mdbch/md-chri7m.pfb><C:/Users/Ich/AppData/Roaming/MiKTeX/2
-.9/fonts/type1/mathdesign/mdbch/md-chrma.pfb><C:/Program Files/MiKTeX 2.9/fonts
-/type1/adobe/utopia/putri8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/za
-pfding/uzdr.pfb>
-Output written on TUDthesis.pdf (22 pages, 3078431 bytes).
+ 73i,18n,100p,9121b,609s stack positions out of 5000i,500n,10000p,200000b,80000s
+{c:/texlive/2018/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2018/texm
+f-dist/fonts/enc/dvips/base/texnansi.enc}<c:/texlive/texmf-local/fonts/type1/so
+ftmake/charter/5chr8a.pfb><c:/texlive/texmf-local/fonts/type1/softmake/charter/
+5chri8a.pfb><c:/texlive/texmf-local/fonts/type1/softmake/frontpage/5fpm8a.pfb><
+c:/texlive/texmf-local/fonts/type1/softmake/frontpage/5fpr8a.pfb><c:/texlive/te
+xmf-local/fonts/type1/softmake/stafford/5sfr8a.pfb><c:/texlive/2018/texmf-dist/
+fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2018/texmf-dist/fonts/type1
+/bitstrea/charter/bchr8a.pfb><c:/texlive/2018/texmf-dist/fonts/type1/bitstrea/c
+harter/bchri8a.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/mathdesign/md
+bch/md-chr7t.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/mathdesign/mdbc
+h/md-chr7v.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/mathdesign/mdbch/
+md-chr7y.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/mathdesign/mdbch/md
+-chri7m.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/mathdesign/mdbch/md-
+chrma.pfb><c:/texlive/2018/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb><c:/
+texlive/2018/texmf-dist/fonts/type1/urw/zapfding/uzdr.pfb>
+Output written on TUDthesis.pdf (22 pages, 3060613 bytes).
 PDF statistics:
- 168 PDF objects out of 1000 (max. 8388607)
+ 171 PDF objects out of 1000 (max. 8388607)
+ 106 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  97 words of extra memory for PDF output out of 10000 (max. 10000000)
 
