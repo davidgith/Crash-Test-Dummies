@@ -18,49 +18,51 @@ Warning--entry type for "doxygen" isn't style-file defined
 --line 87 of file literature.bib
 Warning--entry type for "quadprog" isn't style-file defined
 --line 117 of file literature.bib
-Warning--entry type for "findObject" isn't style-file defined
+Warning--entry type for "rosdoc_lite" isn't style-file defined
 --line 129 of file literature.bib
+Warning--entry type for "findObject" isn't style-file defined
+--line 141 of file literature.bib
 Warning--to sort, need author or key in Trello
 Warning--to sort, need author or key in Github
-You've used 13 entries,
+You've used 14 entries,
             4793 wiz_defined-function locations,
-            952 strings with 7675 characters,
-and the built_in function-call counts, 6377 in all, are:
-= -- 652
-> -- 163
-< -- 162
-+ -- 186
-- -- 54
-* -- 378
-:= -- 1071
-add.period$ -- 13
-call.type$ -- 13
-change.case$ -- 58
-chr.to.int$ -- 13
-cite$ -- 17
-duplicate$ -- 206
-empty$ -- 472
-format.name$ -- 106
-if$ -- 1292
+            956 strings with 7756 characters,
+and the built_in function-call counts, 6873 in all, are:
+= -- 705
+> -- 171
+< -- 186
++ -- 210
+- -- 56
+* -- 397
+:= -- 1152
+add.period$ -- 14
+call.type$ -- 14
+change.case$ -- 62
+chr.to.int$ -- 14
+cite$ -- 18
+duplicate$ -- 220
+empty$ -- 503
+format.name$ -- 111
+if$ -- 1389
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 66
-newline$ -- 73
-num.names$ -- 33
-pop$ -- 108
+missing$ -- 72
+newline$ -- 78
+num.names$ -- 36
+pop$ -- 117
 preamble$ -- 1
-purify$ -- 84
+purify$ -- 90
 quote$ -- 0
-skip$ -- 369
+skip$ -- 407
 stack$ -- 0
-substring$ -- 362
-swap$ -- 39
-text.length$ -- 29
+substring$ -- 396
+swap$ -- 41
+text.length$ -- 31
 text.prefix$ -- 6
 top$ -- 0
-type$ -- 126
+type$ -- 136
 warning$ -- 2
-while$ -- 52
-width$ -- 16
-write$ -- 154
-(There were 8 warnings)
+while$ -- 55
+width$ -- 17
+write$ -- 165
+(There were 9 warnings)

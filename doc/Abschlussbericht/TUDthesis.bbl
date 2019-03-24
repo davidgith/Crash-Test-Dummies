@@ -45,6 +45,11 @@
 \newblock {In: }\emph{URL= http://www. itk. ntnu.
   no/fag/TTK4135/viktig/MPCkompendium\% 20HOvd. pdf}  (2004)
 
+\bibitem[KC]{rosdoc_lite}
+\textsc{Ken~Conley}, Eitan Marder-Eppstein:
+\newblock \emph{rosdoc}.
+\newblock \url{http://wiki.ros.org/rosdoc_lite}
+
 \bibitem[Lab]{findObject}
 \textsc{Labbe}, Mathieu:
 \newblock \emph{findObject}.

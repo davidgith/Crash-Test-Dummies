@@ -24,7 +24,7 @@ Unser erster Ansatz für die Schilderkennung war es, das ROS-Packet Find-Object v
 Als wir die Schilderkennung und den Regler für die Steuerung gleichzeitig laufen ließen, begann das Auto stark zu schwingen und es war diesem nicht mehr möglich die Spur korrekt zu halten. Die Performanz-Probleme konnten wir auf die CPU zurückführen, welche alleine durch die Verwendung der Kinect-Kamera zu ca. 50 \% ausgelastet war. Außerdem ist das Paket Find-Object mit seinen umfangreichen Funktionen (von denen wir nicht alle benötigten), sehr rechenintensiv. So musste ein anderer Ansatz mit einem simplen, überschaubaren Codeumfang angewendet werden.
 
 \subsection{Finaler Ansatz: Schilderkennung mit SURF}
-Mit dem ersten Ansatz hatten wir experimentell ermittelt, dass der Suchalgorithmus SURF (Speeded Up Robust Features) \cite{bay2006surf} für unser Anwendungsszenario am schnellsten und robustesten funktioniert. Schilder werden unabhängig von Größe und Orientation erkannt.
+Mit dem ersten Ansatz hatten wir experimentell ermittelt, dass der Suchalgorithmus SURF (Speeded Up Robust Features) \cite{bay2006surf} für unser Anwendungsszenario am schnellsten und robustesten funktioniert. Schilder werden unabhängig von Größe und Drehung erkannt.
 
 Als Code-Basis haben wir bestehenden OpenCV-Beispielcode verwendet. Diesen haben wir für unsere Zwecke angepasst, damit dieser mit ROS und der Kinect-Kamera kompatibel ist, und haben Funktionen wie Multi-Objekt-Erkennung hinzugefügt.
 
@@ -45,7 +45,7 @@ Um die Funktionsweise unseres Ansatzes zu erklären, gehen wir die Schilderkennun
 
 \subparagraph{Schritt 4}: Nun wird nach Übereinstimmungen zwischen den Keypoints des Referenzbildes und des Kamerabildes gesucht. In diesem Schritt werden für jeden Keypoint des Referenzbildes zwei Keypoints aus dem Kamera-Bild gesucht, welche die größte Gemeinsamkeit haben. Dafür wird der Nearest-Neighbor Algorithmus von FLANN (Fast Library for Approximate Nearest Neighbors) \cite{flann_pami_2014} genutzt.
 
-\subparagraph{Schritt 5}: Anschließend werden die Übereinstimmungen gefiltert, so dass wir nur noch die besten Übereinstimmungen haben. Dazu verwenden wir den Lowe's-Ratio-Test \cite{lowe2004distinctive}, dieser schaut sich die Distanz zwischen dem Keypoint des Referenzbildes und dem des Kamerabild an und filtert Übereinstimmungen aus, welche den Vorgegebenen Threshold nicht erfüllen. Mit Distanz ist hier keine physikalische Distanz gemeint, sondern die Euklidische Distanz von zwei Keypoint-Vektoren. Dieser gibt den Wert der Ähnlichkeit an.
+\subparagraph{Schritt 5}: Anschließend werden die Übereinstimmungen gefiltert, so dass wir nur noch die besten Übereinstimmungen haben. Dazu verwenden wir den Lowe's-Ratio-Test \cite{lowe2004distinctive}, dieser schaut sich die Distanz zwischen dem Keypoint des Referenzbildes und dem des Kamerabildes an und filtert Übereinstimmungen heraus, welche den vorgegebenen Threshold nicht erfüllen. Mit Distanz ist hier keine physikalische Distanz gemeint, sondern die Euklidische Distanz von zwei Keypoint-Vektoren. Diese gibt den Wert der Ähnlichkeit an.
 
 \subparagraph{Schritt 6}: Wenn ein Schild gefunden wird, wird die physikalische Distanz vom Schild zum Auto ermittelt und diese wird auf einem ROS-Topic ausgegeben: \\
 Wenn das Stoppschild erkannt wird: /sign\_detection\_node/StopSign \\

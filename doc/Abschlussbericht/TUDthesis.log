@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/W32TeX) (preloaded format=pdflatex 2019.1.25)  24 MAR 2019 00:27
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/W32TeX) (preloaded format=pdflatex 2019.1.25)  24 MAR 2019 11:07
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1956,10 +1956,10 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 30632 strings out of 492616
- 717847 string characters out of 6132768
- 1155927 words of memory out of 5000000
- 33814 multiletter control sequences out of 15000+600000
+ 30633 strings out of 492616
+ 717860 string characters out of 6132768
+ 1155929 words of memory out of 5000000
+ 33815 multiletter control sequences out of 15000+600000
  168126 words of font info for 115 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  73i,18n,100p,9121b,609s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1978,7 +1978,7 @@ md-chr7y.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/mathdesign/mdbch/md
 -chri7m.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/mathdesign/mdbch/md-
 chrma.pfb><c:/texlive/2018/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb><c:/
 texlive/2018/texmf-dist/fonts/type1/urw/zapfding/uzdr.pfb>
-Output written on TUDthesis.pdf (22 pages, 3060613 bytes).
+Output written on TUDthesis.pdf (22 pages, 3060757 bytes).
 PDF statistics:
  171 PDF objects out of 1000 (max. 8388607)
  106 compressed objects within 2 object streams
